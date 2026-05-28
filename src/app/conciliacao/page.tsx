@@ -74,21 +74,28 @@ export default function ConciliacaoPage() {
             const pct = (diff / t.entrada) * 100;
             const tone = pct > 1.5 ? "danger" : pct > 0.8 ? "warning" : "success";
             return (
-              <div key={i} className="grid grid-cols-12 items-center gap-3 px-5 py-4">
-                <div className="col-span-4 text-sm font-medium text-white">{t.nome}</div>
-                <div className="col-span-2 text-xs">
-                  <div className="text-[color:var(--color-muted)]">Entrada (XML)</div>
-                  <div className="font-mono text-white">{formatNumber(t.entrada)} L</div>
+              <div key={i} className="flex flex-col gap-3 px-4 py-4 sm:grid sm:grid-cols-12 sm:items-center sm:gap-3 sm:px-5">
+                <div className="flex items-start justify-between gap-3 sm:col-span-4 sm:block">
+                  <div className="text-sm font-medium text-white">{t.nome}</div>
+                  <div className="sm:hidden">
+                    <Badge variant={tone}>{pct.toFixed(2)}% perda</Badge>
+                  </div>
                 </div>
-                <div className="col-span-2 text-xs">
-                  <div className="text-[color:var(--color-muted)]">Saída (IoT)</div>
-                  <div className="font-mono text-white">{formatNumber(t.saida)} L</div>
+                <div className="grid grid-cols-3 gap-2 text-xs sm:contents">
+                  <div className="sm:col-span-2">
+                    <div className="text-[color:var(--color-muted)]">Entrada</div>
+                    <div className="font-mono text-white">{formatNumber(t.entrada)} L</div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <div className="text-[color:var(--color-muted)]">Saída</div>
+                    <div className="font-mono text-white">{formatNumber(t.saida)} L</div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <div className="text-[color:var(--color-muted)]">Diferença</div>
+                    <div className="font-mono text-white">{formatNumber(diff)} L</div>
+                  </div>
                 </div>
-                <div className="col-span-2 text-xs">
-                  <div className="text-[color:var(--color-muted)]">Diferença</div>
-                  <div className="font-mono text-white">{formatNumber(diff)} L</div>
-                </div>
-                <div className="col-span-2 flex justify-end">
+                <div className="hidden sm:col-span-2 sm:flex sm:justify-end">
                   <Badge variant={tone}>{pct.toFixed(2)}% perda</Badge>
                 </div>
               </div>

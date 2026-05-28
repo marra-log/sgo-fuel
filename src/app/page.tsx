@@ -30,14 +30,14 @@ export default function HomePage() {
 
       {/* HERO */}
       <section className="grid-backdrop relative overflow-hidden border-b border-[color:var(--color-border)]">
-        <div className="mx-auto max-w-7xl px-4 py-20">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:py-20">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
             <div>
               <Badge variant="success" className="mb-5">
                 <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-brand)]" />
                 Aether IA · Ecossistema de Abastecimento
               </Badge>
-              <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
+              <h1 className="text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
                 Revolucionando o controle de frotas com
                 <span className="ml-2 bg-gradient-to-r from-[color:var(--color-brand)] to-[#7ee7b4] bg-clip-text text-transparent">
                   IoT de baixo custo
@@ -385,9 +385,9 @@ function Section({
 
 function KpiHero({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-4">
-      <div className="text-xl font-semibold text-white">{value}</div>
-      <div className="mt-1 text-[11px] uppercase tracking-wider text-[color:var(--color-muted)]">
+    <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-3 sm:p-4">
+      <div className="text-base font-semibold leading-tight text-white sm:text-xl">{value}</div>
+      <div className="mt-1 text-[10px] uppercase tracking-wider text-[color:var(--color-muted)] sm:text-[11px]">
         {label}
       </div>
     </div>

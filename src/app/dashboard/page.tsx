@@ -134,18 +134,28 @@ export default function DashboardPage() {
           </div>
           <div className="divide-y divide-[color:var(--color-border)]">
             {recentEvents.map((e, i) => (
-              <div key={i} className="grid grid-cols-12 items-center gap-3 px-5 py-3 text-sm">
-                <div className="col-span-3 text-[color:var(--color-muted)]">{e.when}</div>
-                <div className="col-span-4">
+              <div
+                key={i}
+                className="flex flex-col gap-2 px-4 py-3 text-sm sm:grid sm:grid-cols-12 sm:items-center sm:gap-3 sm:px-5"
+              >
+                <div className="flex items-center justify-between sm:col-span-3 sm:block">
+                  <span className="text-xs text-[color:var(--color-muted)] sm:text-sm">
+                    {e.when}
+                  </span>
+                  <span className="font-mono text-right text-sm text-white sm:hidden">
+                    {e.litros.toFixed(1)} L
+                  </span>
+                </div>
+                <div className="sm:col-span-4">
                   <div className="font-medium text-white">{e.pump}</div>
                   <div className="text-xs text-[color:var(--color-muted)]">
                     <span className="font-mono">{e.placa}</span> · {e.motorista}
                   </div>
                 </div>
-                <div className="col-span-2 font-mono text-right text-white">
+                <div className="hidden sm:col-span-2 sm:block sm:text-right sm:font-mono sm:text-white">
                   {e.litros.toFixed(1)} L
                 </div>
-                <div className="col-span-3 flex justify-end">
+                <div className="flex sm:col-span-3 sm:justify-end">
                   <Badge variant={e.tone}>
                     {e.tone === "danger" ? (
                       <AlertTriangle className="h-3 w-3" />
@@ -232,30 +242,30 @@ export default function DashboardPage() {
           </div>
           <div className="divide-y divide-[color:var(--color-border)]">
             {ranking.map((m, i) => (
-              <div key={i} className="grid grid-cols-12 items-center gap-3 px-5 py-3 text-sm">
-                <div className="col-span-1 flex items-center justify-center">
+              <div key={i} className="flex items-center gap-3 px-4 py-3 text-sm sm:px-5">
+                <div className="flex w-6 flex-none items-center justify-center">
                   {i === 0 ? (
                     <Trophy className="h-4 w-4 text-[color:var(--color-warning)]" />
                   ) : (
                     <span className="text-xs text-[color:var(--color-muted)]">#{i + 1}</span>
                   )}
                 </div>
-                <div className="col-span-5">
-                  <div className="font-medium text-white">{m.nome}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium text-white">{m.nome}</div>
                   <div className="text-xs text-[color:var(--color-muted)]">
                     {m.viagens} viagens · {m.anomalias} anomalia{m.anomalias === 1 ? "" : "s"}
                   </div>
                 </div>
-                <div className="col-span-6">
-                  <div className="flex items-center justify-end gap-3">
-                    <div className="h-1.5 w-32 overflow-hidden rounded-full bg-[color:var(--color-surface-2)]">
-                      <div
-                        className="h-full bg-[color:var(--color-brand)]"
-                        style={{ width: `${(m.kml / 3.5) * 100}%` }}
-                      />
-                    </div>
-                    <span className="font-mono text-white">{m.kml.toFixed(2)} km/L</span>
+                <div className="flex flex-none items-center gap-2 sm:gap-3">
+                  <div className="hidden h-1.5 w-24 overflow-hidden rounded-full bg-[color:var(--color-surface-2)] sm:block sm:w-32">
+                    <div
+                      className="h-full bg-[color:var(--color-brand)]"
+                      style={{ width: `${(m.kml / 3.5) * 100}%` }}
+                    />
                   </div>
+                  <span className="whitespace-nowrap font-mono text-white">
+                    {m.kml.toFixed(2)} km/L
+                  </span>
                 </div>
               </div>
             ))}
@@ -368,10 +378,10 @@ function ConcilRow({
           {pct.toFixed(2)}% perda
         </Badge>
       </div>
-      <div className="mt-2 grid grid-cols-3 gap-3 text-xs text-[color:var(--color-muted)]">
+      <div className="mt-2 grid grid-cols-1 gap-1.5 text-xs text-[color:var(--color-muted)] sm:grid-cols-3 sm:gap-3">
         <span>Entrada (XML): <span className="font-mono text-white">{formatNumber(entrada)} L</span></span>
         <span>Saída (IoT): <span className="font-mono text-white">{formatNumber(saida)} L</span></span>
-        <span className="text-right">
+        <span className="sm:text-right">
           Diferença: <span className="font-mono text-white">{formatNumber(diff)} L</span>
         </span>
       </div>
