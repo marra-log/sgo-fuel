@@ -38,3 +38,9 @@ Abrir em http://localhost:3000.
 ## Deploy
 
 Projeto vinculado à Vercel como projeto **separado** do `ia-super-terminais`.
+Cada push em `main` redeploya automaticamente em https://sgo-fuel.vercel.app.
+
+## Plano de ativação real
+
+Demo → produto: ver [`PLANO_EXECUCAO.md`](./PLANO_EXECUCAO.md).
+Cobre backend (Next.js + tRPC + Prisma), Postgres multi-tenant, IoT em Raspberry Pi 5, ALPR + classificador anti-balde, app motorista (Expo), Smart POS (Kotlin), conciliação SEFAZ, segurança/LGPD, roadmap por sprint (12 semanas) e orçamento.
