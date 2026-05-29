@@ -13,6 +13,7 @@ import {
   Video,
 } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
+import { TenantBanner } from "@/components/tenant-banner";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -74,13 +75,16 @@ const ranking = [
   { nome: "Cleber Marques", kml: 2.11, viagens: 18, anomalias: 3 },
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
   return (
     <SectionShell
       badge="Portal do Gestor"
       title="Visão central da operação"
       description="Faturamento, conciliação, ranking e alertas de anomalia em tempo real — tudo em um único painel."
     >
+      {/* Status da empresa + contadores reais do banco */}
+      <TenantBanner />
+
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi

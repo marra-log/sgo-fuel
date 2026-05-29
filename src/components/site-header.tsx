@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Fuel, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UserMenu } from "./user-menu";
 
 const links = [
   { href: "/", label: "Visão Geral" },
   { href: "/dashboard", label: "Portal do Gestor" },
+  { href: "/cadastros", label: "Cadastros" },
   { href: "/anomalias", label: "Anomalias" },
   { href: "/conciliacao", label: "Conciliação SEFAZ" },
   { href: "/ranking", label: "Ranking" },
@@ -73,10 +75,9 @@ export function SiteHeader() {
           })}
         </nav>
 
-        {/* Right side: demo badge + hamburger */}
+        {/* Right side: user menu + hamburger */}
         <div className="flex items-center gap-2">
-          <span className="hidden text-xs text-[color:var(--color-muted)] sm:inline">DEMO</span>
-          <span className="hidden h-2 w-2 animate-pulse rounded-full bg-[color:var(--color-brand)] sm:inline-block" />
+          <UserMenu />
 
           {/* Hamburger só aparece abaixo do breakpoint lg */}
           <button

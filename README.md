@@ -43,4 +43,28 @@ Cada push em `main` redeploya automaticamente em https://sgo-fuel.vercel.app.
 ## Plano de ativação real
 
 Demo → produto: ver [`PLANO_EXECUCAO.md`](./PLANO_EXECUCAO.md).
-Cobre backend (Next.js + tRPC + Prisma), Postgres multi-tenant, IoT em Raspberry Pi 5, ALPR + classificador anti-balde, app motorista (Expo), Smart POS (Kotlin), conciliação SEFAZ, segurança/LGPD, roadmap por sprint (12 semanas) e orçamento.
+Cobre backend (Next.js + Supabase), Postgres multi-tenant, IoT em Raspberry Pi 5, ALPR + classificador anti-balde, PWA motorista, Smart POS (Kotlin), conciliação SEFAZ, segurança/LGPD, roadmap em 2 fases e orçamento.
+
+## Bloco A1 — Banco e auth ativos (concluído)
+
+- Cliente Supabase (browser + server + middleware) configurado
+- Auth real: `/login`, `/cadastro`, `/auth/logout`
+- Rotas protegidas: `/dashboard`, `/anomalias`, `/conciliacao`, `/ranking`, `/cadastros`
+- Schema completo em [`supabase/schema.sql`](./supabase/schema.sql) — multi-tenant, RLS, trigger que torna o criador OWNER
+- `/cadastros/empresa` cria/edita o tenant
+- Banner no dashboard mostra contadores reais do banco e link pra cadastros
+
+### Como ativar do zero
+1. Abrir o SQL Editor do Supabase: <https://supabase.com/dashboard/project/jozeyczhxdcfvtvumiph/sql/new>
+2. Colar todo o conteúdo de `supabase/schema.sql` e clicar em **Run**
+3. Em Authentication → URL Configuration, definir **Site URL** = `https://sgo-fuel.vercel.app` e adicionar `http://localhost:3000` em Additional Redirect URLs
+4. (Opcional) Em Authentication → Email Auth, desligar "Confirm email" para teste mais rápido — pode ligar depois
+5. Em `https://sgo-fuel.vercel.app/cadastro` criar a primeira conta
+
+## Variáveis de ambiente
+
+Em produção (já configuradas na Vercel via CLI):
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+Em local, copiar `.env.example` para `.env.local` e preencher os mesmos valores.
