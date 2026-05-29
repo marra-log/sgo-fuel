@@ -14,9 +14,19 @@ Documento vivo. Cada seção foi escrita para virar issue/épico no GitHub Proje
 | **Pátio piloto** | 1 base Marralog + 1 transportadora-cliente |
 | **Postos parceiros piloto** | 3 a 5 postos em corredor logístico (BR-381 / BR-040) |
 | **Frotas-alvo no piloto** | 30 a 80 placas |
-| **Custo por bomba (hardware)** | R$ 1.180 (Pi 5 + câmera IR + SSR + modem) |
+| **Custo por bomba (hardware OPEX)** | R$ 1.180 (Pi 5 + câmera IR + SSR + modem) |
 | **Custo de backend mensal (até 100 bombas)** | ~R$ 350 (Postgres gerenciado + Vercel + storage de vídeo S3) |
 | **Equipe mínima MVP** | 1 PM/produto, 2 devs full-stack, 1 dev IoT/IA, 1 designer 50% |
+| **App do motorista** | **PWA** (sem iOS/Android nativo na v1 — economiza ~R$ 25k e 4 semanas) |
+
+### 0.1 ⚠️ Não confunda: pitch × orçamento
+
+| Você vai falar com... | Use estes números |
+|------|------|
+| **Cliente final** (frotista comprando a solução) | Pitch comercial: **R$ 1.500/bomba** (setup) · **R$ 89/bomba/mês** (assinatura) · economia ~5–8% do consumo (R$ 23k/mês numa frota de 50k L) — esses são os números do site/`page.tsx` e do PDF que o sócio mandou |
+| **Sócio / investidor / banco** (financiando o desenvolvimento) | Orçamento de produto: **R$ 159.640** para 12 semanas de desenvolvimento + 10 kits de protótipo + 3 meses de infra SaaS. É um **CAPEX único** que vira o ativo "produto pronto pra vender" |
+
+Os R$ 1.500 do hardware são o **custo unitário operacional por cliente novo**. Eles não pagam o desenvolvimento — pagam só o material que vai junto com cada bomba ativada depois que o produto existir. O desenvolvimento do produto em si está na seção 14.
 
 ---
 
@@ -83,8 +93,31 @@ Documento vivo. Cada seção foi escrita para virar issue/épico no GitHub Proje
 ### 2.1 Pontos de contato
 - **Totem IoT** (pátio): Raspberry Pi 5 + câmera 1080p IR + relé SSR 25A + modem 4G/WiFi
 - **Smart POS** (posto parceiro): app Android nativo em PAX A920 Pro, Gertec, Sunmi
-- **App do motorista**: Expo (iOS + Android) com mapa, check-in QR/NFC
+- **App do motorista**: **PWA** (Progressive Web App) servida pelo mesmo Next.js, com manifest + service worker + ícone instalável. Funciona em qualquer celular sem passar por App Store/Play Store
 - **Portal do Gestor**: Next.js (já temos a casca pronta neste repo)
+
+### 2.2 Onde fica hospedado o quê (resposta direta)
+
+Tudo em **3 contas SaaS** (sem servidor próprio, sem VPS, sem mexer em Linux). Custo total da infra do MVP: ~**R$ 1.430/mês**.
+
+| O quê | Onde | URL/conta | Custo mensal |
+|------|------|-----------|--------------|
+| **Site / Portal Gestor / API REST / API tRPC / PWA Motorista** | **Vercel** | já é onde está hoje: `marralog-s-projects/sgo-fuel` | US$ 20 (~R$ 110) |
+| **Banco de dados (Postgres 16)** | **Neon** (recomendado) ou Supabase | conta nova `neon.tech` no e-mail da Marralog | US$ 30 (~R$ 165) |
+| **Storage de vídeo/foto das anomalias** | **Cloudflare R2** | conta nova `cloudflare.com` | ~R$ 80 |
+| **Fila/cache (Redis)** | **Upstash** | conta nova `upstash.com` | ~R$ 60 |
+| **MQTT broker** (comunicação com os totens IoT no pátio) | **HiveMQ Cloud** | conta nova `hivemq.com` | US$ 49 (~R$ 270) |
+| **SMS de login do motorista** | **Twilio** | conta nova `twilio.com` | ~R$ 250 (consumo) |
+| **Mapas / distância da rota** | **Mapbox** (mais barato que Google) | conta nova `mapbox.com` | ~R$ 200 |
+| **Treino de IA** (esporádico, só quando muda o modelo) | **Modal** (paga por minuto) | conta nova `modal.com` | ~R$ 150 |
+| **Monitoramento de erro** | **Sentry** | conta nova `sentry.io` | US$ 26 (~R$ 145) |
+
+**Por que dividido em vários SaaS?** Porque cada um é o melhor no que faz e tem free tier generoso. Não precisa "comprar tudo da Vercel" nem manter servidor próprio. Cada conta é só uma autenticação Google e um cartão de crédito.
+
+**Plano B (super simplificado)**: se quiser **menos contas**, dá pra trocar Neon + Upstash + Cloudflare R2 + Sentry por **Supabase só** — que entrega Postgres + Auth + Storage + Realtime numa conta única. Fica em ~R$ 350/mês (mais caro por GB) mas é uma decisão a menos pra gerenciar. Recomendo Supabase pra começar e migrar peças pra Neon/R2 quando passar de 50 bombas ativas.
+
+### 2.3 Já está parcialmente no ar
+Hoje (29/05/26) **a Vercel já está hospedando** o portal + o esqueleto da PWA do motorista em `https://sgo-fuel.vercel.app`. Falta só conectar nas outras contas (Neon, R2, Upstash, HiveMQ) — cada uma adiciona um `process.env.XXX_URL` no painel da Vercel e segue. Nenhuma migração de hospedagem é necessária.
 
 ---
 
@@ -100,7 +133,7 @@ Documento vivo. Cada seção foi escrita para virar issue/épico no GitHub Proje
 | Storage | Cloudflare R2 (S3-compatible) | Vídeo barato; sem egress |
 | Auth gestor | NextAuth + email/senha + TOTP | Multi-tenant nativo |
 | Auth motorista | OTP por SMS (Twilio) + biometria do device | Simples e seguro |
-| App motorista | Expo + React Native | Mesma base iOS/Android |
+| App motorista | **PWA** (Next.js + Workbox SW + Web Manifest) | Sem App Store/Play Store. Instala direto pelo navegador, abre em tela cheia, push notification via Web Push API. Funciona offline básico (cache de cota e check-in pendente). Cabe na mesma stack do portal — 1 dev cobre tudo |
 | Smart POS | Kotlin + Android nativo | SDK Pax/Gertec é Java/Kotlin |
 | IoT/Edge | Python 3.12 + FastAPI local + OpenCV | Comunidade ALPR é Python; FastAPI é leve |
 | ALPR | `OpenALPR` ou `ultralytics` (YOLO + OCR custom) | YOLO + TrOCR roda no Pi 5 a 8-12 fps |
@@ -451,21 +484,43 @@ GitHub Action → roda no Modal/RunPod (GPU spot, R$ 0,80/h) → publica modelo 
 
 ---
 
-## 9. App do motorista (Expo)
+## 9. App do motorista (PWA)
 
-### 9.1 Telas
+> **Decisão**: na v1 **não temos app nativo iOS/Android**. O motorista usa uma PWA — um site que se comporta como app. Em ~3s ele toca em "Adicionar à tela inicial" e fica um ícone no celular dele igualzinho a app de loja. Economiza ~R$ 25k de desenvolvimento e 4 semanas, sem perder a experiência. App nativo entra na v2 se o piloto provar tração.
+
+### 9.1 Por que PWA dá conta
+| Recurso que normalmente justifica nativo | Como resolvemos via web |
+|------------------------------------------|-------------------------|
+| Ícone na home, abre em tela cheia | Web App Manifest + `display: standalone` |
+| Funciona offline | Service Worker (Workbox) com cache da cota, foto, check-in pendente |
+| Push notification | Web Push API (Chrome Android, Safari iOS 16.4+) |
+| Câmera (QR Code) | `getUserMedia` + `BarcodeDetector` API |
+| NFC tap | Web NFC API (Chrome Android — não tem no iOS, fallback pra QR) |
+| GPS | Geolocation API |
+| Vibração | Vibration API |
+| Biometria | WebAuthn (passkey) |
+
+### 9.2 Telas (mesma URL base, ex: `app.sgo-fuel.com`)
 1. **Onboarding** (CPF + OTP SMS + selfie de validação)
 2. **Home** com cota da viagem, próximo ponto autorizado, rota
-3. **Check-in**: escaneia QR do totem OU NFC tap no POS
+3. **Check-in**: escaneia QR do totem (todos celulares) OU NFC tap no POS (Android)
 4. **Status do abastecimento** (loading, autorizado, em andamento, concluído)
 5. **Histórico** (abastecimentos passados, score, ranking)
 6. **Perfil** (CNH, contato, configurações)
 
-### 9.2 Push notifications
+### 9.3 Push notifications
 - Cota expirou
 - Bomba autorizada (ir pra bomba)
 - Bloqueio detectado
 - Anomalia criada pelo gestor que precisa de resposta
+
+Implementação: VAPID keys no backend + `Notification.requestPermission()` no primeiro check-in.
+
+### 9.4 Como o motorista instala
+1. Acessa `app.sgo-fuel.com` (subdomínio que já fica na Vercel, custo zero)
+2. Faz login com OTP SMS
+3. O navegador automaticamente sugere "Adicionar à tela inicial" depois de 30s de uso
+4. Pronto — ícone vermelho com a logo no Android/iOS, sem passar por loja
 
 ---
 
@@ -501,13 +556,12 @@ Aplicativo nativo Kotlin distribuído via:
 ## 12. DevOps / observabilidade
 
 - **Repos**:
-  - `marra-log/sgo-fuel` — web/portal (já temos)
-  - `marra-log/sgo-fuel-mobile` — app Expo
+  - `marra-log/sgo-fuel` — web/portal **+ PWA do motorista** no mesmo Next.js (já temos)
   - `marra-log/sgo-fuel-pos` — Android Kotlin POS
   - `marra-log/sgo-fuel-edge` — firmware Pi (Python)
 - **CI/CD**: GitHub Actions
-  - Web → preview por PR + auto-deploy em `main` (Vercel)
-  - Mobile → EAS build + canal `preview`/`production`
+  - Web/PWA → preview por PR + auto-deploy em `main` (Vercel) — **já funcionando**
+  - POS Android → Gradle build + APK assinado em release; distribuição manual no Pax Market
   - Edge → build imagem Docker → GHCR; Pi puxa via `watchtower` em janela de manutenção
 - **Observabilidade**:
   - Sentry no front e back
@@ -532,7 +586,7 @@ Aplicativo nativo Kotlin distribuído via:
 ### Sprint 2 (semanas 5–8): Loop fechado
 - [ ] MQTT broker (HiveMQ Cloud) + bridge no backend
 - [ ] Endpoints REST do device (handshake, authorize, event, anomaly)
-- [ ] App motorista — Expo, onboarding, check-in via QR
+- [ ] **PWA do motorista** — rota `/app` no mesmo Next.js: manifest, SW, onboarding OTP, check-in via QR
 - [ ] Firmware Pi consumindo cota e autorizando
 - [ ] Classificador anti-balde — primeira versão (precisão alvo 85%+)
 - [ ] Portal: visualização ao vivo de eventos (SSE)
@@ -553,42 +607,60 @@ Aplicativo nativo Kotlin distribuído via:
 - Roteirização avançada
 - Pagamento PIX para postos parceiros
 - Telemetria veicular (Sascar/Cobli)
-- App nativo Android offline-first
+- **App nativo Android/iOS** (Expo) com Web NFC mais robusto, offline-first agressivo, deep-link com o POS — **só entra se o piloto provar tração**
 - White-label para outras transportadoras
 
 ---
 
 ## 14. Equipe e estimativa de custo
 
-### 14.1 Equipe MVP (12 semanas)
-| Papel | Alocação | Custo/mês (CLT+enc. ou PJ) | Total 3 meses |
-|-------|----------|-----|----------------|
-| PM / Produto | 50% | R$ 6.000 | R$ 18.000 |
-| Tech lead full-stack | 100% | R$ 16.000 | R$ 48.000 |
-| Dev full-stack | 100% | R$ 11.000 | R$ 33.000 |
-| Dev IoT/IA (Python+ML) | 100% | R$ 14.000 | R$ 42.000 |
-| Designer Product | 25% | R$ 9.000 | R$ 6.750 |
-| **Subtotal pessoas** | | | **R$ 147.750** |
+> **Importante**: este é o **investimento único para construir o produto** (CAPEX de desenvolvimento), pago em 3 meses. Depois disso, cada cliente novo paga só o hardware dele (R$ 1.500/bomba) + assinatura mensal — quem vira o caixa pra cobrir e amortizar o desenvolvimento.
 
-### 14.2 Infra MVP (3 meses)
-| Item | Custo/mês | 3 meses |
-|------|-----------|---------|
-| Vercel Pro (web + funções) | US$ 20 (~R$ 110) | R$ 330 |
-| Neon Postgres Scale | US$ 30 (~R$ 165) | R$ 495 |
-| Upstash Redis Pay-as-you-go | ~R$ 60 | R$ 180 |
-| Cloudflare R2 (vídeo) | ~R$ 80 | R$ 240 |
-| HiveMQ Cloud Starter | US$ 49 (~R$ 270) | R$ 810 |
-| Sentry Team | US$ 26 (~R$ 145) | R$ 435 |
-| Twilio (SMS + WA) | ~R$ 250 | R$ 750 |
-| Mapbox / Maps API | ~R$ 200 | R$ 600 |
-| Modal/RunPod (treino IA, esporádico) | ~R$ 150 | R$ 450 |
-| **Subtotal infra** | | **R$ 4.290** |
+### 14.1 Equipe MVP (12 semanas) — sem mobile nativo, PWA cabe na conta do full-stack
+
+| Papel | Alocação | Custo/mês (PJ) | Total 3 meses |
+|-------|----------|-----|----------------|
+| PM / Produto | 50% | R$ 6.000 | R$ 9.000 |
+| Tech lead full-stack (portal + PWA + tRPC + Prisma) | 100% | R$ 16.000 | R$ 48.000 |
+| Dev full-stack (CRUDs + integrações SEFAZ/Maps + POS Android) | 100% | R$ 11.000 | R$ 33.000 |
+| Dev IoT/IA (Python + visão computacional + firmware Pi) | 100% | R$ 14.000 | R$ 42.000 |
+| Designer Product | 25% | R$ 9.000 | R$ 6.750 |
+| **Subtotal pessoas** | | | **R$ 138.750** |
+
+### 14.2 Infra MVP (3 meses) — todas as contas SaaS já mapeadas na seção 2.2
+
+| Item | Onde fica | Custo/mês | 3 meses |
+|------|-----------|-----------|---------|
+| Vercel Pro (portal + PWA + API + funções) | `vercel.com/marralog-s-projects` (já temos) | R$ 110 | R$ 330 |
+| Neon Postgres (banco principal) | conta nova `neon.tech` | R$ 165 | R$ 495 |
+| Upstash Redis (fila + cache) | conta nova `upstash.com` | R$ 60 | R$ 180 |
+| Cloudflare R2 (vídeo das anomalias) | conta nova `cloudflare.com` | R$ 80 | R$ 240 |
+| HiveMQ Cloud (MQTT broker dos totens) | conta nova `hivemq.com` | R$ 270 | R$ 810 |
+| Sentry Team (monitoramento de erro) | conta nova `sentry.io` | R$ 145 | R$ 435 |
+| Twilio (SMS de login do motorista) | conta nova `twilio.com` | R$ 250 | R$ 750 |
+| Mapbox (distância de rota) | conta nova `mapbox.com` | R$ 200 | R$ 600 |
+| Modal (treino esporádico da IA) | conta nova `modal.com` | R$ 150 | R$ 450 |
+| **Subtotal infra** | | **~R$ 1.430/mês** | **R$ 4.290** |
+
+> No total são **8 contas SaaS novas + Vercel que já existe**. Cada uma é um cadastro Google + 1 cartão. Nenhum servidor próprio, nenhum administrador de banco, nenhum Linux pra zelar.
 
 ### 14.3 Hardware piloto (10 bombas)
-- 10 × R$ 1.660 = **R$ 16.600**
+- 10 kits × R$ 1.660 = **R$ 16.600**
+  (Pi 5 + câmera IR + relé SSR + modem 4G + caixa IP65 + mão de obra elétrica)
 
 ### 14.4 Total estimado MVP
-**~R$ 168.640** para 12 semanas até 1º pátio operando e 3 postos parceiros conectados.
+
+| Bloco | Valor |
+|-------|-------|
+| Equipe (12 semanas) | R$ 138.750 |
+| Infra SaaS (3 meses) | R$ 4.290 |
+| Hardware do piloto (10 bombas) | R$ 16.600 |
+| **Total** | **R$ 159.640** |
+
+Após o MVP, **custo operacional por cliente novo** é apenas:
+- **R$ 1.500/bomba** (material que sai do bolso do cliente, não da Marralog)
+- **R$ ~14/bomba/mês** de infra rateada (até 100 bombas; cai abaixo de R$ 6 acima de 500)
+- Equipe técnica passa a operar como SaaS team (suporte + features novas) e não como time de desenvolvimento inicial
 
 ---
 
@@ -613,7 +685,7 @@ Aplicativo nativo Kotlin distribuído via:
 3. **Setup Prisma + auth + um CRUD ponta-a-ponta** (Drivers) substituindo o mock atual da tela `/dashboard`. Owner: Dev full-stack.
 4. **Comprar 1 kit IoT** (Pi 5 + câmera + SSR + modem) para protótipo de bancada. Owner: Dev IoT.
 5. **Coletar dataset inicial** de placas e bicos de bomba (filmar 1 dia inteiro no pátio existente). Owner: Dev IoT + operações.
-6. **Aprovar orçamento** R$ 168k MVP. Owner: Sócios.
+6. **Aprovar orçamento** R$ 159,6k MVP (138,7k pessoas + 4,3k infra 3m + 16,6k hardware piloto). Owner: Sócios.
 
 > Quando aprovado o item 6, o repo `sgo-fuel` recebe um PR criando os diretórios `/prisma`, `/src/server`, `/src/lib/auth` — e o demo estático começa a ler do Postgres uma tela por vez.
 
