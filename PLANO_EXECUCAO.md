@@ -6,27 +6,36 @@ Documento vivo. Cada seção foi escrita para virar issue/épico no GitHub Proje
 
 ---
 
-## 0. Sumário executivo
+## 0. Sumário executivo — 2 fases, equipe = você + Claude
 
-| Item | Decisão |
-|------|---------|
-| **MVP útil em produção** | 12 semanas (3 sprints de 4 semanas) |
-| **Pátio piloto** | 1 base Marralog + 1 transportadora-cliente |
-| **Postos parceiros piloto** | 3 a 5 postos em corredor logístico (BR-381 / BR-040) |
-| **Frotas-alvo no piloto** | 30 a 80 placas |
-| **Custo por bomba (hardware OPEX)** | R$ 1.180 (Pi 5 + câmera IR + SSR + modem) |
-| **Custo de backend mensal (até 100 bombas)** | ~R$ 350 (Postgres gerenciado + Vercel + storage de vídeo S3) |
-| **Equipe mínima MVP** | 1 PM/produto, 2 devs full-stack, 1 dev IoT/IA, 1 designer 50% |
-| **App do motorista** | **PWA** (sem iOS/Android nativo na v1 — economiza ~R$ 25k e 4 semanas) |
+A construção é feita **por você + Claude (Anthropic)** dentro deste repo. **Sem equipe contratada, sem PJ, sem CLT.** Tudo o que é software (backend, banco, autenticação, telas funcionais, integrações leves) é executado primeiro e roda 100% em free tier. Só quando essa parte estiver provando valor é que entram os gastos de hardware, infra paga e integrações que cobram por uso.
 
-### 0.1 ⚠️ Não confunda: pitch × orçamento
+### 🧪 FASE A — Software ativo, custo R$ 0/mês
+Transformar o demo estático atual em **produto web funcional** rodando em free tier. Cliente consegue cadastrar empresa, motoristas, veículos, ver eventos sendo persistidos, gestor logando de verdade, PWA do motorista existindo.
 
-| Você vai falar com... | Use estes números |
-|------|------|
-| **Cliente final** (frotista comprando a solução) | Pitch comercial: **R$ 1.500/bomba** (setup) · **R$ 89/bomba/mês** (assinatura) · economia ~5–8% do consumo (R$ 23k/mês numa frota de 50k L) — esses são os números do site/`page.tsx` e do PDF que o sócio mandou |
-| **Sócio / investidor / banco** (financiando o desenvolvimento) | Orçamento de produto: **R$ 159.640** para 12 semanas de desenvolvimento + 10 kits de protótipo + 3 meses de infra SaaS. É um **CAPEX único** que vira o ativo "produto pronto pra vender" |
+| Item | Valor |
+|------|-------|
+| Equipe | Você + Claude (R$ 0) |
+| Duração esperada | 3 a 6 semanas de trabalho pontual |
+| Hospedagem | Vercel free + **Supabase free** (Postgres + Auth + Storage + Realtime numa conta só) |
+| Custo total | **R$ 0/mês** enquanto não passar do free tier |
+| Critério de "pronto" | Portal lê/grava banco real, login funciona, PWA do motorista existe, dados de demo viram dados persistidos |
 
-Os R$ 1.500 do hardware são o **custo unitário operacional por cliente novo**. Eles não pagam o desenvolvimento — pagam só o material que vai junto com cada bomba ativada depois que o produto existir. O desenvolvimento do produto em si está na seção 14.
+### ⚙️ FASE B — Hardware em campo + SaaS pagos
+**Só começa depois que a Fase A estiver pronta e validada com um cliente real.** Quando o sistema sai do navegador e começa a controlar bomba.
+
+| Item | Valor |
+|------|-------|
+| Hardware piloto (10 bombas) | R$ 16.600 |
+| MQTT broker (HiveMQ) | R$ 270/mês |
+| Twilio (SMS de login do motorista) | R$ ~250/mês |
+| Mapbox + Sentry + R2 + Modal | R$ ~575/mês |
+| Upgrade Supabase ou migração pra Neon | R$ ~165/mês |
+| **Total Fase B** | **~R$ 1.260/mês** recorrente + **R$ 16.600** único |
+
+### 0.1 Os números do pitch comercial não mudam
+
+Os **R$ 1.500/bomba** (setup) e a **economia de R$ 23k/mês numa frota 50k L** que aparecem no site `https://sgo-fuel.vercel.app` são **argumentos comerciais para o cliente final** — frotista que vai assinar. **Não são custos de desenvolvimento**. O cliente paga isso quando o produto já está pronto. Nosso custo de construção é tempo seu + Claude.
 
 ---
 
@@ -572,95 +581,137 @@ Aplicativo nativo Kotlin distribuído via:
 
 ---
 
-## 13. Roadmap por sprint (12 semanas para MVP)
+## 13. Roadmap das duas fases
 
-### Sprint 1 (semanas 1–4): Fundação
-- [ ] Setup Prisma + Postgres (Neon) + migrations iniciais
-- [ ] Auth NextAuth multi-tenant
-- [ ] CRUDs: tenant, user, driver, vehicle, yard, pump, tank
-- [ ] Portal: substituir mocks por dados reais nas telas já existentes
-- [ ] Importador SEFAZ (parser XML local; upload manual)
-- [ ] Protótipo IoT no Pi (ALPR + relé GPIO ligando lâmpada de teste)
-- [ ] CI/CD funcionando para web
+Não é mais "sprint de equipe". É **bloco de trabalho** entre você e Claude. Cada bloco é uma sessão (ou um conjunto de sessões) onde a gente sai com algo funcionando.
 
-### Sprint 2 (semanas 5–8): Loop fechado
-- [ ] MQTT broker (HiveMQ Cloud) + bridge no backend
-- [ ] Endpoints REST do device (handshake, authorize, event, anomaly)
-- [ ] **PWA do motorista** — rota `/app` no mesmo Next.js: manifest, SW, onboarding OTP, check-in via QR
-- [ ] Firmware Pi consumindo cota e autorizando
-- [ ] Classificador anti-balde — primeira versão (precisão alvo 85%+)
-- [ ] Portal: visualização ao vivo de eventos (SSE)
-- [ ] Conciliação SEFAZ automática (cron mensal)
+### 🧪 FASE A — Software ativo no free tier (3 a 6 semanas)
 
-### Sprint 3 (semanas 9–12): Piloto operacional
-- [ ] Smart POS app (Kotlin) MVP — cadastro de posto, transação NFC, comprovante
-- [ ] Cota dinâmica v1 (regra + maps directions)
-- [ ] Anti-balde v2 (treinada com dados reais coletados nas semanas 5–10)
-- [ ] Storage de vídeo no R2 + thumbnails + signed URLs
-- [ ] Auditoria completa + LGPD endpoints
-- [ ] Observabilidade ligada
-- [ ] **Instalação na 1ª bomba do pátio Marralog**
-- [ ] **Onboarding do primeiro posto parceiro**
+**Bloco A1 · Banco e auth de verdade** (1 sessão grande ou 2 menores)
+- Criar conta Supabase (free)
+- Schema Prisma completo no banco
+- Conectar Next.js → Supabase
+- Tela de login do gestor + cadastro de empresa (tenant)
+- Critério "pronto": você consegue criar uma conta nova de gestor, fazer login, e ver um dashboard vazio (sem mocks)
 
-### Sprint 4+ (semanas 13+): Hardening
-- Multi-bomba, múltiplos pátios
-- Roteirização avançada
-- Pagamento PIX para postos parceiros
-- Telemetria veicular (Sascar/Cobli)
-- **App nativo Android/iOS** (Expo) com Web NFC mais robusto, offline-first agressivo, deep-link com o POS — **só entra se o piloto provar tração**
-- White-label para outras transportadoras
+**Bloco A2 · CRUDs principais via UI**
+- Cadastro de motoristas (CPF, CNH, contato)
+- Cadastro de veículos (placa, modelo, consumo)
+- Cadastro de pátios e bombas (mesmo sem hardware ainda)
+- Critério "pronto": cliente consegue cadastrar a frota dele inteira no portal
+
+**Bloco A3 · Eventos e anomalias simulados, mas persistidos**
+- Botão "simular abastecimento" que cria um registro `Fueling` real no banco
+- Tela /dashboard lê eventos REAIS do banco
+- Botão "simular anomalia" gera registro `Anomaly`
+- Tela /anomalias lê anomalias REAIS
+- Critério "pronto": apresentação ao cliente mostra dados que ele próprio criou, não mock
+
+**Bloco A4 · Conciliação SEFAZ funcional**
+- Upload manual de XML (NFe de combustível)
+- Parser que extrai chave, volume, valor
+- Tela /conciliacao mostra cruzamento real
+- Critério "pronto": cliente sobe uma NFe sua, vê processada no portal
+
+**Bloco A5 · Ranking e relatórios reais**
+- Cálculo de km/L baseado em odômetro + litros dos `Fueling` persistidos
+- Tela /ranking calcula em tempo real
+- Critério "pronto": ranking se atualiza ao adicionar novos abastecimentos simulados
+
+**Bloco A6 · PWA do motorista**
+- Rota `/app` com manifest, ícone, service worker básico
+- Onboarding email + senha (SMS fica pra Fase B)
+- Tela de cota da viagem (atribuída pelo gestor)
+- Botão "check-in" simulado (gera Fueling)
+- Critério "pronto": motorista instala a PWA pelo navegador no celular dele e faz check-in
+
+**Bloco A7 · Auditoria + multi-tenant blindado**
+- Logs em todas as mutações
+- RLS no Supabase pra isolar tenants
+- Permissões por papel (OWNER, MANAGER, VIEWER)
+- Critério "pronto": criar 2 contas de gestor de empresas diferentes e provar que uma não vê dados da outra
 
 ---
 
-## 14. Equipe e estimativa de custo
+### ⚙️ FASE B — Hardware e SaaS pagos (só quando A estiver pronta)
 
-> **Importante**: este é o **investimento único para construir o produto** (CAPEX de desenvolvimento), pago em 3 meses. Depois disso, cada cliente novo paga só o hardware dele (R$ 1.500/bomba) + assinatura mensal — quem vira o caixa pra cobrir e amortizar o desenvolvimento.
+**Bloco B1 · Protótipo IoT em bancada (1 kit)**
+- Comprar 1 Pi 5 + câmera + SSR + lâmpada de teste
+- Firmware Python: ALPR offline, GPIO acendendo a lâmpada quando placa autoriza
+- Conta HiveMQ + bridge no backend
+- Critério "pronto": fala "BRA-2E19" pra câmera, lâmpada acende
 
-### 14.1 Equipe MVP (12 semanas) — sem mobile nativo, PWA cabe na conta do full-stack
+**Bloco B2 · Loop fechado fim-a-fim**
+- Endpoints REST do device (handshake, authorize, event, anomaly)
+- Portal recebe evento real do Pi e mostra no /dashboard
+- PWA motorista solicita autorização, Pi recebe via MQTT, autoriza
+- Critério "pronto": fluxo completo motorista→portal→Pi→bomba em bancada
 
-| Papel | Alocação | Custo/mês (PJ) | Total 3 meses |
-|-------|----------|-----|----------------|
-| PM / Produto | 50% | R$ 6.000 | R$ 9.000 |
-| Tech lead full-stack (portal + PWA + tRPC + Prisma) | 100% | R$ 16.000 | R$ 48.000 |
-| Dev full-stack (CRUDs + integrações SEFAZ/Maps + POS Android) | 100% | R$ 11.000 | R$ 33.000 |
-| Dev IoT/IA (Python + visão computacional + firmware Pi) | 100% | R$ 14.000 | R$ 42.000 |
-| Designer Product | 25% | R$ 9.000 | R$ 6.750 |
-| **Subtotal pessoas** | | | **R$ 138.750** |
+**Bloco B3 · IA classificador anti-balde v1**
+- Coletar 1.000 frames reais no pátio Marralog (1 dia de filmagem)
+- Treinar YOLOv8-n no Modal (R$ 5 por treino)
+- Deploy do modelo no Pi
+- Critério "pronto": balde no enquadramento corta a bomba em < 1s
 
-### 14.2 Infra MVP (3 meses) — todas as contas SaaS já mapeadas na seção 2.2
+**Bloco B4 · Instalação no pátio piloto**
+- Eletricista certificado, laudo, EPI
+- 1 bomba primeiro, 24h de observação
+- Smart POS Kotlin (MVP) pros postos parceiros
+- Critério "pronto": primeira transação real autorizada e bloqueio real funcionando
 
-| Item | Onde fica | Custo/mês | 3 meses |
-|------|-----------|-----------|---------|
-| Vercel Pro (portal + PWA + API + funções) | `vercel.com/marralog-s-projects` (já temos) | R$ 110 | R$ 330 |
-| Neon Postgres (banco principal) | conta nova `neon.tech` | R$ 165 | R$ 495 |
-| Upstash Redis (fila + cache) | conta nova `upstash.com` | R$ 60 | R$ 180 |
-| Cloudflare R2 (vídeo das anomalias) | conta nova `cloudflare.com` | R$ 80 | R$ 240 |
-| HiveMQ Cloud (MQTT broker dos totens) | conta nova `hivemq.com` | R$ 270 | R$ 810 |
-| Sentry Team (monitoramento de erro) | conta nova `sentry.io` | R$ 145 | R$ 435 |
-| Twilio (SMS de login do motorista) | conta nova `twilio.com` | R$ 250 | R$ 750 |
-| Mapbox (distância de rota) | conta nova `mapbox.com` | R$ 200 | R$ 600 |
-| Modal (treino esporádico da IA) | conta nova `modal.com` | R$ 150 | R$ 450 |
-| **Subtotal infra** | | **~R$ 1.430/mês** | **R$ 4.290** |
+**Bloco B5+ · Hardening**
+- Multi-bomba, telemetria veicular, pagamento PIX, app nativo, white-label
+- Tudo só se o piloto provar tração comercial
 
-> No total são **8 contas SaaS novas + Vercel que já existe**. Cada uma é um cadastro Google + 1 cartão. Nenhum servidor próprio, nenhum administrador de banco, nenhum Linux pra zelar.
+---
 
-### 14.3 Hardware piloto (10 bombas)
-- 10 kits × R$ 1.660 = **R$ 16.600**
-  (Pi 5 + câmera IR + relé SSR + modem 4G + caixa IP65 + mão de obra elétrica)
+## 14. Custos reais nas duas fases
 
-### 14.4 Total estimado MVP
+### 14.1 Fase A — Software em free tier (você + Claude)
 
-| Bloco | Valor |
-|-------|-------|
-| Equipe (12 semanas) | R$ 138.750 |
-| Infra SaaS (3 meses) | R$ 4.290 |
-| Hardware do piloto (10 bombas) | R$ 16.600 |
-| **Total** | **R$ 159.640** |
+**Equipe**: você + Claude. Custo R$ 0.
 
-Após o MVP, **custo operacional por cliente novo** é apenas:
-- **R$ 1.500/bomba** (material que sai do bolso do cliente, não da Marralog)
-- **R$ ~14/bomba/mês** de infra rateada (até 100 bombas; cai abaixo de R$ 6 acima de 500)
-- Equipe técnica passa a operar como SaaS team (suporte + features novas) e não como time de desenvolvimento inicial
+**Infra**: tudo no free tier dos SaaS, que cobre folgado o que precisamos pra rodar protótipo funcional com 1 cliente real.
+
+| Item | Plano usado | Limite do free tier | O que cabe |
+|------|-------------|---------------------|------------|
+| **Vercel** (site + API) | Hobby (free) | 100 GB de banda/mês, deploys ilimitados | Domínio público + apps internos |
+| **Supabase** (Postgres + Auth + Storage + Realtime) | Free | 500 MB de banco, 1 GB storage, 50k usuários ativos/mês, 2 GB transfer | Schema completo + auth real + bucket pra fotos pequenas |
+| **GitHub** (repos privados) | Free | Ilimitado | `sgo-fuel` já existe |
+| **Cloudflare** (DNS + e-mail) | Free | Domínio próprio (se comprar) | `sgo-fuel.com.br` apontando pra Vercel |
+| **Domínio `.com.br`** (opcional) | Registro.br | R$ 40/ano (~R$ 3,30/mês) | Único custo possível da Fase A — e mesmo assim só se você quiser sair do `.vercel.app` |
+| **Total recorrente** | | | **R$ 0 a R$ 3/mês** |
+
+> **Resultado da Fase A**: cliente abre `sgo-fuel.com.br` (ou `sgo-fuel.vercel.app`), cria conta, cadastra empresa, motoristas e veículos, vê eventos simulados sendo gravados em Postgres real. O sistema **inteiro** funciona — só não tem hardware físico cortando bomba ainda. Pra demo comercial e para o cliente acreditar no produto, isso é suficiente.
+
+### 14.2 Fase B — Só quando ativar hardware em campo
+
+Aqui entra o custo. **Só começa quando Fase A estiver pronta E você tiver assinado o piloto com um frotista**, porque o custo passa a fazer sentido (o piloto paga uma parte; o resto é investimento no produto).
+
+| Item | Quando entra | Custo |
+|------|-------------|-------|
+| 10 kits IoT (Pi 5 + câmera + SSR + modem + instalação) | Antes da instalação no pátio piloto | **R$ 16.600** (único) |
+| HiveMQ Cloud Starter (MQTT) | Quando primeiro totem for ligado | R$ 270/mês |
+| Twilio (SMS de login) | Quando 1º motorista for cadastrado | R$ ~250/mês (varia com consumo) |
+| Upgrade Supabase Pro **ou** migrar pra Neon | Quando passar de 500 MB de banco ou 1 GB de storage | R$ 165/mês |
+| Cloudflare R2 (vídeo) | Quando começar a guardar vídeo das anomalias | R$ 80/mês |
+| Sentry Team | Quando o sistema sair de protótipo pra produção | R$ 145/mês |
+| Mapbox | Quando cálculo de cota dinâmica entrar em uso | R$ 200/mês |
+| Modal (treino IA esporádico) | Quando re-treinar o modelo anti-balde | R$ 150/mês média |
+| **Total Fase B** | | **~R$ 1.260/mês** + **R$ 16.600** único |
+
+### 14.3 Quando cada item é dispensável
+
+| Item | Pode adiar até... |
+|------|--------------------|
+| HiveMQ | Quando tiver mais de 1 totem instalado |
+| Twilio | Pode começar com login email/senha; SMS entra na v1.1 |
+| R2 | Pode usar Supabase Storage até bater limite |
+| Sentry | Pode começar com `console.error` no Vercel logs |
+| Mapbox | Pode começar com cota fixa por rota cadastrada manualmente |
+| Modal | Só quando precisar re-treinar; até lá usa modelo pré-treinado |
+
+> Na prática, dá pra ir só com **Supabase Pro (R$ 165) + HiveMQ (R$ 270) + Twilio (R$ 250) = R$ 685/mês** e adicionar o resto conforme escalar.
 
 ---
 
@@ -678,16 +729,26 @@ Após o MVP, **custo operacional por cliente novo** é apenas:
 
 ---
 
-## 16. Próximos passos imediatos (esta semana)
+## 16. Próximos passos imediatos — começam HOJE, sem custo
 
-1. **Definir piloto** — escolher 1 pátio Marralog + 2 postos parceiros + 30 placas elegíveis. Owner: PM.
-2. **Criar projeto Neon** e rodar primeira migration do schema acima. Owner: Tech lead.
-3. **Setup Prisma + auth + um CRUD ponta-a-ponta** (Drivers) substituindo o mock atual da tela `/dashboard`. Owner: Dev full-stack.
-4. **Comprar 1 kit IoT** (Pi 5 + câmera + SSR + modem) para protótipo de bancada. Owner: Dev IoT.
-5. **Coletar dataset inicial** de placas e bicos de bomba (filmar 1 dia inteiro no pátio existente). Owner: Dev IoT + operações.
-6. **Aprovar orçamento** R$ 159,6k MVP (138,7k pessoas + 4,3k infra 3m + 16,6k hardware piloto). Owner: Sócios.
+Como **não tem equipe contratada** e **não vamos comprar hardware ainda**, a partida da Fase A acontece neste repo, com sessões comigo.
 
-> Quando aprovado o item 6, o repo `sgo-fuel` recebe um PR criando os diretórios `/prisma`, `/src/server`, `/src/lib/auth` — e o demo estático começa a ler do Postgres uma tela por vez.
+### Os 3 passos pra você fazer (5 minutos, gratuito)
+1. **Criar conta gratuita no Supabase**: `https://supabase.com/dashboard` → Sign up com o e-mail `aetherai.agentes@gmail.com` ou `transportes.marralog@gmail.com` → criar projeto `sgo-fuel` na região `South America (São Paulo)` → me passar a `Project URL` e a `anon key` (estão em Settings → API).
+2. **Confirmar nome do tenant inicial**: vai ser "Marralog Transportes"? (pode ser qualquer coisa, é só pra primeira conta de exemplo).
+3. **Decidir domínio**: quer registrar `sgo-fuel.com.br` (R$ 40/ano no Registro.br) ou seguir em `sgo-fuel.vercel.app` por enquanto?
+
+### Os passos que eu (Claude) faço assim que você responder
+1. Adiciono Prisma ao repo com o schema completo (`prisma/schema.prisma`)
+2. Crio `/src/lib/db.ts` apontando pro Supabase
+3. Implemento auth (login do gestor) usando Supabase Auth
+4. Crio página `/login` e `/cadastro`
+5. Transformo `/dashboard` numa tela que **lê dados reais** (vazios no início, mas reais)
+6. Faço deploy, validamos que abre o login e dá pra criar conta
+
+Aí entramos no **Bloco A2** e começamos a substituir os mocks tela por tela.
+
+**Custo até esse ponto: R$ 0.**
 
 ---
 
