@@ -56,8 +56,8 @@ export default async function CadastrosPage() {
       title: "Motoristas",
       desc: "CPF, CNH, contato. Quem está habilitado a abastecer.",
       count: stats.drivers,
-      ready: false,
-      cta: "Em breve (Bloco A2)",
+      ready: true,
+      cta: "Gerenciar",
     },
     {
       href: "/cadastros/veiculos",
@@ -65,8 +65,8 @@ export default async function CadastrosPage() {
       title: "Veículos",
       desc: "Placa, modelo, consumo médio, hodômetro atual.",
       count: stats.vehicles,
-      ready: false,
-      cta: "Em breve (Bloco A2)",
+      ready: true,
+      cta: "Gerenciar",
     },
     {
       href: "/cadastros/patios",
@@ -74,8 +74,8 @@ export default async function CadastrosPage() {
       title: "Pátios",
       desc: "Bases onde ficam as bombas e tanques.",
       count: stats.yards,
-      ready: false,
-      cta: "Em breve (Bloco A2)",
+      ready: true,
+      cta: "Gerenciar",
     },
     {
       href: "/cadastros/tanques",
@@ -83,8 +83,8 @@ export default async function CadastrosPage() {
       title: "Tanques",
       desc: "Tipo de combustível, capacidade, pátio onde está.",
       count: stats.tanks,
-      ready: false,
-      cta: "Em breve (Bloco A2)",
+      ready: true,
+      cta: "Gerenciar",
     },
     {
       href: "/cadastros/bombas",
@@ -92,8 +92,8 @@ export default async function CadastrosPage() {
       title: "Bombas",
       desc: "Bombas físicas (com ou sem Totem IoT instalado).",
       count: stats.pumps,
-      ready: false,
-      cta: "Em breve (Bloco A2)",
+      ready: true,
+      cta: "Gerenciar",
     },
   ];
 

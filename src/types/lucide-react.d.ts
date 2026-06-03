@@ -42,6 +42,7 @@ declare module "lucide-react" {
   export const Nfc: LucideIcon;
   export const PiggyBank: LucideIcon;
   export const Plug: LucideIcon;
+  export const Plus: LucideIcon;
   export const Power: LucideIcon;
   export const Radar: LucideIcon;
   export const Save: LucideIcon;
@@ -49,6 +50,7 @@ declare module "lucide-react" {
   export const ShieldCheck: LucideIcon;
   export const Signal: LucideIcon;
   export const Smartphone: LucideIcon;
+  export const Trash2: LucideIcon;
   export const Trophy: LucideIcon;
   export const Truck: LucideIcon;
   export const Upload: LucideIcon;
