@@ -107,8 +107,10 @@ function Field({
 
 function traduzErro(msg: string) {
   const m = msg.toLowerCase();
-  if (m.includes("invalid login credentials")) return "E-mail ou senha incorretos.";
-  if (m.includes("email not confirmed")) return "Confirme o e-mail antes de entrar.";
+  if (m.includes("invalid login credentials"))
+    return "E-mail ou senha incorretos. Se acabou de cadastrar, confira no Supabase se 'Confirm email' está desligado (Auth → Providers → Email).";
+  if (m.includes("email not confirmed"))
+    return "E-mail não confirmado. Verifique sua caixa de entrada OU desligue 'Confirm email' no Supabase (Auth → Providers → Email).";
   if (m.includes("rate limit")) return "Muitas tentativas. Tente novamente em alguns minutos.";
   return msg;
 }

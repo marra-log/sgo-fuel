@@ -142,7 +142,7 @@ export default function CadastroPage() {
             />
             <Field
               icon={<Lock className="h-4 w-4" />}
-              label="Senha (mín. 8 caracteres)"
+              label="Senha (mín. 6 caracteres, evite senhas comuns)"
               type="password"
               value={password}
               onChange={setPassword}
@@ -221,7 +221,10 @@ function traduzErro(msg: string) {
   if (m.includes("already registered") || m.includes("already been registered"))
     return "Este e-mail já está cadastrado. Tente fazer login.";
   if (m.includes("password should be at least"))
-    return "Senha deve ter pelo menos 8 caracteres.";
+    return "Senha deve ter pelo menos 6 caracteres.";
+  if (m.includes("password") && (m.includes("pwned") || m.includes("leaked") || m.includes("weak") || m.includes("compromised")))
+    return "Esta senha aparece em vazamentos públicos. Use outra mais forte (mistura de letras, números e símbolos).";
   if (m.includes("invalid email")) return "E-mail inválido.";
+  if (m.includes("signup is disabled")) return "Cadastro está desabilitado no Supabase. Habilite em Auth → Providers → Email.";
   return msg;
 }
