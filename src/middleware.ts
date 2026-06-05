@@ -7,6 +7,7 @@ const PROTECTED_PREFIXES = [
   "/conciliacao",
   "/ranking",
   "/cadastros",
+  "/simular",
 ];
 
 const PUBLIC_AUTH_ROUTES = ["/login", "/cadastro"];

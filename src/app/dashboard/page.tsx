@@ -11,71 +11,157 @@ import {
   Truck,
   Trophy,
   Video,
+  Zap,
 } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
 import { TenantBanner } from "@/components/tenant-banner";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatBRL, formatNumber } from "@/lib/utils";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { formatBRL, formatNumber, timeAgo } from "@/lib/utils";
 
-const recentEvents = [
-  {
-    when: "há 2 min",
-    pump: "Pátio MRL · Bomba 02",
-    placa: "BRA-2E19",
-    motorista: "Reinaldo Souza",
-    litros: 178.4,
-    status: "Conforme",
-    tone: "success" as const,
-  },
-  {
-    when: "há 14 min",
-    pump: "Posto Parceiro · Trevão BR-381",
-    placa: "BRA-7K22",
-    motorista: "Antônio Lima",
-    litros: 240.0,
-    status: "Conforme",
-    tone: "success" as const,
-  },
-  {
-    when: "há 33 min",
-    pump: "Pátio MRL · Bomba 01",
-    placa: "RIO-1A88",
-    motorista: "Edna Pacheco",
-    litros: 12.0,
-    status: "Bloqueado · Recipiente",
-    tone: "danger" as const,
-  },
-  {
-    when: "há 1 h",
-    pump: "Posto Parceiro · Posto Caminhão MG",
-    placa: "BRA-5C04",
-    motorista: "Júlio Andrade",
-    litros: 95.6,
-    status: "Conforme",
-    tone: "success" as const,
-  },
-  {
-    when: "há 2 h",
-    pump: "Pátio MRL · Bomba 03",
-    placa: "BRA-9X12",
-    motorista: "Cleber Marques",
-    litros: 0.0,
-    status: "Bloqueado · Placa divergente",
-    tone: "danger" as const,
-  },
-];
+export const dynamic = "force-dynamic";
 
-const ranking = [
-  { nome: "Reinaldo Souza", kml: 3.12, viagens: 24, anomalias: 0 },
-  { nome: "Antônio Lima", kml: 3.04, viagens: 27, anomalias: 0 },
-  { nome: "Júlio Andrade", kml: 2.97, viagens: 19, anomalias: 0 },
-  { nome: "Edna Pacheco", kml: 2.42, viagens: 22, anomalias: 1 },
-  { nome: "Cleber Marques", kml: 2.11, viagens: 18, anomalias: 3 },
-];
+type EventRow = {
+  when: string;
+  pump: string;
+  placa: string;
+  motorista: string;
+  litros: number;
+  status: string;
+  tone: "success" | "danger" | "warning" | "info" | "outline";
+};
+
+type RankingRow = {
+  nome: string;
+  kml: number;
+  viagens: number;
+  anomalias: number;
+};
+
+async function loadDashboardData(): Promise<{
+  events: EventRow[];
+  ranking: RankingRow[];
+  litrosMes: number;
+  bloqueiosMes: number;
+  pumpsOnline: { online: number; total: number };
+}> {
+  const supabase = await createSupabaseServerClient();
+
+  // Eventos recentes
+  const { data: fuelings } = await supabase
+    .from("fuelings")
+    .select(
+      "id, started_at, status, delivered_l, quota_l, alpr_plate, vehicles(plate), drivers(name), pumps(serial_number, yards(name), partner_station)"
+    )
+    .order("started_at", { ascending: false })
+    .limit(6);
+
+  const events: EventRow[] = ((fuelings ?? []) as unknown as Array<{
+    id: string;
+    started_at: string;
+    status: string;
+    delivered_l: number | null;
+    quota_l: number;
+    alpr_plate: string | null;
+    vehicles: { plate: string } | null;
+    drivers: { name: string } | null;
+    pumps: { serial_number: string; yards: { name: string } | null; partner_station: string | null } | null;
+  }>).map((f) => {
+    const pumpLabel =
+      f.pumps?.yards?.name ?? f.pumps?.partner_station ?? f.pumps?.serial_number ?? "—";
+    const isBlocked = f.status === "BLOCKED";
+    return {
+      when: timeAgo(f.started_at),
+      pump: pumpLabel,
+      placa: f.alpr_plate ?? f.vehicles?.plate ?? "—",
+      motorista: f.drivers?.name ?? "—",
+      litros: Number(f.delivered_l ?? 0),
+      status: isBlocked ? "Bloqueado" : "Conforme",
+      tone: isBlocked ? "danger" : "success",
+    };
+  });
+
+  // Mês corrente — litros e bloqueios
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+
+  const { data: monthFuelings } = await supabase
+    .from("fuelings")
+    .select("status, delivered_l, driver_id, vehicle_id, drivers(name)")
+    .gte("started_at", monthStart.toISOString());
+
+  const monthRows = (monthFuelings ?? []) as unknown as Array<{
+    status: string;
+    delivered_l: number | null;
+    driver_id: string;
+    vehicle_id: string;
+    drivers: { name: string } | null;
+  }>;
+  const litrosMes = monthRows.reduce((acc, r) => acc + Number(r.delivered_l ?? 0), 0);
+  const bloqueiosMes = monthRows.filter((r) => r.status === "BLOCKED").length;
+
+  // Anomalias por motorista (mês)
+  const { data: anomaliaRows } = await supabase
+    .from("anomalies")
+    .select("fueling_id, fuelings(driver_id)")
+    .gte("detected_at", monthStart.toISOString());
+
+  const anomaliasMap = new Map<string, number>();
+  for (const a of (anomaliaRows ?? []) as unknown as Array<{ fuelings: { driver_id: string } | null }>) {
+    const did = a.fuelings?.driver_id;
+    if (did) anomaliasMap.set(did, (anomaliasMap.get(did) ?? 0) + 1);
+  }
+
+  // Ranking de motoristas
+  const driverMap = new Map<string, { nome: string; litros: number; viagens: number; anomalias: number }>();
+  for (const r of monthRows) {
+    if (!r.driver_id) continue;
+    const prev = driverMap.get(r.driver_id) ?? {
+      nome: r.drivers?.name ?? "—",
+      litros: 0,
+      viagens: 0,
+      anomalias: anomaliasMap.get(r.driver_id) ?? 0,
+    };
+    if (r.status !== "BLOCKED") {
+      prev.litros += Number(r.delivered_l ?? 0);
+      prev.viagens += 1;
+    }
+    driverMap.set(r.driver_id, prev);
+  }
+  const ranking: RankingRow[] = Array.from(driverMap.values())
+    .map((d) => ({
+      nome: d.nome,
+      kml: d.litros > 0 ? Number((d.viagens * 100 / d.litros).toFixed(2)) : 0,
+      viagens: d.viagens,
+      anomalias: d.anomalias,
+    }))
+    .sort((a, b) => b.viagens - a.viagens)
+    .slice(0, 5);
+
+  // Bombas online
+  const { count: pumpsTotal } = await supabase.from("pumps").select("*", { count: "exact", head: true });
+  const { count: pumpsOnline } = await supabase
+    .from("pumps")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "ONLINE");
+
+  return {
+    events,
+    ranking,
+    litrosMes,
+    bloqueiosMes,
+    pumpsOnline: { online: pumpsOnline ?? 0, total: pumpsTotal ?? 0 },
+  };
+}
 
 export default async function DashboardPage() {
+  const { events: recentEvents, ranking, litrosMes, bloqueiosMes, pumpsOnline } =
+    await loadDashboardData();
+  const economiaEstimada = Math.round(bloqueiosMes * 230 * 100) / 100; // ~R$230 por bloqueio prevenido (estimativa)
+
   return (
     <SectionShell
       badge="Portal do Gestor"
@@ -89,35 +175,35 @@ export default async function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi
           title="Litros abastecidos · mês"
-          value={`${formatNumber(48230)} L`}
-          delta="+4,2%"
+          value={`${formatNumber(Math.round(litrosMes))} L`}
+          delta={recentEvents.length > 0 ? "Dados reais" : "Sem dados"}
           deltaUp
           icon={<Fuel className="h-4 w-4" />}
-          sublabel="vs. abril/26"
+          sublabel="soma de delivered_l no mês"
         />
         <Kpi
-          title="Economia gerada"
-          value={formatBRL(21850)}
-          delta="+R$ 3.120"
+          title="Economia estimada"
+          value={formatBRL(economiaEstimada)}
+          delta={`${bloqueiosMes} bloqueios`}
           deltaUp
           icon={<PiggyBank className="h-4 w-4" />}
-          sublabel="anomalias bloqueadas em tempo real"
+          sublabel="cada bloqueio ≈ R$ 230 evitados"
         />
         <Kpi
           title="Bloqueios da IA"
-          value="37"
-          delta="-12%"
+          value={String(bloqueiosMes)}
+          delta="este mês"
           deltaUp={false}
           icon={<ShieldCheck className="h-4 w-4" />}
-          sublabel="motoristas se adaptando ao sistema"
+          sublabel="ações da IA prevenindo desvios"
         />
         <Kpi
           title="Bombas IoT online"
-          value="14 / 14"
-          delta="100%"
+          value={`${pumpsOnline.online} / ${pumpsOnline.total}`}
+          delta={pumpsOnline.total > 0 ? `${Math.round((pumpsOnline.online / pumpsOnline.total) * 100)}%` : "—"}
           deltaUp
           icon={<Cpu className="h-4 w-4" />}
-          sublabel="uptime médio 99,8% (30 dias)"
+          sublabel="status reportado pelas bombas"
         />
       </div>
 
@@ -137,40 +223,55 @@ export default async function DashboardPage() {
             </Badge>
           </div>
           <div className="divide-y divide-[color:var(--color-border)]">
-            {recentEvents.map((e, i) => (
-              <div
-                key={i}
-                className="flex flex-col gap-2 px-4 py-3 text-sm sm:grid sm:grid-cols-12 sm:items-center sm:gap-3 sm:px-5"
-              >
-                <div className="flex items-center justify-between sm:col-span-3 sm:block">
-                  <span className="text-xs text-[color:var(--color-muted)] sm:text-sm">
-                    {e.when}
-                  </span>
-                  <span className="font-mono text-right text-sm text-white sm:hidden">
+            {recentEvents.length === 0 ? (
+              <div className="px-5 py-10 text-center">
+                <p className="text-sm text-[color:var(--color-muted)]">
+                  Nenhum evento registrado ainda.
+                </p>
+                <Link
+                  href="/simular"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-1.5 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-white"
+                >
+                  <Zap className="h-3 w-3" />
+                  Simular abastecimento
+                </Link>
+              </div>
+            ) : (
+              recentEvents.map((e, i) => (
+                <div
+                  key={i}
+                  className="flex flex-col gap-2 px-4 py-3 text-sm sm:grid sm:grid-cols-12 sm:items-center sm:gap-3 sm:px-5"
+                >
+                  <div className="flex items-center justify-between sm:col-span-3 sm:block">
+                    <span className="text-xs text-[color:var(--color-muted)] sm:text-sm">
+                      {e.when}
+                    </span>
+                    <span className="font-mono text-right text-sm text-white sm:hidden">
+                      {e.litros.toFixed(1)} L
+                    </span>
+                  </div>
+                  <div className="sm:col-span-4">
+                    <div className="font-medium text-white">{e.pump}</div>
+                    <div className="text-xs text-[color:var(--color-muted)]">
+                      <span className="font-mono">{e.placa}</span> · {e.motorista}
+                    </div>
+                  </div>
+                  <div className="hidden sm:col-span-2 sm:block sm:text-right sm:font-mono sm:text-white">
                     {e.litros.toFixed(1)} L
-                  </span>
-                </div>
-                <div className="sm:col-span-4">
-                  <div className="font-medium text-white">{e.pump}</div>
-                  <div className="text-xs text-[color:var(--color-muted)]">
-                    <span className="font-mono">{e.placa}</span> · {e.motorista}
+                  </div>
+                  <div className="flex sm:col-span-3 sm:justify-end">
+                    <Badge variant={e.tone}>
+                      {e.tone === "danger" ? (
+                        <AlertTriangle className="h-3 w-3" />
+                      ) : (
+                        <ShieldCheck className="h-3 w-3" />
+                      )}
+                      {e.status}
+                    </Badge>
                   </div>
                 </div>
-                <div className="hidden sm:col-span-2 sm:block sm:text-right sm:font-mono sm:text-white">
-                  {e.litros.toFixed(1)} L
-                </div>
-                <div className="flex sm:col-span-3 sm:justify-end">
-                  <Badge variant={e.tone}>
-                    {e.tone === "danger" ? (
-                      <AlertTriangle className="h-3 w-3" />
-                    ) : (
-                      <ShieldCheck className="h-3 w-3" />
-                    )}
-                    {e.status}
-                  </Badge>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
           <div className="border-t border-[color:var(--color-border)] px-5 py-3 text-right">
             <Link href="/anomalias" className="text-xs font-medium text-[color:var(--color-brand)] hover:underline">
@@ -245,7 +346,20 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div className="divide-y divide-[color:var(--color-border)]">
-            {ranking.map((m, i) => (
+            {ranking.length === 0 ? (
+              <div className="px-5 py-10 text-center">
+                <p className="text-sm text-[color:var(--color-muted)]">
+                  Ranking aparece após o primeiro abastecimento.
+                </p>
+                <Link
+                  href="/simular"
+                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[color:var(--color-brand)] hover:underline"
+                >
+                  Simular agora →
+                </Link>
+              </div>
+            ) : (
+              ranking.map((m, i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-3 text-sm sm:px-5">
                 <div className="flex w-6 flex-none items-center justify-center">
                   {i === 0 ? (
@@ -272,7 +386,8 @@ export default async function DashboardPage() {
                   </span>
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </div>
           <div className="border-t border-[color:var(--color-border)] px-5 py-3 text-right">
             <Link href="/ranking" className="text-xs font-medium text-[color:var(--color-brand)] hover:underline">
