@@ -13,6 +13,14 @@ const PROTECTED_PREFIXES = [
 
 const PUBLIC_AUTH_ROUTES = ["/login", "/cadastro"];
 
+/**
+ * Casa o pathname com um prefixo de rota respeitando limites de segmento.
+ * Evita que "/cadastros/empresa" seja confundido com a rota pública "/cadastro".
+ */
+function matchesRoute(pathname: string, base: string) {
+  return pathname === base || pathname.startsWith(base + "/");
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -42,8 +50,8 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
-  const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
-  const isPublicAuth = PUBLIC_AUTH_ROUTES.some((p) => pathname.startsWith(p));
+  const isProtected = PROTECTED_PREFIXES.some((p) => matchesRoute(pathname, p));
+  const isPublicAuth = PUBLIC_AUTH_ROUTES.some((p) => matchesRoute(pathname, p));
 
   // Redireciona não-autenticado em rota protegida → /login
   if (isProtected && !user) {
