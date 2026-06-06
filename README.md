@@ -3,20 +3,37 @@
 **Ecossistema Inteligente de Gestão de Abastecimento**
 Hardware IoT de baixo custo + Visão Computacional para prevenção ativa de fraudes de combustível em frotas e pátios.
 
-> Demonstração interativa do produto. Sem backend nesta fase — todas as telas usam dados simulados para apresentação ao cliente.
+> **Fase A concluída** — produto web funcional com banco real (Supabase), auth, CRUDs, eventos persistidos, conciliação SEFAZ, ranking, PWA do motorista e auditoria. Tudo em free tier. Hardware/IoT (Fase B) entra depois.
 
-## Telas disponíveis
+## Telas — funcionais (lêem/escrevem o banco)
+
+| Rota | Descrição | Auth |
+|------|-----------|------|
+| `/` | Pitch / landing (vitrine comercial) | público |
+| `/login`, `/cadastro` | Auth de gestor (Supabase) | público |
+| `/dashboard` | Portal do Gestor — KPIs, eventos, ranking reais | protegido |
+| `/cadastros` | Hub: empresa, motoristas, veículos, pátios, tanques, bombas | protegido |
+| `/simular` | Gera abastecimentos/anomalias reais (substitui o Totem até a Fase B) | protegido |
+| `/anomalias` | Anomalias reais + resolver | protegido |
+| `/conciliacao` | Upload de XML de NFe + cruzamento entrada × saída por tanque | protegido |
+| `/ranking` | Ranking de motoristas calculado do banco | protegido |
+| `/auditoria` | Trilha de auditoria (trigger automático no banco) | protegido |
+| `/app` | **PWA do motorista** — cota, check-in, histórico (instalável) | login próprio |
+| `/diagnostico` | Diagnóstico de sessão/empresa/RLS | protegido |
+
+## Telas — vitrine comercial (estáticas)
 
 | Rota | Descrição |
 |------|-----------|
-| `/` | Pitch / landing com desafio, solução, comparativo e ROI |
-| `/dashboard` | Portal do Gestor (KPIs, eventos, conciliação, ranking) |
-| `/anomalias` | Alertas em vídeo dos bloqueios da IA |
-| `/conciliacao` | Cruzamento XML SEFAZ × saída efetiva por tanque |
-| `/ranking` | Ranking de motoristas por km/L e anomalias |
-| `/totem` | Mockup do hardware IoT instalado na bomba |
+| `/totem` | Mockup do hardware IoT na bomba |
 | `/pos` | Mockup do Smart POS (Pax / Gertec) |
-| `/motorista` | Mockup do app do motorista |
+| `/motorista` | Mockup-vitrine do app do motorista |
+
+## Banco de dados
+
+Schema em [`supabase/schema.sql`](./supabase/schema.sql) (rodar primeiro).
+Auditoria automática em [`supabase/audit.sql`](./supabase/audit.sql) (rodar depois, opcional).
+Multi-tenant isolado por Row-Level Security — cada empresa só enxerga seus dados.
 
 ## Stack
 
