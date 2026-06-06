@@ -32,6 +32,7 @@ declare module "lucide-react" {
   export const Filter: LucideIcon;
   export const Fuel: LucideIcon;
   export const Gauge: LucideIcon;
+  export const Loader2: LucideIcon;
   export const Lock: LucideIcon;
   export const LogOut: LucideIcon;
   export const Mail: LucideIcon;
