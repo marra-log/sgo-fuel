@@ -16,9 +16,11 @@ const links = [
   { href: "/anomalias", label: "Anomalias" },
   { href: "/conciliacao", label: "Conciliação SEFAZ" },
   { href: "/ranking", label: "Ranking" },
+  { href: "/auditoria", label: "Auditoria" },
+  { href: "/app", label: "App Motorista (PWA)" },
   { href: "/totem", label: "Totem IoT" },
   { href: "/pos", label: "Smart POS" },
-  { href: "/motorista", label: "App Motorista" },
+  { href: "/motorista", label: "Vitrine" },
 ];
 
 export function SiteHeader() {

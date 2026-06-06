@@ -41,6 +41,7 @@ declare module "lucide-react" {
   export const Menu: LucideIcon;
   export const Navigation: LucideIcon;
   export const Nfc: LucideIcon;
+  export const Pencil: LucideIcon;
   export const PiggyBank: LucideIcon;
   export const Plug: LucideIcon;
   export const Plus: LucideIcon;

@@ -1,0 +1,29 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "SGO-Fuel · Motorista",
+    short_name: "SGO-Fuel",
+    description: "App do motorista — cota, check-in e histórico de abastecimento.",
+    start_url: "/app",
+    scope: "/app",
+    display: "standalone",
+    orientation: "portrait",
+    background_color: "#08090b",
+    theme_color: "#08090b",
+    icons: [
+      {
+        src: "/icon.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "any",
+      },
+      {
+        src: "/icon-maskable.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "maskable",
+      },
+    ],
+  };
+}

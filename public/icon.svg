@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" fill="#0e1014"/>
+  <rect x="1" y="1" width="510" height="510" rx="95" fill="none" stroke="#1f232c" stroke-width="2"/>
+  <g transform="translate(176,120)" fill="none" stroke="#19c37d" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="10" y="10" width="120" height="260" rx="20"/>
+    <path d="M140 70 h26 a14 14 0 0 1 14 14 v120 a26 26 0 1 1 -52 0 V50 l-26 -40"/>
+    <line x1="40" y1="120" x2="100" y2="120"/>
+  </g>
+  <text x="256" y="430" font-family="ui-sans-serif,system-ui,Arial" font-size="56" font-weight="700" fill="#ffffff" text-anchor="middle">SGO-Fuel</text>
+</svg>
