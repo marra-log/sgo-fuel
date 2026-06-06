@@ -10,6 +10,7 @@ const PROTECTED_PREFIXES = [
   "/simular",
   "/diagnostico",
   "/auditoria",
+  "/relatorios",
 ];
 
 const PUBLIC_AUTH_ROUTES = ["/login", "/cadastro"];

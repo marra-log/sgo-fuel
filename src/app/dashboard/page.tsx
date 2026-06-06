@@ -19,6 +19,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { loadAnalytics } from "@/lib/analytics";
+import { LitrosArea, EventosBar, StatusPie, TopDriversBar, PieLegend } from "@/components/charts";
 import { formatBRL, formatNumber, timeAgo } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +48,7 @@ async function loadDashboardData(): Promise<{
   litrosMes: number;
   bloqueiosMes: number;
   pumpsOnline: { online: number; total: number };
+  latestAnomaly: { id: string; type: string; description: string | null; local: string } | null;
 }> {
   const supabase = await createSupabaseServerClient();
 
@@ -148,18 +151,55 @@ async function loadDashboardData(): Promise<{
     .select("*", { count: "exact", head: true })
     .eq("status", "ONLINE");
 
+  // Última anomalia aberta
+  const { data: lastAnomalyData } = await supabase
+    .from("anomalies")
+    .select("id, type, description, detected_at, pumps(serial_number, yards(name), partner_station)")
+    .is("resolved_at", null)
+    .order("detected_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const la = lastAnomalyData as unknown as {
+    id: string;
+    type: string;
+    description: string | null;
+    detected_at: string;
+    pumps: { serial_number: string; yards: { name: string } | null; partner_station: string | null } | null;
+  } | null;
+
+  const latestAnomaly = la
+    ? {
+        id: la.id,
+        type: la.type,
+        description: la.description,
+        local: la.pumps?.yards?.name ?? la.pumps?.partner_station ?? la.pumps?.serial_number ?? "—",
+      }
+    : null;
+
   return {
     events,
     ranking,
     litrosMes,
     bloqueiosMes,
     pumpsOnline: { online: pumpsOnline ?? 0, total: pumpsTotal ?? 0 },
+    latestAnomaly,
   };
 }
 
+const ANOMALY_LABEL: Record<string, string> = {
+  CONTAINER_PATTERN: "Recipiente fora do padrão",
+  PLATE_MISMATCH: "Placa divergente",
+  QUOTA_EXCEEDED: "Volume acima da cota",
+  OFFHOURS: "Fora do horário",
+  TANK_DRAIN: "Drenagem de tanque",
+  COMM_LOSS: "Perda de comunicação",
+};
+
 export default async function DashboardPage() {
-  const { events: recentEvents, ranking, litrosMes, bloqueiosMes, pumpsOnline } =
+  const { events: recentEvents, ranking, litrosMes, bloqueiosMes, pumpsOnline, latestAnomaly } =
     await loadDashboardData();
+  const analytics = await loadAnalytics(14);
   const economiaEstimada = Math.round(bloqueiosMes * 230 * 100) / 100; // ~R$230 por bloqueio prevenido (estimativa)
 
   return (
@@ -205,6 +245,61 @@ export default async function DashboardPage() {
           icon={<Cpu className="h-4 w-4" />}
           sublabel="status reportado pelas bombas"
         />
+      </div>
+
+      {/* Gráficos */}
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
+            <div>
+              <h2 className="text-base font-semibold text-white">Litros abastecidos · 14 dias</h2>
+              <p className="text-xs text-[color:var(--color-muted)]">
+                Volume entregue por dia (apenas eventos conformes).
+              </p>
+            </div>
+            <Link href="/relatorios" className="text-xs font-medium text-[color:var(--color-brand)] hover:underline">
+              Relatório PDF →
+            </Link>
+          </div>
+          <div className="px-3 py-4">
+            <LitrosArea data={analytics.daily} />
+          </div>
+        </Card>
+
+        <Card>
+          <div className="border-b border-[color:var(--color-border)] px-5 py-4">
+            <h2 className="text-base font-semibold text-white">Distribuição</h2>
+            <p className="text-xs text-[color:var(--color-muted)]">Eventos por status (14 dias).</p>
+          </div>
+          <div className="px-3 py-4">
+            <StatusPie data={analytics.statusDist} />
+            <PieLegend data={analytics.statusDist} />
+          </div>
+        </Card>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <div className="border-b border-[color:var(--color-border)] px-5 py-4">
+            <h2 className="text-base font-semibold text-white">Eventos × Bloqueios · 14 dias</h2>
+            <p className="text-xs text-[color:var(--color-muted)]">
+              Volume de abastecimentos e quantos a IA bloqueou.
+            </p>
+          </div>
+          <div className="px-3 py-4">
+            <EventosBar data={analytics.daily} />
+          </div>
+        </Card>
+
+        <Card>
+          <div className="border-b border-[color:var(--color-border)] px-5 py-4">
+            <h2 className="text-base font-semibold text-white">Top motoristas</h2>
+            <p className="text-xs text-[color:var(--color-muted)]">Litros no período.</p>
+          </div>
+          <div className="px-3 py-4">
+            <TopDriversBar data={analytics.topDrivers} />
+          </div>
+        </Card>
       </div>
 
       {/* Live + Anomalias */}
@@ -282,9 +377,11 @@ export default async function DashboardPage() {
 
         <Card>
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Anomalia ao vivo</h2>
+            <h2 className="text-base font-semibold text-white">Anomalia mais recente</h2>
             <p className="text-xs text-[color:var(--color-muted)]">
-              Recipiente não padronizado · Bomba 01
+              {latestAnomaly
+                ? `${ANOMALY_LABEL[latestAnomaly.type] ?? latestAnomaly.type} · ${latestAnomaly.local}`
+                : "Nenhuma anomalia aberta no momento."}
             </p>
           </div>
           <div className="px-5 py-4">
@@ -295,23 +392,33 @@ export default async function DashboardPage() {
                 ))}
               </div>
               <Video className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 text-white/30" />
-              <div className="absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-white">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--color-danger)]" />
-                REC
-              </div>
-              <div className="absolute inset-x-2 bottom-2 rounded-md border border-[color:var(--color-danger)] bg-black/70 px-2 py-1 text-[10px] text-[color:var(--color-danger)]">
-                Padrão visual: balde · IA cortou energia
-              </div>
+              {latestAnomaly ? (
+                <>
+                  <div className="absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-white">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--color-danger)]" />
+                    ABERTA
+                  </div>
+                  <div className="absolute inset-x-2 bottom-2 rounded-md border border-[color:var(--color-danger)] bg-black/70 px-2 py-1 text-[10px] text-[color:var(--color-danger)]">
+                    {latestAnomaly.description ?? "IA cortou a energia da bomba"}
+                  </div>
+                </>
+              ) : (
+                <div className="absolute inset-x-2 bottom-2 rounded-md border border-[color:var(--color-brand)]/40 bg-black/70 px-2 py-1 text-[10px] text-[color:var(--color-brand)]">
+                  Operação sem anomalias abertas
+                </div>
+              )}
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <Link href="/anomalias">
                 <Button size="sm" variant="outline">
-                  Abrir caso
+                  {latestAnomaly ? "Abrir caso" : "Ver anomalias"}
                 </Button>
               </Link>
-              <Button size="sm" variant="danger">
-                Notificar motorista
-              </Button>
+              <Link href="/relatorios">
+                <Button size="sm" variant="ghost">
+                  Gerar relatório
+                </Button>
+              </Link>
             </div>
           </div>
         </Card>

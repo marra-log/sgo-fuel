@@ -27,6 +27,7 @@ declare module "lucide-react" {
   export const CheckCircle2: LucideIcon;
   export const Cpu: LucideIcon;
   export const Database: LucideIcon;
+  export const Download: LucideIcon;
   export const Eye: LucideIcon;
   export const FileText: LucideIcon;
   export const Filter: LucideIcon;
@@ -46,6 +47,7 @@ declare module "lucide-react" {
   export const Plug: LucideIcon;
   export const Plus: LucideIcon;
   export const Power: LucideIcon;
+  export const Printer: LucideIcon;
   export const Radar: LucideIcon;
   export const Save: LucideIcon;
   export const Scan: LucideIcon;
