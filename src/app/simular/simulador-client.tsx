@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Activity, AlertTriangle, ArrowRight, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { traduzSupabaseError } from "@/lib/supabase/errors";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -102,7 +103,7 @@ export function SimuladorClient({
       .single();
 
     if (fErr || !fueling) {
-      setMsg({ kind: "err", text: fErr?.message ?? "Falha ao criar evento." });
+      setMsg({ kind: "err", text: traduzSupabaseError(fErr?.message ?? "Falha ao criar evento.") });
       setSaving(false);
       return;
     }
@@ -143,7 +144,7 @@ export function SimuladorClient({
         description: a.description,
       });
       if (aErr) {
-        setMsg({ kind: "err", text: "Evento criado, mas anomalia falhou: " + aErr.message });
+        setMsg({ kind: "err", text: "Evento criado, mas anomalia falhou: " + traduzSupabaseError(aErr.message) });
         setSaving(false);
         return;
       }

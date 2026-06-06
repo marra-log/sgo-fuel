@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { traduzSupabaseError } from "@/lib/supabase/errors";
 
 type TenantRow = {
   id: string;
@@ -61,7 +62,7 @@ export default function EmpresaPage() {
         .update({ name, cnpj: cnpj || null })
         .eq("id", tenant.id);
       if (error) {
-        setMsg({ kind: "err", text: error.message });
+        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
         setSaving(false);
         return;
       }
@@ -74,7 +75,7 @@ export default function EmpresaPage() {
         .select()
         .single();
       if (error) {
-        setMsg({ kind: "err", text: error.message });
+        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
         setSaving(false);
         return;
       }

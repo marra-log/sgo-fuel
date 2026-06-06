@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { traduzSupabaseError } from "@/lib/supabase/errors";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input, Select } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
@@ -85,7 +86,7 @@ export function VehicleForm({ initial }: { initial?: VehicleFormData }) {
     if (editing && initial?.id) {
       const { error } = await supabase.from("vehicles").update(payload).eq("id", initial.id);
       if (error) {
-        setMsg({ kind: "err", text: error.message });
+        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
         setSaving(false);
         return;
       }
@@ -94,7 +95,7 @@ export function VehicleForm({ initial }: { initial?: VehicleFormData }) {
     } else {
       const { error } = await supabase.from("vehicles").insert({ ...payload, tenant_id: tenantId });
       if (error) {
-        setMsg({ kind: "err", text: error.message });
+        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
         setSaving(false);
         return;
       }

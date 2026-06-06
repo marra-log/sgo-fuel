@@ -12,6 +12,7 @@ const links = [
   { href: "/dashboard", label: "Portal do Gestor" },
   { href: "/cadastros", label: "Cadastros" },
   { href: "/simular", label: "Simular" },
+  { href: "/diagnostico", label: "Diagnóstico" },
   { href: "/anomalias", label: "Anomalias" },
   { href: "/conciliacao", label: "Conciliação SEFAZ" },
   { href: "/ranking", label: "Ranking" },

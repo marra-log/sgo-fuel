@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { traduzSupabaseError } from "@/lib/supabase/errors";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
@@ -54,12 +55,12 @@ export function YardForm({ initial }: { initial?: YardFormData }) {
 
     if (editing && initial?.id) {
       const { error } = await supabase.from("yards").update(payload).eq("id", initial.id);
-      if (error) { setMsg({ kind: "err", text: error.message }); setSaving(false); return; }
+      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
       setMsg({ kind: "ok", text: "Pátio atualizado." });
       router.refresh();
     } else {
       const { error } = await supabase.from("yards").insert({ ...payload, tenant_id: tenantId });
-      if (error) { setMsg({ kind: "err", text: error.message }); setSaving(false); return; }
+      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
       router.push("/cadastros/patios");
       router.refresh();
     }

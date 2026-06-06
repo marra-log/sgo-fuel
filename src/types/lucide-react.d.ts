@@ -59,5 +59,6 @@ declare module "lucide-react" {
   export const Video: LucideIcon;
   export const Wifi: LucideIcon;
   export const X: LucideIcon;
+  export const XCircle: LucideIcon;
   export const Zap: LucideIcon;
 }

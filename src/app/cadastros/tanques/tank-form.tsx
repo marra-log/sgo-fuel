@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { traduzSupabaseError } from "@/lib/supabase/errors";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input, Select } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
@@ -64,12 +65,12 @@ export function TankForm({ initial }: { initial?: TankFormData }) {
 
     if (editing && initial?.id) {
       const { error } = await supabase.from("tanks").update(payload).eq("id", initial.id);
-      if (error) { setMsg({ kind: "err", text: error.message }); setSaving(false); return; }
+      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
       setMsg({ kind: "ok", text: "Tanque atualizado." });
       router.refresh();
     } else {
       const { error } = await supabase.from("tanks").insert({ ...payload, tenant_id: tenantId });
-      if (error) { setMsg({ kind: "err", text: error.message }); setSaving(false); return; }
+      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
       router.push("/cadastros/tanques");
       router.refresh();
     }
