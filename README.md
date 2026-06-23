@@ -29,10 +29,22 @@ Hardware IoT de baixo custo + Visão Computacional para prevenção ativa de fra
 | `/pos` | Mockup do Smart POS (Pax / Gertec) |
 | `/motorista` | Mockup-vitrine do app do motorista |
 
+## Módulo de pagamento (cartão + maquininha)
+
+Modelo private label fechado + identificação NFC, máquina como app em terminal de adquirente.
+Plano completo (passo a passo + custos + regulatório): [`MODELO_PAGAMENTO.md`](./MODELO_PAGAMENTO.md).
+
+| Rota | Descrição | Auth |
+|------|-----------|------|
+| `/cartoes` | Emitir/bloquear cartões de frota (cota mensal, PIN, vínculo) | protegido |
+| `/cartoes/[id]` | Cota usada × restante + histórico de transações | protegido |
+| `/maquininha` | Terminal POS simulado: valida cartão e autoriza/nega | protegido |
+
 ## Banco de dados
 
 Schema em [`supabase/schema.sql`](./supabase/schema.sql) (rodar primeiro).
 Auditoria automática em [`supabase/audit.sql`](./supabase/audit.sql) (rodar depois, opcional).
+Cartão + transações em [`supabase/cards.sql`](./supabase/cards.sql) (rodar para o módulo de pagamento).
 Multi-tenant isolado por Row-Level Security — cada empresa só enxerga seus dados.
 
 ## Stack

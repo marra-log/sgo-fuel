@@ -12,6 +12,8 @@ const links = [
   { href: "/dashboard", label: "Portal do Gestor" },
   { href: "/postos", label: "Rede de Postos" },
   { href: "/cadastros", label: "Cadastros" },
+  { href: "/cartoes", label: "Cartões" },
+  { href: "/maquininha", label: "Maquininha" },
   { href: "/simular", label: "Simular" },
   { href: "/diagnostico", label: "Diagnóstico" },
   { href: "/anomalias", label: "Anomalias" },
