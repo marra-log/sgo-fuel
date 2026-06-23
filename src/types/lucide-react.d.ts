@@ -27,7 +27,9 @@ declare module "lucide-react" {
   export const CheckCircle2: LucideIcon;
   export const Cpu: LucideIcon;
   export const Database: LucideIcon;
+  export const DollarSign: LucideIcon;
   export const Download: LucideIcon;
+  export const Droplet: LucideIcon;
   export const Eye: LucideIcon;
   export const FileText: LucideIcon;
   export const Filter: LucideIcon;
@@ -54,7 +56,9 @@ declare module "lucide-react" {
   export const ShieldCheck: LucideIcon;
   export const Signal: LucideIcon;
   export const Smartphone: LucideIcon;
+  export const Store: LucideIcon;
   export const Trash2: LucideIcon;
+  export const TrendingUp: LucideIcon;
   export const Trophy: LucideIcon;
   export const Truck: LucideIcon;
   export const Upload: LucideIcon;

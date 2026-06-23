@@ -58,10 +58,10 @@ export default function HomePage() {
                     <BarChart3 className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/totem">
+                <Link href="/postos">
                   <Button size="lg" variant="outline">
-                    Ver Totem IoT
-                    <Cpu className="h-4 w-4" />
+                    Painel de Postos
+                    <BarChart3 className="h-4 w-4" />
                   </Button>
                 </Link>
               </div>
