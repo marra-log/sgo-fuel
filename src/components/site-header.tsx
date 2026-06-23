@@ -14,6 +14,7 @@ const links = [
   { href: "/cadastros", label: "Cadastros" },
   { href: "/cartoes", label: "Cartões" },
   { href: "/maquininha", label: "Maquininha" },
+  { href: "/faturamento", label: "Faturamento" },
   { href: "/simular", label: "Simular" },
   { href: "/diagnostico", label: "Diagnóstico" },
   { href: "/anomalias", label: "Anomalias" },

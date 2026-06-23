@@ -13,6 +13,7 @@ const PROTECTED_PREFIXES = [
   "/relatorios",
   "/cartoes",
   "/maquininha",
+  "/faturamento",
 ];
 
 const PUBLIC_AUTH_ROUTES = ["/login", "/cadastro"];

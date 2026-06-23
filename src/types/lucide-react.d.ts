@@ -20,6 +20,7 @@ declare module "lucide-react" {
   export const ArrowRight: LucideIcon;
   export const ArrowUpRight: LucideIcon;
   export const Award: LucideIcon;
+  export const Ban: LucideIcon;
   export const BarChart3: LucideIcon;
   export const Battery: LucideIcon;
   export const Building2: LucideIcon;
