@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, CreditCard, Nfc, Receipt, XCircle } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { NfcReaderButton } from "@/components/nfc-reader-button";
+import { normalizeUid } from "@/lib/web-nfc";
 import { formatBRL, formatNumber } from "@/lib/utils";
 
 type Pump = {
@@ -39,6 +41,24 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
   const [pumpId, setPumpId] = useState(pumps[0]?.id ?? "");
   const [busy, setBusy] = useState(false);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
+  const [nfcInfo, setNfcInfo] = useState<string | null>(null);
+
+  // Lê a tag física: busca o cartão por UID e preenche o número.
+  async function onNfcRead(uid: string) {
+    setNfcInfo(null);
+    const supabase = createSupabaseBrowserClient();
+    const { data: card } = await supabase
+      .from("fleet_cards")
+      .select("card_number, holder_name")
+      .eq("nfc_uid", normalizeUid(uid))
+      .maybeSingle();
+    if (card) {
+      setCardNumber(card.card_number);
+      setNfcInfo(`Cartão reconhecido: ${card.holder_name ?? card.card_number.slice(-4)}`);
+    } else {
+      setNfcInfo(`Tag não cadastrada (UID ${uid}). Cadastre em /cartoes.`);
+    }
+  }
 
   async function autorizar() {
     setBusy(true);
@@ -186,6 +206,11 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
                     className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2.5 font-mono text-sm text-white outline-none focus:border-[color:var(--color-brand)]"
                   />
                 </label>
+
+                <div className="mt-2">
+                  <NfcReaderButton onRead={onNfcRead} />
+                  {nfcInfo ? <div className="mt-1 text-[11px] text-[color:var(--color-brand)]">{nfcInfo}</div> : null}
+                </div>
 
                 {cards.length > 0 ? (
                   <div className="mt-2 flex flex-wrap gap-1.5">

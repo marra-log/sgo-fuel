@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { CreditCard, Save, Shuffle } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { traduzSupabaseError } from "@/lib/supabase/errors";
+import { normalizeUid } from "@/lib/web-nfc";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input, Select } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
+import { NfcReaderButton } from "@/components/nfc-reader-button";
 
 export type CardFormData = {
   id?: string;
@@ -80,7 +82,7 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
 
     const payload = {
       card_number: cardNumber.replace(/\s/g, ""),
-      nfc_uid: nfc || null,
+      nfc_uid: nfc ? normalizeUid(nfc) : null,
       holder_name: holder || null,
       status,
       monthly_limit_l: Number(limit || 0),
@@ -131,14 +133,15 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
             ) : null}
           </div>
         </FormField>
-        <FormField label="UID NFC" hint="Tag física (opcional).">
+        <FormField label="UID NFC" hint="Aproxime a tag física no Android ou gere um UID.">
           <div className="flex gap-2">
             <Input value={nfc} onChange={(e) => setNfc(e.target.value)} className="font-mono" />
-            {!editing ? (
-              <Button type="button" variant="outline" size="icon" onClick={() => setNfc(genNfc())} title="Gerar">
-                <Shuffle className="h-4 w-4" />
-              </Button>
-            ) : null}
+            <Button type="button" variant="outline" size="icon" onClick={() => setNfc(genNfc())} title="Gerar">
+              <Shuffle className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="mt-2">
+            <NfcReaderButton onRead={(uid) => setNfc(uid)} label="Ler tag física (NFC)" />
           </div>
         </FormField>
       </div>
