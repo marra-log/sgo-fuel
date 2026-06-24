@@ -7,7 +7,7 @@ import { PrintButton } from "@/components/print-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentTenant } from "@/lib/supabase/tenant";
 import { formatBRL, formatNumber } from "@/lib/utils";
-import { FaturamentoExport, type FaturaLinha } from "./faturamento-export";
+import { FaturamentoExport, FaturaPix, type FaturaLinha } from "./faturamento-export";
 
 export const dynamic = "force-dynamic";
 
@@ -153,10 +153,17 @@ export default async function FaturamentoPage() {
             )}
           </Card>
 
+          {linhas.length > 0 ? (
+            <div className="mt-4">
+              <FaturaPix total={totalValor} periodo={periodoKey} />
+            </div>
+          ) : null}
+
           <p className="mt-4 text-xs text-[color:var(--color-muted)]">
             Como funciona a cobrança: este valor é a fatura fechada da frota no período. A empresa
-            cobra o cliente (transportadora) por esse total — sem mover dinheiro na maquininha. Quando
-            houver liquidação via adquirente, o mesmo número alimenta o repasse.
+            cobra o cliente (transportadora) por esse total — gere o Pix acima (recebimento direto na
+            conta da empresa, sem adquirente) ou emita boleto. Quando houver liquidação via adquirente,
+            o mesmo número alimenta o repasse.
           </p>
         </>
       )}

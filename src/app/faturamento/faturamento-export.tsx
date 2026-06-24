@@ -1,7 +1,9 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { useState } from "react";
+import { Download, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PixCharge } from "@/components/pix-charge";
 
 export type FaturaLinha = {
   cartao: string;
@@ -37,5 +39,23 @@ export function FaturamentoExport({ linhas, periodo }: { linhas: FaturaLinha[]; 
       <Download className="h-3.5 w-3.5" />
       Exportar CSV
     </Button>
+  );
+}
+
+export function FaturaPix({ total, periodo }: { total: number; periodo: string }) {
+  const [open, setOpen] = useState(false);
+  if (total <= 0) return null;
+  return (
+    <div className="print:hidden">
+      <Button type="button" variant="outline" size="sm" onClick={() => setOpen((v) => !v)}>
+        <QrCode className="h-3.5 w-3.5" />
+        {open ? "Fechar Pix" : "Cobrar fatura via Pix"}
+      </Button>
+      {open ? (
+        <div className="mt-3 max-w-xs">
+          <PixCharge valor={total} txid={`FATURA${periodo.replace("-", "")}`} />
+        </div>
+      ) : null}
+    </div>
   );
 }

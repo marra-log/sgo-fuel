@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle2, CreditCard, Nfc, Receipt, XCircle } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { NfcReaderButton } from "@/components/nfc-reader-button";
+import { PixCharge } from "@/components/pix-charge";
 import { normalizeUid } from "@/lib/web-nfc";
 import { formatBRL, formatNumber } from "@/lib/utils";
 
@@ -321,6 +322,12 @@ function ReceiptView({ receipt, onNew }: { receipt: Receipt; onNew: () => void }
         <Row label="Total" value={formatBRL(receipt.amount)} strong />
         <Row label="Data" value={receipt.at} />
       </div>
+
+      {receipt.ok && receipt.amount > 0 ? (
+        <div className="mt-4 text-left">
+          <PixCharge valor={receipt.amount} txid={`SGOFUEL${Date.now().toString().slice(-8)}`} />
+        </div>
+      ) : null}
 
       <button onClick={onNew} className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--color-border)] px-4 py-2 text-xs text-white">
         <Receipt className="h-3.5 w-3.5" />
