@@ -10,6 +10,7 @@ import { UserMenu } from "./user-menu";
 const links = [
   { href: "/", label: "Visão Geral" },
   { href: "/dashboard", label: "Portal do Gestor" },
+  { href: "/frota", label: "Cartão Frota" },
   { href: "/postos", label: "Rede de Postos" },
   { href: "/cadastros", label: "Cadastros" },
   { href: "/cartoes", label: "Cartões" },
