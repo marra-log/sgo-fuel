@@ -39,7 +39,7 @@ export default function MotoristaPage() {
                 <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
                   Olá, motorista
                 </div>
-                <div className="text-base font-semibold text-white">Reinaldo Souza</div>
+                <div className="text-base font-semibold text-white">João Pereira</div>
               </div>
 
               {/* Cota card */}
@@ -50,7 +50,7 @@ export default function MotoristaPage() {
                 </div>
                 <div className="mt-1 text-2xl font-semibold">180,00 L</div>
                 <div className="mt-3 flex items-center justify-between text-[11px]">
-                  <span>Rota MRL-1184</span>
+                  <span>Rota RTA-1184</span>
                   <span className="font-medium">BH → Vitória</span>
                 </div>
               </div>
@@ -75,7 +75,7 @@ export default function MotoristaPage() {
                   Antes de abastecer
                 </div>
                 <div className="mt-2 space-y-1.5">
-                  <Check label="Veículo: BRA-2E19" />
+                  <Check label="Veículo: RDA-1A01" />
                   <Check label="KM: 412.880" />
                   <Check label="Cota não excedida" />
                 </div>

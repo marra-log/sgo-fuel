@@ -177,6 +177,11 @@ async function loadDashboardData(): Promise<{
       }
     : null;
 
+  // Fallback de DEMONSTRAÇÃO quando o tenant ainda não tem eventos
+  if (events.length === 0) {
+    return demoDashboard();
+  }
+
   return {
     events,
     ranking,
@@ -184,6 +189,38 @@ async function loadDashboardData(): Promise<{
     bloqueiosMes,
     pumpsOnline: { online: pumpsOnline ?? 0, total: pumpsTotal ?? 0 },
     latestAnomaly,
+  };
+}
+
+// Dados fictícios genéricos para a apresentação (tenant vazio).
+function demoDashboard() {
+  const events: EventRow[] = [
+    { when: "há 8 min", pump: "Pátio TransCargo · Bomba 02", placa: "RDA-1A01", motorista: "João Pereira", litros: 178.4, status: "Conforme", tone: "success" },
+    { when: "há 26 min", pump: "Posto Estrela · BR-381", placa: "RDB-2B02", motorista: "Carlos Santos", litros: 240.0, status: "Conforme", tone: "success" },
+    { when: "há 41 min", pump: "Pátio TransCargo · Bomba 01", placa: "RDC-3C03", motorista: "Marcos Oliveira", litros: 12.0, status: "Bloqueado", tone: "danger" },
+    { when: "há 1 h", pump: "Posto Horizonte", placa: "RDD-4D04", motorista: "Paulo Ribeiro", litros: 95.6, status: "Conforme", tone: "success" },
+    { when: "há 2 h", pump: "Pátio TransCargo · Bomba 03", placa: "RDE-5E05", motorista: "Antônio Costa", litros: 0.0, status: "Bloqueado", tone: "danger" },
+    { when: "há 3 h", pump: "Posto Boa Viagem", placa: "RDF-6F06", motorista: "Rafael Lima", litros: 160.0, status: "Conforme", tone: "success" },
+  ];
+  const ranking: RankingRow[] = [
+    { nome: "João Pereira", kml: 3.12, viagens: 24, anomalias: 0 },
+    { nome: "Carlos Santos", kml: 3.04, viagens: 27, anomalias: 0 },
+    { nome: "Marcos Oliveira", kml: 2.97, viagens: 19, anomalias: 0 },
+    { nome: "Paulo Ribeiro", kml: 2.42, viagens: 22, anomalias: 1 },
+    { nome: "Antônio Costa", kml: 2.11, viagens: 18, anomalias: 3 },
+  ];
+  return {
+    events,
+    ranking,
+    litrosMes: 48230,
+    bloqueiosMes: 14,
+    pumpsOnline: { online: 12, total: 14 },
+    latestAnomaly: {
+      id: "demo0001",
+      type: "CONTAINER_PATTERN",
+      description: "IA detectou recipiente fora do padrão (balde) no bico. Corte imediato.",
+      local: "Pátio TransCargo · Bomba 01",
+    },
   };
 }
 

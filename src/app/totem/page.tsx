@@ -42,15 +42,15 @@ export default function TotemPage() {
                       <div className="text-[8px] uppercase tracking-wider text-[color:var(--color-brand)]">
                         Placa
                       </div>
-                      <div className="font-mono text-xs text-white">BRA-2E19</div>
+                      <div className="font-mono text-xs text-white">RDA-1A01</div>
                     </div>
                     <div className="absolute inset-x-0 h-8 scanline" />
                   </div>
 
                   <div className="mt-3 space-y-1.5 text-[11px]">
-                    <Row label="Motorista" value="Reinaldo S." ok />
+                    <Row label="Motorista" value="João P." ok />
                     <Row label="Cota autorizada" value="180 L" ok />
-                    <Row label="Rota" value="MRL-1184 · BH→Vitória" ok />
+                    <Row label="Rota" value="RTA-1184 · BH→Vitória" ok />
                     <Row label="Recipiente" value="Padrão OK" ok />
                   </div>
                 </div>
@@ -68,7 +68,7 @@ export default function TotemPage() {
             </div>
             <div className="mt-3 flex items-center justify-between px-1 text-[10px] text-[color:var(--color-muted)]">
               <span>SGO-Fuel · Totem v2</span>
-              <span>S/N · SGOF-MRL-0014</span>
+              <span>S/N · SGOF-TC-0014</span>
             </div>
           </div>
         </div>
@@ -103,16 +103,16 @@ export default function TotemPage() {
             <div className="flex items-center gap-2">
               <Badge variant="success">
                 <ShieldCheck className="h-3 w-3" />
-                Tempero
+                Vantagens
               </Badge>
               <span className="text-xs text-[color:var(--color-muted)]">
-                Custo total de implantação por bomba
+                Por que o Totem IoT muda o jogo
               </span>
             </div>
             <div className="mt-3 grid gap-3 sm:grid-cols-3">
-              <Cost label="Hardware" value="R$ 1.180" />
-              <Cost label="Instalação" value="R$ 280" />
-              <Cost label="Plataforma (mensal)" value="R$ 89 / bomba" />
+              <Vantagem titulo="Prevenção ativa" desc="Corta a bomba em tempo real, não no fim do mês." />
+              <Vantagem titulo="Sem digitação" desc="A IA lê a placa e cruza o KM automaticamente." />
+              <Vantagem titulo="Implantação simples" desc="Instala na elétrica existente, sem obra." />
             </div>
           </Card>
         </div>
@@ -156,13 +156,11 @@ function Step({ n, title, desc }: { n: number; title: string; desc: string }) {
   );
 }
 
-function Cost({ label, value }: { label: string; value: string }) {
+function Vantagem({ titulo, desc }: { titulo: string; desc: string }) {
   return (
-    <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3 text-center">
-      <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
-        {label}
-      </div>
-      <div className="mt-1 text-base font-semibold text-white">{value}</div>
+    <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3">
+      <div className="text-sm font-semibold text-[color:var(--color-brand)]">{titulo}</div>
+      <div className="mt-1 text-xs text-[color:var(--color-muted)]">{desc}</div>
     </div>
   );
 }

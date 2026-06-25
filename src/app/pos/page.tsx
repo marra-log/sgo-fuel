@@ -29,7 +29,7 @@ export default function POSPage() {
                 <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
                   Frota autorizada
                 </div>
-                <div className="mt-1 font-mono text-sm text-white">BRA-7K22</div>
+                <div className="mt-1 font-mono text-sm text-white">RDB-2B02</div>
                 <div className="text-xs text-[color:var(--color-muted)]">Volvo FH 540 · Antônio L.</div>
               </div>
 
@@ -39,7 +39,7 @@ export default function POSPage() {
                 </div>
                 <div className="mt-1 text-xl font-semibold text-white">240,00 L</div>
                 <div className="text-[10px] text-[color:var(--color-muted)]">
-                  Rota MRL-1184 · 1.180 km
+                  Rota RTA-1184 · 1.180 km
                 </div>
               </div>
 

@@ -211,6 +211,10 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
                 <div className="mt-2">
                   <NfcReaderButton onRead={onNfcRead} />
                   {nfcInfo ? <div className="mt-1 text-[11px] text-[color:var(--color-brand)]">{nfcInfo}</div> : null}
+                  <p className="mt-1 text-[10px] text-[color:var(--color-muted)]">
+                    Teste no celular Android (Chrome) com qualquer tag NFC — cartão de transporte,
+                    crachá ou cartão por aproximação. Ele mostra o UID lido, mesmo antes de comprar os cartões.
+                  </p>
                 </div>
 
                 {cards.length > 0 ? (

@@ -513,7 +513,7 @@ function PumpVisual() {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
-              Pátio Marralog · Bomba 02
+              Pátio TransCargo · Bomba 02
             </div>
             <div className="text-sm font-medium text-white">Diesel S10 — 12.450 L em tanque</div>
           </div>
