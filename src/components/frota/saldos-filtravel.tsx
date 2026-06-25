@@ -35,20 +35,20 @@ export function SaldosFiltravel({ rows }: { rows: SaldoRow[] }) {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--color-border)] px-5 py-4">
         <div>
-          <h2 className="text-base font-semibold text-white">Saldos por usuário</h2>
+          <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Saldos por usuário</h2>
           <p className="text-xs text-[color:var(--color-muted)]">Filtre por departamento e centro de custo.</p>
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           <Filter className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
-          <select value={depto} onChange={(e) => setDepto(e.target.value)} className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-1 text-xs text-white outline-none">
+          <select value={depto} onChange={(e) => setDepto(e.target.value)} className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-1 text-xs text-[color:var(--color-text-strong)] outline-none">
             <option value="ALL">Todo depto</option>
             {deptos.map((d) => <option key={d} value={d}>{d}</option>)}
           </select>
-          <select value={centro} onChange={(e) => setCentro(e.target.value)} className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-1 text-xs text-white outline-none">
+          <select value={centro} onChange={(e) => setCentro(e.target.value)} className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-1 text-xs text-[color:var(--color-text-strong)] outline-none">
             <option value="ALL">Todo centro</option>
             {centros.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
-          <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+          <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
             <Download className="h-3 w-3" /> CSV
           </button>
         </div>
@@ -66,16 +66,16 @@ export function SaldosFiltravel({ rows }: { rows: SaldoRow[] }) {
           <tbody className="divide-y divide-[color:var(--color-border)]">
             {filtered.map((s, i) => (
               <tr key={i}>
-                <td className="px-5 py-3 font-mono text-white">{s.usuario}</td>
+                <td className="px-5 py-3 font-mono text-[color:var(--color-text-strong)]">{s.usuario}</td>
                 <td className="px-5 py-3 text-[color:var(--color-muted)]">{s.departamento}</td>
                 <td className="px-5 py-3 text-[color:var(--color-muted)]">{s.centroCusto}</td>
-                <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(s.saldoAtual)}</td>
+                <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(s.saldoAtual)}</td>
               </tr>
             ))}
           </tbody>
           <tfoot>
             <tr className="border-t border-[color:var(--color-border)] bg-[color:var(--color-surface-2)]">
-              <td className="px-5 py-3 font-semibold text-white" colSpan={3}>Total filtrado</td>
+              <td className="px-5 py-3 font-semibold text-[color:var(--color-text-strong)]" colSpan={3}>Total filtrado</td>
               <td className="px-5 py-3 text-right font-mono font-semibold text-[color:var(--color-brand)]">{formatBRL(total)}</td>
             </tr>
           </tfoot>

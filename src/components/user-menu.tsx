@@ -59,7 +59,7 @@ export function UserMenu() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 items-center gap-2 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 text-xs text-white transition-colors hover:bg-[color:var(--color-surface-2)]"
+        className="flex h-9 items-center gap-2 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 text-xs text-[color:var(--color-text-strong)] transition-colors hover:bg-[color:var(--color-surface-2)]"
         aria-label="Menu do usuário"
       >
         <UserIcon className="h-3.5 w-3.5" />
@@ -74,7 +74,7 @@ export function UserMenu() {
             <div className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
               Empresa
             </div>
-            <div className="mt-0.5 text-sm font-medium text-white">
+            <div className="mt-0.5 text-sm font-medium text-[color:var(--color-text-strong)]">
               {session.tenantName ?? "—"}
             </div>
             <div className="mt-2 truncate text-xs text-[color:var(--color-muted)]">

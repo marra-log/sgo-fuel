@@ -32,7 +32,7 @@ export function MapaPostos() {
             </g>
           ))}
         </svg>
-        <div className="absolute left-3 top-3 rounded-md bg-black/60 px-2 py-1 text-[10px] text-white">
+        <div className="absolute left-3 top-3 rounded-md bg-black/60 px-2 py-1 text-[10px] text-[color:var(--color-text-strong)]">
           {PRECOS_POSTOS.length} postos credenciados · MG/SP
         </div>
       </div>
@@ -42,7 +42,7 @@ export function MapaPostos() {
           <div key={i} className="flex items-center justify-between rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2">
             <span className="flex items-center gap-2 text-sm">
               <MapPin className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
-              <span className="text-white">{p.posto}</span>
+              <span className="text-[color:var(--color-text-strong)]">{p.posto}</span>
             </span>
             <span className="text-[11px] text-[color:var(--color-muted)]">{p.cidade}</span>
           </div>

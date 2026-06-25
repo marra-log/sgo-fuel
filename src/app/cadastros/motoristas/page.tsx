@@ -62,7 +62,7 @@ export default async function MotoristasPage() {
                     <td className="px-5 py-3">
                       <Link
                         href={`/cadastros/motoristas/${d.id}`}
-                        className="flex items-center gap-2 font-medium text-white hover:text-[color:var(--color-brand)]"
+                        className="flex items-center gap-2 font-medium text-[color:var(--color-text-strong)] hover:text-[color:var(--color-brand)]"
                       >
                         <Users className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
                         {d.name}
@@ -71,7 +71,7 @@ export default async function MotoristasPage() {
                     <td className="px-5 py-3 font-mono text-xs text-[color:var(--color-muted)]">{d.cpf ?? "—"}</td>
                     <td className="px-5 py-3 font-mono text-xs text-[color:var(--color-muted)]">{d.cnh ?? "—"}</td>
                     <td className="px-5 py-3 text-[color:var(--color-muted)]">{d.phone ?? "—"}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{d.score}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{d.score}</td>
                     <td className="px-5 py-3 text-right">
                       {d.active ? (
                         <Badge variant="success">Ativo</Badge>

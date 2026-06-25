@@ -38,7 +38,7 @@ export function TransacoesInvalidasInterativo({ rows }: { rows: TransacaoInvalid
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--color-border)] px-5 py-4">
         <div>
-          <h2 className="text-base font-semibold text-white">Transações inválidas passíveis de autorização</h2>
+          <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Transações inválidas passíveis de autorização</h2>
           <p className="text-xs text-[color:var(--color-muted)]">A IA sinaliza; o gestor justifica, aprova ou nega.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -46,7 +46,7 @@ export function TransacoesInvalidasInterativo({ rows }: { rows: TransacaoInvalid
             <AlertTriangle className="h-3 w-3" />
             {pendentes} pendentes
           </Badge>
-          <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 py-1.5 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+          <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 py-1.5 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
             <Download className="h-3 w-3" /> CSV
           </button>
         </div>
@@ -69,7 +69,7 @@ export function TransacoesInvalidasInterativo({ rows }: { rows: TransacaoInvalid
               return (
                 <Fragment key={i}>
                   <tr className="align-top">
-                    <td className="px-5 py-3 text-white">{t.tipo}</td>
+                    <td className="px-5 py-3 text-[color:var(--color-text-strong)]">{t.tipo}</td>
                     <td className="px-5 py-3 whitespace-nowrap text-[color:var(--color-muted)]">{t.data}</td>
                     <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{t.placa}</td>
                     <td className="px-5 py-3 text-[color:var(--color-muted)]">{t.motorista}</td>
@@ -78,7 +78,7 @@ export function TransacoesInvalidasInterativo({ rows }: { rows: TransacaoInvalid
                         {e === "PENDENTE" ? (
                           <>
                             <button onClick={() => { setJustifyOpen(justifyOpen === i ? null : i); setJustText(""); }} title="Justificar"
-                              className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-2 py-1 text-[11px] text-[color:var(--color-muted)] hover:text-white">
+                              className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-2 py-1 text-[11px] text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
                               <MessageSquare className="h-3 w-3" /> Justificar
                             </button>
                             <button onClick={() => set(i, "APROVADA")} title="Aprovar"
@@ -106,7 +106,7 @@ export function TransacoesInvalidasInterativo({ rows }: { rows: TransacaoInvalid
                             value={justText}
                             onChange={(ev) => setJustText(ev.target.value)}
                             placeholder="Motivo (ex.: hodômetro digitado errado, corrigido pelo motorista)"
-                            className="flex-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--color-brand)]"
+                            className="flex-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]"
                           />
                           <button
                             onClick={() => { set(i, "JUSTIFICADA"); setJustifyOpen(null); }}

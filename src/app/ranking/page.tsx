@@ -91,20 +91,20 @@ export default async function RankingPage() {
       {drivers.length === 0 ? (
         <Card className="px-6 py-16 text-center">
           <Trophy className="mx-auto h-8 w-8 text-[color:var(--color-muted)]" />
-          <h3 className="mt-3 text-base font-semibold text-white">Ranking ainda vazio</h3>
+          <h3 className="mt-3 text-base font-semibold text-[color:var(--color-text-strong)]">Ranking ainda vazio</h3>
           <p className="mt-1 text-sm text-[color:var(--color-muted)]">
             Cadastre motoristas e gere o primeiro abastecimento para popular o ranking.
           </p>
           <div className="mt-4 flex justify-center gap-2">
             <Link
               href="/cadastros/motoristas/novo"
-              className="rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-white hover:bg-[color:var(--color-surface-2)]"
+              className="rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]"
             >
               Cadastrar motorista
             </Link>
             <Link
               href="/simular"
-              className="inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-2 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-2 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-[color:var(--color-text-strong)]"
             >
               <Zap className="h-3 w-3" />
               Simular evento
@@ -136,7 +136,7 @@ export default async function RankingPage() {
 
           <Card>
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">
                 Ranking · {new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
               </h2>
             </div>
@@ -157,10 +157,10 @@ export default async function RankingPage() {
                   {drivers.map((d, i) => (
                     <tr key={d.id}>
                       <td className="px-5 py-3 text-[color:var(--color-muted)]">{i + 1}</td>
-                      <td className="px-5 py-3 font-medium text-white">{d.nome}</td>
+                      <td className="px-5 py-3 font-medium text-[color:var(--color-text-strong)]">{d.nome}</td>
                       <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{d.placa ?? "—"}</td>
-                      <td className="px-5 py-3 text-right text-white">{d.viagens}</td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{formatNumber(Math.round(d.litros))} L</td>
+                      <td className="px-5 py-3 text-right text-[color:var(--color-text-strong)]">{d.viagens}</td>
+                      <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(Math.round(d.litros))} L</td>
                       <td className="px-5 py-3 text-right">
                         {d.anomalias === 0 ? (
                           <Badge variant="success">0</Badge>
@@ -170,7 +170,7 @@ export default async function RankingPage() {
                           <Badge variant="danger">{d.anomalias}</Badge>
                         )}
                       </td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{score(d)}</td>
+                      <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{score(d)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -205,7 +205,7 @@ function Highlight({
         {icon}
       </div>
       <div>
-        <div className="text-base font-semibold text-white">{title}</div>
+        <div className="text-base font-semibold text-[color:var(--color-text-strong)]">{title}</div>
         <div className="text-xs text-[color:var(--color-muted)]">{subtitle}</div>
       </div>
     </Card>

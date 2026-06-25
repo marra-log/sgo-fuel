@@ -52,10 +52,10 @@ export default async function CartaoEditPage({ params }: { params: Promise<{ id:
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="text-sm font-semibold text-white">Cota do mês</h3>
+            <h3 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Cota do mês</h3>
             <div className="mt-3 flex items-end justify-between">
               <div>
-                <div className="text-2xl font-semibold text-white">{formatNumber(Math.round(restante))} L</div>
+                <div className="text-2xl font-semibold text-[color:var(--color-text-strong)]">{formatNumber(Math.round(restante))} L</div>
                 <div className="text-xs text-[color:var(--color-muted)]">restantes de {formatNumber(data.monthly_limit_l)} L</div>
               </div>
               <Badge variant={pctUso > 90 ? "danger" : pctUso > 70 ? "warning" : "success"}>
@@ -69,7 +69,7 @@ export default async function CartaoEditPage({ params }: { params: Promise<{ id:
 
           <Card className="overflow-hidden">
             <div className="border-b border-[color:var(--color-border)] px-5 py-3">
-              <h3 className="text-sm font-semibold text-white">Últimas transações</h3>
+              <h3 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Últimas transações</h3>
             </div>
             <div className="divide-y divide-[color:var(--color-border)]">
               {tx.length === 0 ? (
@@ -86,7 +86,7 @@ export default async function CartaoEditPage({ params }: { params: Promise<{ id:
                         <XCircle className="h-4 w-4 text-[color:var(--color-danger)]" />
                       )}
                       <div>
-                        <div className="text-white">
+                        <div className="text-[color:var(--color-text-strong)]">
                           {t.status === "APPROVED" ? `${formatNumber(t.liters)} L` : "Negado"}
                         </div>
                         <div className="text-[11px] text-[color:var(--color-muted)]">

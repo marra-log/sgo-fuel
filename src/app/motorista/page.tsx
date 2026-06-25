@@ -25,7 +25,7 @@ export default function MotoristaPage() {
           <div className="rounded-[42px] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-3 shadow-[0_30px_60px_-20px_rgba(25,195,125,0.25)]">
             <div className="overflow-hidden rounded-[34px] bg-black">
               {/* Status bar */}
-              <div className="flex items-center justify-between px-5 pt-3 text-[10px] text-white">
+              <div className="flex items-center justify-between px-5 pt-3 text-[10px] text-[color:var(--color-text-strong)]">
                 <span>09:48</span>
                 <div className="flex items-center gap-1">
                   <Signal className="h-3 w-3" />
@@ -39,7 +39,7 @@ export default function MotoristaPage() {
                 <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
                   Olá, motorista
                 </div>
-                <div className="text-base font-semibold text-white">João Pereira</div>
+                <div className="text-base font-semibold text-[color:var(--color-text-strong)]">João Pereira</div>
               </div>
 
               {/* Cota card */}
@@ -61,7 +61,7 @@ export default function MotoristaPage() {
                   <Navigation className="h-3 w-3" />
                   Próximo ponto autorizado
                 </div>
-                <div className="mt-1 text-sm font-semibold text-white">
+                <div className="mt-1 text-sm font-semibold text-[color:var(--color-text-strong)]">
                   Posto Trevão · BR-381 km 412
                 </div>
                 <div className="mt-0.5 text-[11px] text-[color:var(--color-muted)]">
@@ -92,7 +92,7 @@ export default function MotoristaPage() {
         {/* Direita */}
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="text-base font-semibold text-white">Recursos do app</h3>
+            <h3 className="text-base font-semibold text-[color:var(--color-text-strong)]">Recursos do app</h3>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <Feature icon={<Fuel className="h-4 w-4" />} title="Cota dinâmica" desc="Volume exato calculado por rota e carga." />
               <Feature icon={<MapPin className="h-4 w-4" />} title="Postos parceiros" desc="Mapa com pontos compatíveis no trajeto." />
@@ -102,7 +102,7 @@ export default function MotoristaPage() {
           </Card>
 
           <Card className="p-5">
-            <h3 className="text-base font-semibold text-white">Tela de check-in (passo a passo)</h3>
+            <h3 className="text-base font-semibold text-[color:var(--color-text-strong)]">Tela de check-in (passo a passo)</h3>
             <ol className="mt-3 space-y-3 text-sm text-[color:var(--color-text)]">
               <Step n={1} title="Selecionar bomba" desc="QR Code do totem ou tag NFC do posto parceiro." />
               <Step n={2} title="Confirmar KM atual" desc="App pré-preenche com base em telemetria, se houver." />
@@ -131,7 +131,7 @@ export default function MotoristaPage() {
 
 function Check({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-2 text-xs text-white">
+    <div className="flex items-center gap-2 text-xs text-[color:var(--color-text-strong)]">
       <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
       {label}
     </div>
@@ -143,7 +143,7 @@ function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; 
     <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3">
       <div className="flex items-center gap-2 text-[color:var(--color-brand)]">
         {icon}
-        <span className="text-sm font-medium text-white">{title}</span>
+        <span className="text-sm font-medium text-[color:var(--color-text-strong)]">{title}</span>
       </div>
       <div className="mt-1 text-xs text-[color:var(--color-muted)]">{desc}</div>
     </div>
@@ -157,7 +157,7 @@ function Step({ n, title, desc }: { n: number; title: string; desc: string }) {
         {n}
       </span>
       <div>
-        <div className="text-sm font-medium text-white">{title}</div>
+        <div className="text-sm font-medium text-[color:var(--color-text-strong)]">{title}</div>
         <div className="text-xs text-[color:var(--color-muted)]">{desc}</div>
       </div>
     </li>

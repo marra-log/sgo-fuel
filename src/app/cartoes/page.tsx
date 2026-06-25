@@ -47,7 +47,7 @@ export default async function CartoesPage() {
       description="Cartões private label (fechados) identificados por número e NFC. Cada um tem cota mensal e pode ser bloqueado na hora. Use a Maquininha para validar."
     >
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <Link href="/maquininha" className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+        <Link href="/maquininha" className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
           <CreditCard className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
           Abrir a Maquininha (terminal)
         </Link>
@@ -87,7 +87,7 @@ export default async function CartoesPage() {
                   return (
                     <tr key={c.id} className="transition-colors hover:bg-[color:var(--color-surface-2)]/50">
                       <td className="px-5 py-3">
-                        <Link href={`/cartoes/${c.id}`} className="flex items-center gap-2 font-mono font-medium text-white hover:text-[color:var(--color-brand)]">
+                        <Link href={`/cartoes/${c.id}`} className="flex items-center gap-2 font-mono font-medium text-[color:var(--color-text-strong)] hover:text-[color:var(--color-brand)]">
                           <CreditCard className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
                           {maskCard(c.card_number)}
                           {c.nfc_uid ? <Nfc className="h-3 w-3 text-[color:var(--color-brand)]" /> : null}
@@ -96,7 +96,7 @@ export default async function CartoesPage() {
                       <td className="px-5 py-3 text-[color:var(--color-muted)]">{c.holder_name ?? "—"}</td>
                       <td className="px-5 py-3 text-[color:var(--color-muted)]">{c.drivers?.name ?? "—"}</td>
                       <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{c.vehicles?.plate ?? "—"}</td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{formatNumber(c.monthly_limit_l)} L</td>
+                      <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(c.monthly_limit_l)} L</td>
                       <td className="px-5 py-3 text-right">
                         <Badge variant={st.tone}>{st.label}</Badge>
                       </td>

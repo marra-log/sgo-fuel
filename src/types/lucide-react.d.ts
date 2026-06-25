@@ -47,6 +47,7 @@ declare module "lucide-react" {
   export const Medal: LucideIcon;
   export const Menu: LucideIcon;
   export const MessageSquare: LucideIcon;
+  export const Moon: LucideIcon;
   export const Navigation: LucideIcon;
   export const Nfc: LucideIcon;
   export const Pencil: LucideIcon;
@@ -63,7 +64,10 @@ declare module "lucide-react" {
   export const Shuffle: LucideIcon;
   export const Scan: LucideIcon;
   export const Settings: LucideIcon;
+  export const Shield: LucideIcon;
   export const ShieldCheck: LucideIcon;
+  export const Sun: LucideIcon;
+  export const UserPlus: LucideIcon;
   export const Signal: LucideIcon;
   export const Smartphone: LucideIcon;
   export const Store: LucideIcon;

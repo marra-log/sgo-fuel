@@ -108,12 +108,12 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       {/* Visual do cartão */}
-      <div className="rounded-2xl bg-gradient-to-br from-[#14171d] to-[#0e1014] p-5 ring-1 ring-[color:var(--color-border)]">
+      <div className="surface-dark rounded-2xl bg-gradient-to-br from-[#14171d] to-[#0e1014] p-5 ring-1 ring-[color:var(--color-border)]">
         <div className="flex items-center justify-between">
           <span className="text-xs uppercase tracking-widest text-[color:var(--color-muted)]">SGO-Fuel · Frota</span>
           <CreditCard className="h-5 w-5 text-[color:var(--color-brand)]" />
         </div>
-        <div className="mt-6 font-mono text-lg tracking-widest text-white">
+        <div className="mt-6 font-mono text-lg tracking-widest text-[color:var(--color-text-strong)]">
           {cardNumber.replace(/(.{4})/g, "$1 ").trim()}
         </div>
         <div className="mt-3 flex items-center justify-between text-xs text-[color:var(--color-muted)]">

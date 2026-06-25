@@ -35,7 +35,7 @@ export default function PainelClientePage() {
     <div className="min-h-screen">
       <SiteHeader />
       <main className="mx-auto max-w-7xl px-4 py-8">
-        <Link href="/frota" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-white">
+        <Link href="/frota" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
           <ArrowLeft className="h-3 w-3" /> Plataforma Cartão Frota
         </Link>
 
@@ -43,7 +43,7 @@ export default function PainelClientePage() {
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div>
             <Badge variant="info" className="mb-2">Painel do Cliente</Badge>
-            <h1 className="text-xl font-semibold text-white sm:text-2xl">{EMPRESA.curto}</h1>
+            <h1 className="text-xl font-semibold text-[color:var(--color-text-strong)] sm:text-2xl">{EMPRESA.curto}</h1>
             <p className="text-xs text-[color:var(--color-muted)]">{EMPRESA.nome} · CNPJ {EMPRESA.cnpj}</p>
           </div>
           <Link href="/frota/posto" className="text-xs font-medium text-[color:var(--color-brand)] hover:underline">
@@ -61,7 +61,7 @@ export default function PainelClientePage() {
             { id: "#ranking", label: "Ranking de veículos" },
             { id: "#nf", label: "Upload de NF" },
           ].map((l) => (
-            <a key={l.id} href={l.id} className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-1.5 text-xs text-[color:var(--color-muted)] hover:text-white">
+            <a key={l.id} href={l.id} className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-1.5 text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
               {l.label}
             </a>
           ))}
@@ -80,7 +80,7 @@ export default function PainelClientePage() {
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <Card>
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Consumo por departamento (R$)</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Consumo por departamento (R$)</h2>
             </div>
             <div className="px-3 py-4">
               <ConsumoDeptoBar data={DEPARTAMENTOS} />
@@ -88,7 +88,7 @@ export default function PainelClientePage() {
           </Card>
           <Card>
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Histórico de consumo da empresa (R$)</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Histórico de consumo da empresa (R$)</h2>
             </div>
             <div className="px-3 py-4">
               <HistoricoArea data={HISTORICO} />
@@ -104,7 +104,7 @@ export default function PainelClientePage() {
         {/* Mapa de postos credenciados (geolocalização) */}
         <Card className="mt-6 p-5">
           <div className="mb-4">
-            <h2 className="text-base font-semibold text-white">Onde a frota abastece</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Onde a frota abastece</h2>
             <p className="text-xs text-[color:var(--color-muted)]">Postos credenciados e rotas (geolocalização).</p>
           </div>
           <MapaPostos />
@@ -114,7 +114,7 @@ export default function PainelClientePage() {
         <Card className="mt-6 overflow-hidden">
           <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
             <div>
-              <h2 className="text-base font-semibold text-white">Preços por estabelecimento</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Preços por estabelecimento</h2>
               <p className="text-xs text-[color:var(--color-muted)]">Preço com desconto negociado ou preço de bomba.</p>
             </div>
             <Badge variant="info"><TrendingUp className="h-3 w-3" /> {PRECOS_POSTOS.length} postos</Badge>
@@ -135,16 +135,16 @@ export default function PainelClientePage() {
                 {PRECOS_POSTOS.map((p, i) => (
                   <tr key={i}>
                     <td className="px-5 py-3">
-                      <div className="font-medium text-white">{p.posto}</div>
+                      <div className="font-medium text-[color:var(--color-text-strong)]">{p.posto}</div>
                       <div className="text-[11px] text-[color:var(--color-muted)]">
                         {p.cidade} · <span className={p.tipo === "Desconto" ? "text-[color:var(--color-brand)]" : ""}>{p.tipo === "Desconto" ? "preço com desconto" : "preço de bomba"}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(p.gasolina)}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(p.gasolinaAditivada)}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(p.etanol)}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(p.dieselComum)}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(p.dieselS10)}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(p.gasolina)}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(p.gasolinaAditivada)}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(p.etanol)}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(p.dieselComum)}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(p.dieselS10)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -161,7 +161,7 @@ export default function PainelClientePage() {
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <Card id="creditos" className="overflow-hidden scroll-mt-20">
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Relatório gerencial de créditos</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Relatório gerencial de créditos</h2>
               <p className="text-xs text-[color:var(--color-muted)]">Recargas de saldo por usuário/veículo.</p>
             </div>
             <div className="overflow-x-auto">
@@ -176,7 +176,7 @@ export default function PainelClientePage() {
                 <tbody className="divide-y divide-[color:var(--color-border)]">
                   {relatorioCreditos().map((c, i) => (
                     <tr key={i}>
-                      <td className="px-5 py-3 font-mono text-white">{c.usuario}</td>
+                      <td className="px-5 py-3 font-mono text-[color:var(--color-text-strong)]">{c.usuario}</td>
                       <td className="px-5 py-3 whitespace-nowrap text-[color:var(--color-muted)]">{c.data}</td>
                       <td className="px-5 py-3 text-right font-mono text-[color:var(--color-brand)]">{formatBRL(c.valor)}</td>
                     </tr>
@@ -195,7 +195,7 @@ export default function PainelClientePage() {
         <Card id="ranking" className="mt-6 overflow-hidden scroll-mt-20">
           <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
             <div>
-              <h2 className="text-base font-semibold text-white">Ranking de veículos (km/L)</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Ranking de veículos (km/L)</h2>
               <p className="text-xs text-[color:var(--color-muted)]">Consumo mínimo/máximo esperado × realizado.</p>
             </div>
             <Badge variant="info"><Gauge className="h-3 w-3" /> eficiência</Badge>
@@ -219,7 +219,7 @@ export default function PainelClientePage() {
                   const ok = v.consumoRealizado >= v.consumoMin;
                   return (
                     <tr key={i}>
-                      <td className="px-4 py-3 font-mono text-white">{v.placa}</td>
+                      <td className="px-4 py-3 font-mono text-[color:var(--color-text-strong)]">{v.placa}</td>
                       <td className="px-4 py-3 text-[color:var(--color-muted)]">{v.modelo}</td>
                       <td className="px-4 py-3 text-right font-mono text-[color:var(--color-muted)]">{v.consumoMin.toFixed(1)}</td>
                       <td className="px-4 py-3 text-right font-mono text-[color:var(--color-muted)]">{v.consumoMax.toFixed(1)}</td>
@@ -242,12 +242,12 @@ export default function PainelClientePage() {
               <Upload className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white">Upload de Nota Fiscal (XML)</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Upload de Nota Fiscal (XML)</h2>
               <p className="mt-1 text-sm text-[color:var(--color-muted)]">
                 Envie o XML da NFe de compra de combustível. O sistema extrai chave, volume e valor e
                 cruza automaticamente com o consumo registrado (conciliação SEFAZ).
               </p>
-              <Link href="/conciliacao" className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-2 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-white">
+              <Link href="/conciliacao" className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-2 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-[color:var(--color-text-strong)]">
                 <Upload className="h-3 w-3" /> Abrir upload de NF
               </Link>
             </div>
@@ -275,7 +275,7 @@ function KpiBig({
         <span className="text-[11px] uppercase tracking-wider text-[color:var(--color-muted)]">{title}</span>
         <span className="text-[color:var(--color-muted)]">{icon}</span>
       </div>
-      <div className={"mt-3 text-2xl font-semibold " + (highlight ? "text-[color:var(--color-brand)]" : "text-white")}>{value}</div>
+      <div className={"mt-3 text-2xl font-semibold " + (highlight ? "text-[color:var(--color-brand)]" : "text-[color:var(--color-text-strong)]")}>{value}</div>
     </Card>
   );
 }

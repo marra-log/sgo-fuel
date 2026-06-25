@@ -67,7 +67,7 @@ export default async function BombasPage() {
                       <td className="px-5 py-3">
                         <Link
                           href={`/cadastros/bombas/${p.id}`}
-                          className="flex items-center gap-2 font-mono font-medium text-white hover:text-[color:var(--color-brand)]"
+                          className="flex items-center gap-2 font-mono font-medium text-[color:var(--color-text-strong)] hover:text-[color:var(--color-brand)]"
                         >
                           <Cpu className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
                           {p.serial_number}
@@ -79,7 +79,7 @@ export default async function BombasPage() {
                       <td className="px-5 py-3 text-[color:var(--color-muted)]">{p.tanks?.name ?? "—"}</td>
                       <td className="px-5 py-3 text-xs">
                         {p.iot_device_id ? (
-                          <span className="font-mono text-white">{p.iot_device_id}</span>
+                          <span className="font-mono text-[color:var(--color-text-strong)]">{p.iot_device_id}</span>
                         ) : (
                           <span className="text-[color:var(--color-muted)]">não conectado</span>
                         )}

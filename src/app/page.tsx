@@ -37,7 +37,7 @@ export default function HomePage() {
                 <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-brand)]" />
                 Aether IA · Ecossistema de Abastecimento
               </Badge>
-              <h1 className="text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
+              <h1 className="text-3xl font-semibold leading-tight text-[color:var(--color-text-strong)] sm:text-4xl lg:text-5xl">
                 Revolucionando o controle de frotas com
                 <span className="ml-2 bg-gradient-to-r from-[color:var(--color-brand)] to-[#7ee7b4] bg-clip-text text-transparent">
                   IoT de baixo custo
@@ -45,9 +45,9 @@ export default function HomePage() {
                 e Visão Computacional.
               </h1>
               <p className="mt-6 max-w-xl text-base text-[color:var(--color-muted)]">
-                O combustível representa <span className="text-white">40% a 50%</span> dos custos
-                operacionais de uma transportadora. O <span className="text-white">SGO-Fuel</span>{" "}
-                substitui telemetria mecânica cara por <span className="text-white">software, IoT
+                O combustível representa <span className="text-[color:var(--color-text-strong)]">40% a 50%</span> dos custos
+                operacionais de uma transportadora. O <span className="text-[color:var(--color-text-strong)]">SGO-Fuel</span>{" "}
+                substitui telemetria mecânica cara por <span className="text-[color:var(--color-text-strong)]">software, IoT
                 acessível e IA</span> que corta a bomba em tempo real diante de qualquer anomalia.
               </p>
 
@@ -91,7 +91,7 @@ export default function HomePage() {
               <IconBox tone="danger">
                 <AlertTriangle className="h-5 w-5" />
               </IconBox>
-              <h3 className="text-lg font-semibold text-white">Fraude humana</h3>
+              <h3 className="text-lg font-semibold text-[color:var(--color-text-strong)]">Fraude humana</h3>
             </div>
             <ul className="mt-4 space-y-2 text-sm text-[color:var(--color-muted)]">
               <li className="flex gap-2">
@@ -114,13 +114,13 @@ export default function HomePage() {
               <IconBox tone="warning">
                 <PiggyBank className="h-5 w-5" />
               </IconBox>
-              <h3 className="text-lg font-semibold text-white">Automação inacessível</h3>
+              <h3 className="text-lg font-semibold text-[color:var(--color-text-strong)]">Automação inacessível</h3>
             </div>
             <ul className="mt-4 space-y-2 text-sm text-[color:var(--color-muted)]">
               <li className="flex gap-2">
                 <span className="text-[color:var(--color-warning)]">•</span>
                 Telemetria de bombas e sondas custam{" "}
-                <span className="text-white">R$ 15k a R$ 30k</span> por ponto.
+                <span className="text-[color:var(--color-text-strong)]">R$ 15k a R$ 30k</span> por ponto.
               </li>
               <li className="flex gap-2">
                 <span className="text-[color:var(--color-warning)]">•</span>
@@ -144,9 +144,9 @@ export default function HomePage() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="p-6">
             <Badge variant="info">Rodovia</Badge>
-            <h3 className="mt-3 text-lg font-semibold text-white">Postos Parceiros</h3>
+            <h3 className="mt-3 text-lg font-semibold text-[color:var(--color-text-strong)]">Postos Parceiros</h3>
             <p className="mt-2 text-sm text-[color:var(--color-muted)]">
-              Validação via <span className="text-white">Smart POS</span> (terminais Android).
+              Validação via <span className="text-[color:var(--color-text-strong)]">Smart POS</span> (terminais Android).
               Eliminamos cartões plásticos clonáveis — autorização por tag NFC ou pelo próprio app
               do motorista, com auditoria fim-a-fim.
             </p>
@@ -159,9 +159,9 @@ export default function HomePage() {
 
           <Card className="p-6">
             <Badge variant="success">Pátio Interno</Badge>
-            <h3 className="mt-3 text-lg font-semibold text-white">Bases &amp; Transportadoras</h3>
+            <h3 className="mt-3 text-lg font-semibold text-[color:var(--color-text-strong)]">Bases &amp; Transportadoras</h3>
             <p className="mt-2 text-sm text-[color:var(--color-muted)]">
-              Hardware IoT proprietário instalado na <span className="text-white">parte elétrica
+              Hardware IoT proprietário instalado na <span className="text-[color:var(--color-text-strong)]">parte elétrica
               da bomba</span>. A bomba fica permanentemente inoperante e só é energizada quando
               o sistema cruza todas as variáveis e autoriza.
             </p>
@@ -210,7 +210,7 @@ export default function HomePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[color:var(--color-surface-2)] text-left">
-                  <th className="px-5 py-3 font-medium text-white">Funcionalidade / Impacto</th>
+                  <th className="px-5 py-3 font-medium text-[color:var(--color-text-strong)]">Funcionalidade / Impacto</th>
                   <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">
                     Sistemas Tradicionais
                   </th>
@@ -317,7 +317,7 @@ export default function HomePage() {
       {/* CTA FINAL */}
       <section className="border-t border-[color:var(--color-border)]">
         <div className="mx-auto max-w-7xl px-4 py-16 text-center">
-          <h2 className="text-2xl font-semibold text-white sm:text-3xl">
+          <h2 className="text-2xl font-semibold text-[color:var(--color-text-strong)] sm:text-3xl">
             Pronto para ver o ecossistema em operação?
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-[color:var(--color-muted)]">
@@ -373,7 +373,7 @@ function Section({
         <span className="text-xs font-medium uppercase tracking-wider text-[color:var(--color-brand)]">
           {kicker}
         </span>
-        <h2 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">{title}</h2>
+        <h2 className="mt-2 text-2xl font-semibold text-[color:var(--color-text-strong)] sm:text-3xl">{title}</h2>
         {description ? (
           <p className="mt-2 max-w-3xl text-sm text-[color:var(--color-muted)]">{description}</p>
         ) : null}
@@ -386,7 +386,7 @@ function Section({
 function KpiHero({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-3 sm:p-4">
-      <div className="text-base font-semibold leading-tight text-white sm:text-xl">{value}</div>
+      <div className="text-base font-semibold leading-tight text-[color:var(--color-text-strong)] sm:text-xl">{value}</div>
       <div className="mt-1 text-[10px] uppercase tracking-wider text-[color:var(--color-muted)] sm:text-[11px]">
         {label}
       </div>
@@ -402,7 +402,7 @@ function IconBox({
   tone?: "default" | "danger" | "warning" | "success" | "info";
 }) {
   const map = {
-    default: "bg-[color:var(--color-surface-2)] text-white",
+    default: "bg-[color:var(--color-surface-2)] text-[color:var(--color-text-strong)]",
     danger: "bg-[color:var(--color-danger)]/15 text-[color:var(--color-danger)]",
     warning: "bg-[color:var(--color-warning)]/15 text-[color:var(--color-warning)]",
     success: "bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand)]",
@@ -436,7 +436,7 @@ function FeatureCard({
   return (
     <Card className="p-6">
       <IconBox tone="success">{icon}</IconBox>
-      <h3 className="mt-4 text-base font-semibold text-white">{title}</h3>
+      <h3 className="mt-4 text-base font-semibold text-[color:var(--color-text-strong)]">{title}</h3>
       <p className="mt-2 text-sm text-[color:var(--color-muted)]">{desc}</p>
     </Card>
   );
@@ -445,7 +445,7 @@ function FeatureCard({
 function Row({ label, bad, good }: { label: string; bad: string; good: string }) {
   return (
     <tr>
-      <td className="px-5 py-3 font-medium text-white">{label}</td>
+      <td className="px-5 py-3 font-medium text-[color:var(--color-text-strong)]">{label}</td>
       <td className="px-5 py-3 text-[color:var(--color-muted)]">{bad}</td>
       <td className="px-5 py-3 text-[color:var(--color-text)]">
         <span className="inline-flex items-center gap-2">
@@ -471,7 +471,7 @@ function RoiCard({
       <div className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
         {label}
       </div>
-      <div className="mt-2 text-3xl font-semibold text-white">{value}</div>
+      <div className="mt-2 text-3xl font-semibold text-[color:var(--color-text-strong)]">{value}</div>
       <div className="mt-2 text-sm text-[color:var(--color-muted)]">{sublabel}</div>
     </Card>
   );
@@ -496,7 +496,7 @@ function ProductCard({
       className="group rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-6 transition-colors hover:border-[color:var(--color-brand)]/60"
     >
       <IconBox tone="success">{icon}</IconBox>
-      <h3 className="mt-4 text-base font-semibold text-white">{title}</h3>
+      <h3 className="mt-4 text-base font-semibold text-[color:var(--color-text-strong)]">{title}</h3>
       <p className="mt-2 text-sm text-[color:var(--color-muted)]">{desc}</p>
       <div className="mt-4 text-xs font-medium text-[color:var(--color-brand)] group-hover:underline">
         {cta} →
@@ -515,7 +515,7 @@ function PumpVisual() {
             <div className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">
               Pátio TransCargo · Bomba 02
             </div>
-            <div className="text-sm font-medium text-white">Diesel S10 — 12.450 L em tanque</div>
+            <div className="text-sm font-medium text-[color:var(--color-text-strong)]">Diesel S10 — 12.450 L em tanque</div>
           </div>
           <Badge variant="success">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--color-brand)]" />
@@ -540,7 +540,7 @@ function PumpVisual() {
 
           {/* Truck silhouette */}
           <div className="absolute inset-x-4 bottom-6 flex items-end justify-center">
-            <Truck className="h-32 w-32 text-white/30" />
+            <Truck className="h-32 w-32 text-[color:var(--color-text-strong)]/30" />
           </div>
 
           {/* Plate detection box */}
@@ -548,13 +548,13 @@ function PumpVisual() {
             <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-brand)]">
               Placa detectada
             </div>
-            <div className="font-mono text-sm text-white">BRA · 2E19</div>
+            <div className="font-mono text-sm text-[color:var(--color-text-strong)]">BRA · 2E19</div>
           </div>
 
           {/* Scanline */}
           <div className="absolute inset-x-0 h-12 scanline" />
 
-          <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-white">
+          <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-[color:var(--color-text-strong)]">
             <Camera className="h-3 w-3 text-[color:var(--color-brand)]" />
             ALPR · Edge
           </div>
@@ -574,7 +574,7 @@ function PumpVisual() {
             <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
               Bico
             </div>
-            <div className="mt-0.5 font-mono text-sm text-white">Conforme</div>
+            <div className="mt-0.5 font-mono text-sm text-[color:var(--color-text-strong)]">Conforme</div>
           </div>
           <div className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-2">
             <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">

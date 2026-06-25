@@ -289,7 +289,7 @@ export default async function DashboardPage() {
         <Card className="lg:col-span-2">
           <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
             <div>
-              <h2 className="text-base font-semibold text-white">Litros abastecidos · 14 dias</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Litros abastecidos · 14 dias</h2>
               <p className="text-xs text-[color:var(--color-muted)]">
                 Volume entregue por dia (apenas eventos conformes).
               </p>
@@ -305,7 +305,7 @@ export default async function DashboardPage() {
 
         <Card>
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Distribuição</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Distribuição</h2>
             <p className="text-xs text-[color:var(--color-muted)]">Eventos por status (14 dias).</p>
           </div>
           <div className="px-3 py-4">
@@ -318,7 +318,7 @@ export default async function DashboardPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Eventos × Bloqueios · 14 dias</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Eventos × Bloqueios · 14 dias</h2>
             <p className="text-xs text-[color:var(--color-muted)]">
               Volume de abastecimentos e quantos a IA bloqueou.
             </p>
@@ -330,7 +330,7 @@ export default async function DashboardPage() {
 
         <Card>
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Top motoristas</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Top motoristas</h2>
             <p className="text-xs text-[color:var(--color-muted)]">Litros no período.</p>
           </div>
           <div className="px-3 py-4">
@@ -344,7 +344,7 @@ export default async function DashboardPage() {
         <Card className="lg:col-span-2">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[color:var(--color-border)]">
             <div>
-              <h2 className="text-base font-semibold text-white">Eventos recentes</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Eventos recentes</h2>
               <p className="text-xs text-[color:var(--color-muted)]">
                 Cada abastecimento é auditado pela IA antes de energizar a bomba.
               </p>
@@ -362,7 +362,7 @@ export default async function DashboardPage() {
                 </p>
                 <Link
                   href="/simular"
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-1.5 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-white"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-1.5 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-[color:var(--color-text-strong)]"
                 >
                   <Zap className="h-3 w-3" />
                   Simular abastecimento
@@ -378,17 +378,17 @@ export default async function DashboardPage() {
                     <span className="text-xs text-[color:var(--color-muted)] sm:text-sm">
                       {e.when}
                     </span>
-                    <span className="font-mono text-right text-sm text-white sm:hidden">
+                    <span className="font-mono text-right text-sm text-[color:var(--color-text-strong)] sm:hidden">
                       {e.litros.toFixed(1)} L
                     </span>
                   </div>
                   <div className="sm:col-span-4">
-                    <div className="font-medium text-white">{e.pump}</div>
+                    <div className="font-medium text-[color:var(--color-text-strong)]">{e.pump}</div>
                     <div className="text-xs text-[color:var(--color-muted)]">
                       <span className="font-mono">{e.placa}</span> · {e.motorista}
                     </div>
                   </div>
-                  <div className="hidden sm:col-span-2 sm:block sm:text-right sm:font-mono sm:text-white">
+                  <div className="hidden sm:col-span-2 sm:block sm:text-right sm:font-mono sm:text-[color:var(--color-text-strong)]">
                     {e.litros.toFixed(1)} L
                   </div>
                   <div className="flex sm:col-span-3 sm:justify-end">
@@ -414,7 +414,7 @@ export default async function DashboardPage() {
 
         <Card>
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Anomalia mais recente</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Anomalia mais recente</h2>
             <p className="text-xs text-[color:var(--color-muted)]">
               {latestAnomaly
                 ? `${ANOMALY_LABEL[latestAnomaly.type] ?? latestAnomaly.type} · ${latestAnomaly.local}`
@@ -428,10 +428,10 @@ export default async function DashboardPage() {
                   <div key={i} className="border-r border-b border-white/10" />
                 ))}
               </div>
-              <Video className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 text-white/30" />
+              <Video className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 text-[color:var(--color-text-strong)]/30" />
               {latestAnomaly ? (
                 <>
-                  <div className="absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-white">
+                  <div className="absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-[color:var(--color-text-strong)]">
                     <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--color-danger)]" />
                     ABERTA
                   </div>
@@ -465,7 +465,7 @@ export default async function DashboardPage() {
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <Card>
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Conciliação SEFAZ · Tanques</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Conciliação SEFAZ · Tanques</h2>
             <p className="text-xs text-[color:var(--color-muted)]">
               XMLs de compra cruzados com saída efetiva (mês corrente).
             </p>
@@ -484,7 +484,7 @@ export default async function DashboardPage() {
 
         <Card>
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Ranking de motoristas</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Ranking de motoristas</h2>
             <p className="text-xs text-[color:var(--color-muted)]">
               Eficiência (km/L) e anomalias detectadas pela IA.
             </p>
@@ -513,7 +513,7 @@ export default async function DashboardPage() {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-medium text-white">{m.nome}</div>
+                  <div className="truncate font-medium text-[color:var(--color-text-strong)]">{m.nome}</div>
                   <div className="text-xs text-[color:var(--color-muted)]">
                     {m.viagens} viagens · {m.anomalias} anomalia{m.anomalias === 1 ? "" : "s"}
                   </div>
@@ -525,7 +525,7 @@ export default async function DashboardPage() {
                       style={{ width: `${(m.kml / 3.5) * 100}%` }}
                     />
                   </div>
-                  <span className="whitespace-nowrap font-mono text-white">
+                  <span className="whitespace-nowrap font-mono text-[color:var(--color-text-strong)]">
                     {m.kml.toFixed(2)} km/L
                   </span>
                 </div>
@@ -545,7 +545,7 @@ export default async function DashboardPage() {
       <div className="mt-6">
         <Card>
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Frota monitorada</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Frota monitorada</h2>
             <p className="text-xs text-[color:var(--color-muted)]">
               Veículos com placa cadastrada, cota e status atual.
             </p>
@@ -559,11 +559,11 @@ export default async function DashboardPage() {
             ].map((v, i) => (
               <div key={i} className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-sm text-white">{v.placa}</span>
+                  <span className="font-mono text-sm text-[color:var(--color-text-strong)]">{v.placa}</span>
                   <Truck className="h-4 w-4 text-[color:var(--color-muted)]" />
                 </div>
                 <div className="mt-1 text-xs text-[color:var(--color-muted)]">{v.modelo}</div>
-                <div className="mt-2 text-xs text-white">{v.motorista}</div>
+                <div className="mt-2 text-xs text-[color:var(--color-text-strong)]">{v.motorista}</div>
                 <div className="mt-1 text-[10px] uppercase tracking-wider text-[color:var(--color-brand)]">
                   {v.status}
                 </div>
@@ -599,7 +599,7 @@ function Kpi({
         </div>
         <div className="text-[color:var(--color-muted)]">{icon}</div>
       </div>
-      <div className="mt-3 text-2xl font-semibold text-white">{value}</div>
+      <div className="mt-3 text-2xl font-semibold text-[color:var(--color-text-strong)]">{value}</div>
       <div className="mt-2 flex items-center justify-between text-xs">
         <span
           className={
@@ -636,16 +636,16 @@ function ConcilRow({
   return (
     <div>
       <div className="flex items-center justify-between text-sm">
-        <span className="text-white">{label}</span>
+        <span className="text-[color:var(--color-text-strong)]">{label}</span>
         <Badge variant={tone}>
           {pct.toFixed(2)}% perda
         </Badge>
       </div>
       <div className="mt-2 grid grid-cols-1 gap-1.5 text-xs text-[color:var(--color-muted)] sm:grid-cols-3 sm:gap-3">
-        <span>Entrada (XML): <span className="font-mono text-white">{formatNumber(entrada)} L</span></span>
-        <span>Saída (IoT): <span className="font-mono text-white">{formatNumber(saida)} L</span></span>
+        <span>Entrada (XML): <span className="font-mono text-[color:var(--color-text-strong)]">{formatNumber(entrada)} L</span></span>
+        <span>Saída (IoT): <span className="font-mono text-[color:var(--color-text-strong)]">{formatNumber(saida)} L</span></span>
         <span className="sm:text-right">
-          Diferença: <span className="font-mono text-white">{formatNumber(diff)} L</span>
+          Diferença: <span className="font-mono text-[color:var(--color-text-strong)]">{formatNumber(diff)} L</span>
         </span>
       </div>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[color:var(--color-surface-2)]">

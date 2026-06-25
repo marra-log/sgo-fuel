@@ -56,15 +56,15 @@ export default async function PatiosPage() {
                     <td className="px-5 py-3">
                       <Link
                         href={`/cadastros/patios/${y.id}`}
-                        className="flex items-center gap-2 font-medium text-white hover:text-[color:var(--color-brand)]"
+                        className="flex items-center gap-2 font-medium text-[color:var(--color-text-strong)] hover:text-[color:var(--color-brand)]"
                       >
                         <MapPin className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
                         {y.name}
                       </Link>
                     </td>
                     <td className="px-5 py-3 text-[color:var(--color-muted)]">{y.address ?? "—"}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{y.tanks[0]?.count ?? 0}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{y.pumps[0]?.count ?? 0}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{y.tanks[0]?.count ?? 0}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{y.pumps[0]?.count ?? 0}</td>
                   </tr>
                 ))}
               </tbody>

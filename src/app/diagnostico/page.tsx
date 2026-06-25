@@ -101,7 +101,7 @@ export default async function DiagnosticoPage() {
     >
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="p-5">
-          <h2 className="text-sm font-semibold text-white">Sessão e empresa</h2>
+          <h2 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Sessão e empresa</h2>
           <div className="mt-4 space-y-3">
             {checks.map((c, i) => (
               <Row key={i} ok={c.ok} label={c.label} value={c.value} hint={c.hint} />
@@ -119,7 +119,7 @@ export default async function DiagnosticoPage() {
         </Card>
 
         <Card className="p-5">
-          <h2 className="text-sm font-semibold text-white">Acesso às tabelas (RLS)</h2>
+          <h2 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Acesso às tabelas (RLS)</h2>
           <p className="mt-1 text-xs text-[color:var(--color-muted)]">
             Se uma tabela aparecer com erro, o problema é a policy de RLS — o schema
             precisa ser reaplicado.
@@ -137,7 +137,7 @@ export default async function DiagnosticoPage() {
                       <XCircle className="h-4 w-4 flex-none text-[color:var(--color-danger)]" />
                     )}
                     <div>
-                      <div className="font-medium text-white">{t.label}</div>
+                      <div className="font-medium text-[color:var(--color-text-strong)]">{t.label}</div>
                       <div className="font-mono text-[10px] text-[color:var(--color-muted)]">{t.table}</div>
                       {t.err ? <div className="mt-1 text-xs text-[color:var(--color-danger)]">{t.err}</div> : null}
                     </div>
@@ -153,12 +153,12 @@ export default async function DiagnosticoPage() {
       </div>
 
       <Card className="mt-4 p-5">
-        <h2 className="text-sm font-semibold text-white">Como interpretar</h2>
+        <h2 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Como interpretar</h2>
         <ul className="mt-3 space-y-2 text-sm text-[color:var(--color-muted)]">
           <li className="flex gap-2">
             <CheckCircle2 className="mt-0.5 h-4 w-4 flex-none text-[color:var(--color-brand)]" />
             <span>
-              <strong className="text-white">Sessão</strong> verde + <strong className="text-white">Empresa</strong> verde +
+              <strong className="text-[color:var(--color-text-strong)]">Sessão</strong> verde + <strong className="text-[color:var(--color-text-strong)]">Empresa</strong> verde +
               todas as tabelas verdes → o cadastro deveria funcionar. Se ainda falhar, abra o
               console do navegador (F12) na hora do clique <em>Salvar</em>.
             </span>
@@ -166,7 +166,7 @@ export default async function DiagnosticoPage() {
           <li className="flex gap-2">
             <AlertTriangle className="mt-0.5 h-4 w-4 flex-none text-[color:var(--color-warning)]" />
             <span>
-              <strong className="text-white">Empresa vermelha</strong> → seu signup criou usuário mas
+              <strong className="text-[color:var(--color-text-strong)]">Empresa vermelha</strong> → seu signup criou usuário mas
               não criou tenant. Vá em <Link className="underline" href="/cadastros/empresa">/cadastros/empresa</Link>{" "}
               e crie. O trigger SQL te coloca como OWNER.
             </span>
@@ -174,7 +174,7 @@ export default async function DiagnosticoPage() {
           <li className="flex gap-2">
             <XCircle className="mt-0.5 h-4 w-4 flex-none text-[color:var(--color-danger)]" />
             <span>
-              <strong className="text-white">Tabela vermelha</strong> com erro tipo{" "}
+              <strong className="text-[color:var(--color-text-strong)]">Tabela vermelha</strong> com erro tipo{" "}
               <code className="rounded bg-[color:var(--color-surface-2)] px-1 text-xs">relation does not exist</code> → o schema SQL não rodou completo.
               Volte ao SQL Editor do Supabase e reaplique <code className="rounded bg-[color:var(--color-surface-2)] px-1 text-xs">supabase/schema.sql</code>.
             </span>
@@ -196,7 +196,7 @@ function Row({ ok, label, value, hint }: Diag) {
         )}
         <span className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">{label}</span>
       </div>
-      <div className="mt-1 text-sm text-white">{value}</div>
+      <div className="mt-1 text-sm text-[color:var(--color-text-strong)]">{value}</div>
       {hint ? <div className="mt-1 text-xs text-[color:var(--color-muted)]">{hint}</div> : null}
     </div>
   );

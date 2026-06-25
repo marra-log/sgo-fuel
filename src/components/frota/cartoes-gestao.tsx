@@ -34,17 +34,17 @@ export function CartoesGestao({ rows }: { rows: CartaoFrota[] }) {
             return (
               <Fragment key={i}>
                 <tr>
-                  <td className="px-5 py-3 font-mono text-white">{c.numero}</td>
+                  <td className="px-5 py-3 font-mono text-[color:var(--color-text-strong)]">{c.numero}</td>
                   <td className="px-5 py-3 text-[color:var(--color-muted)]">{c.motorista}</td>
                   <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{c.placa}</td>
-                  <td className="px-5 py-3 text-right font-mono text-white">
+                  <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">
                     {formatBRL(c.consumido)} <span className="text-[color:var(--color-muted)]">/ {formatBRL(c.limite)}</span>
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-1.5">
                       <Badge variant={st === "Ativo" ? "success" : "warning"}>{st}</Badge>
                       <button onClick={() => setLimitesOpen(limitesOpen === i ? null : i)} title="Limites"
-                        className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-2 py-1 text-[11px] text-[color:var(--color-muted)] hover:text-white">
+                        className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-2 py-1 text-[11px] text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
                         <Settings className="h-3 w-3" /> Limites
                       </button>
                       <button onClick={() => toggle(i)} title={st === "Ativo" ? "Bloquear" : "Desbloquear"}
@@ -63,7 +63,7 @@ export function CartoesGestao({ rows }: { rows: CartaoFrota[] }) {
                 {limitesOpen === i ? (
                   <tr>
                     <td colSpan={5} className="bg-[color:var(--color-surface-2)] px-5 py-4">
-                      <div className="text-xs font-medium text-white">Regras e limites do cartão</div>
+                      <div className="text-xs font-medium text-[color:var(--color-text-strong)]">Regras e limites do cartão</div>
                       <div className="mt-3 grid gap-3 sm:grid-cols-4">
                         <LimiteCampo label="Limite por dia (R$)" valor="1.500" />
                         <LimiteCampo label="Limite por transação (L)" valor="300" />
@@ -89,7 +89,7 @@ function LimiteCampo({ label, valor }: { label: string; valor: string }) {
   return (
     <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-2.5">
       <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">{label}</div>
-      <div className="mt-1 text-sm font-medium text-white">{valor}</div>
+      <div className="mt-1 text-sm font-medium text-[color:var(--color-text-strong)]">{valor}</div>
     </div>
   );
 }

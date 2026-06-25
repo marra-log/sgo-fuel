@@ -21,7 +21,7 @@ export function SectionShell({
               {badge}
             </span>
           ) : null}
-          <h1 className="text-2xl font-semibold leading-tight text-white sm:text-3xl">{title}</h1>
+          <h1 className="text-2xl font-semibold leading-tight text-[color:var(--color-text-strong)] sm:text-3xl">{title}</h1>
           {description ? (
             <p className="mt-2 max-w-3xl text-sm text-[color:var(--color-muted)]">{description}</p>
           ) : null}

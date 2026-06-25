@@ -70,7 +70,7 @@ export default async function FaturamentoPage() {
     >
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="text-sm text-[color:var(--color-muted)]">
-          Período: <span className="text-white">{periodoLabel}</span> · {tenant?.name ?? "Empresa"}
+          Período: <span className="text-[color:var(--color-text-strong)]">{periodoLabel}</span> · {tenant?.name ?? "Empresa"}
         </div>
         <div className="flex items-center gap-2">
           <FaturamentoExport linhas={linhas} periodo={periodoKey} />
@@ -99,7 +99,7 @@ export default async function FaturamentoPage() {
           <Card className="mt-6 overflow-hidden">
             <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
               <div>
-                <h2 className="text-base font-semibold text-white">Fatura por cartão</h2>
+                <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Fatura por cartão</h2>
                 <p className="text-xs text-[color:var(--color-muted)]">Valor consolidado a lançar por cartão/motorista.</p>
               </div>
               <Badge variant="info">
@@ -132,19 +132,19 @@ export default async function FaturamentoPage() {
                   <tbody className="divide-y divide-[color:var(--color-border)]">
                     {linhas.map((l, i) => (
                       <tr key={i}>
-                        <td className="px-5 py-3 font-mono text-white">{l.cartao}</td>
+                        <td className="px-5 py-3 font-mono text-[color:var(--color-text-strong)]">{l.cartao}</td>
                         <td className="px-5 py-3 text-[color:var(--color-muted)]">{l.titular}</td>
                         <td className="px-5 py-3 text-[color:var(--color-muted)]">{l.motorista}</td>
-                        <td className="px-5 py-3 text-right text-white">{l.transacoes}</td>
-                        <td className="px-5 py-3 text-right font-mono text-white">{formatNumber(Math.round(l.litros))} L</td>
-                        <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(l.valor)}</td>
+                        <td className="px-5 py-3 text-right text-[color:var(--color-text-strong)]">{l.transacoes}</td>
+                        <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(Math.round(l.litros))} L</td>
+                        <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(l.valor)}</td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr className="border-t border-[color:var(--color-border)] bg-[color:var(--color-surface-2)]">
-                      <td className="px-5 py-3 font-semibold text-white" colSpan={4}>Total a faturar</td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{formatNumber(Math.round(totalLitros))} L</td>
+                      <td className="px-5 py-3 font-semibold text-[color:var(--color-text-strong)]" colSpan={4}>Total a faturar</td>
+                      <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(Math.round(totalLitros))} L</td>
                       <td className="px-5 py-3 text-right font-mono font-semibold text-[color:var(--color-brand)]">{formatBRL(totalValor)}</td>
                     </tr>
                   </tfoot>
@@ -191,7 +191,7 @@ function Kpi({
       <div
         className={
           "mt-3 text-2xl font-semibold " +
-          (tone === "brand" ? "text-[color:var(--color-brand)]" : tone === "danger" ? "text-[color:var(--color-danger)]" : "text-white")
+          (tone === "brand" ? "text-[color:var(--color-brand)]" : tone === "danger" ? "text-[color:var(--color-danger)]" : "text-[color:var(--color-text-strong)]")
         }
       >
         {value}

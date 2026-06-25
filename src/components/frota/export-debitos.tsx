@@ -22,10 +22,10 @@ export function ExportDebitos({ rows }: { rows: DebitoRow[] }) {
 
   return (
     <div className="flex items-center gap-1.5">
-      <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 py-1.5 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+      <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 py-1.5 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
         <Download className="h-3 w-3" /> Excel/CSV
       </button>
-      <button onClick={() => window.print()} className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 py-1.5 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+      <button onClick={() => window.print()} className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 py-1.5 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
         <Printer className="h-3 w-3" /> PDF
       </button>
     </div>

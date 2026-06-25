@@ -48,18 +48,18 @@ export function PixCharge({ valor, txid }: { valor: number; txid?: string }) {
   if (editing || !cfg) {
     return (
       <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3">
-        <div className="flex items-center gap-1.5 text-xs font-medium text-white">
+        <div className="flex items-center gap-1.5 text-xs font-medium text-[color:var(--color-text-strong)]">
           <Settings className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
           Configurar chave Pix (recebedor)
         </div>
         <div className="mt-2 space-y-2">
           <input value={chave} onChange={(e) => setChave(e.target.value)} placeholder="Chave Pix (CNPJ, e-mail, telefone…)"
-            className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1.5 text-xs text-white outline-none focus:border-[color:var(--color-brand)]" />
+            className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1.5 text-xs text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" />
           <div className="grid grid-cols-2 gap-2">
             <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome do recebedor"
-              className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1.5 text-xs text-white outline-none focus:border-[color:var(--color-brand)]" />
+              className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1.5 text-xs text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" />
             <input value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Cidade"
-              className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1.5 text-xs text-white outline-none focus:border-[color:var(--color-brand)]" />
+              className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1.5 text-xs text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" />
           </div>
           <button onClick={save} disabled={!chave || !nome || !cidade}
             className="w-full rounded-md bg-[color:var(--color-brand)] py-1.5 text-xs font-semibold text-black disabled:opacity-50">
@@ -85,7 +85,7 @@ export function PixCharge({ valor, txid }: { valor: number; txid?: string }) {
           <QrCode className="h-3.5 w-3.5" />
           Cobrar via Pix · {valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
         </span>
-        <button onClick={() => setEditing(true)} className="text-[10px] text-[color:var(--color-muted)] hover:text-white">
+        <button onClick={() => setEditing(true)} className="text-[10px] text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
           trocar chave
         </button>
       </div>
@@ -93,7 +93,7 @@ export function PixCharge({ valor, txid }: { valor: number; txid?: string }) {
         <div className="rounded-lg bg-white p-2">
           <QRCodeSVG value={code} size={150} />
         </div>
-        <button onClick={copy} className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-1.5 text-xs text-white">
+        <button onClick={copy} className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-1.5 text-xs text-[color:var(--color-text-strong)]">
           {copied ? <Check className="h-3.5 w-3.5 text-[color:var(--color-brand)]" /> : <Copy className="h-3.5 w-3.5" />}
           {copied ? "Copiado!" : "Copiar Pix Copia e Cola"}
         </button>

@@ -175,7 +175,7 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
   return (
     <div className="grid-backdrop min-h-screen px-4 py-8">
       <div className="mx-auto max-w-md">
-        <Link href="/cartoes" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-white">
+        <Link href="/cartoes" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
           <ArrowLeft className="h-3 w-3" /> Cartões de frota
         </Link>
 
@@ -191,7 +191,7 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
           <div className="mt-2 rounded-[18px] bg-black p-4">
             {!receipt ? (
               <>
-                <div className="flex items-center gap-2 text-white">
+                <div className="flex items-center gap-2 text-[color:var(--color-text-strong)]">
                   <CreditCard className="h-4 w-4 text-[color:var(--color-brand)]" />
                   <span className="text-sm font-semibold">Autorizar abastecimento</span>
                 </div>
@@ -204,7 +204,7 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
                     placeholder="7000 0000 0000 0000"
-                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2.5 font-mono text-sm text-white outline-none focus:border-[color:var(--color-brand)]"
+                    className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2.5 font-mono text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]"
                   />
                 </label>
 
@@ -223,7 +223,7 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
                       <button
                         key={c.card_number}
                         onClick={() => setCardNumber(c.card_number)}
-                        className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1 text-[10px] text-[color:var(--color-muted)] hover:text-white"
+                        className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1 text-[10px] text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]"
                         title={c.holder_name ?? ""}
                       >
                         <Nfc className="h-3 w-3" />
@@ -241,24 +241,24 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
                   <label className="block">
                     <span className="mb-1 block text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">Litros</span>
                     <input value={liters} onChange={(e) => setLiters(e.target.value)} type="number" min={0}
-                      className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-2 font-mono text-sm text-white outline-none focus:border-[color:var(--color-brand)]" />
+                      className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-2 font-mono text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" />
                   </label>
                   <label className="block">
                     <span className="mb-1 block text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">R$/L</span>
                     <input value={price} onChange={(e) => setPrice(e.target.value)} type="number" min={0} step="0.01"
-                      className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-2 font-mono text-sm text-white outline-none focus:border-[color:var(--color-brand)]" />
+                      className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-2 font-mono text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" />
                   </label>
                   <label className="block">
                     <span className="mb-1 block text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">PIN</span>
                     <input value={pin} onChange={(e) => setPin(e.target.value)} maxLength={4} inputMode="numeric"
-                      className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-2 font-mono text-sm text-white outline-none focus:border-[color:var(--color-brand)]" placeholder="••••" />
+                      className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-2 font-mono text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" placeholder="••••" />
                   </label>
                 </div>
 
                 <label className="mt-3 block">
                   <span className="mb-1 block text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">Bomba</span>
                   <select value={pumpId} onChange={(e) => setPumpId(e.target.value)}
-                    className="w-full appearance-none rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-sm text-white outline-none focus:border-[color:var(--color-brand)]">
+                    className="w-full appearance-none rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]">
                     {pumps.length === 0 ? <option value="">Sem bomba</option> : null}
                     {pumps.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -270,7 +270,7 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
 
                 <div className="mt-4 flex items-center justify-between rounded-lg bg-[color:var(--color-surface)] px-3 py-2">
                   <span className="text-xs text-[color:var(--color-muted)]">Total</span>
-                  <span className="font-mono text-lg font-semibold text-white">
+                  <span className="font-mono text-lg font-semibold text-[color:var(--color-text-strong)]">
                     {formatBRL((Number(liters) || 0) * (Number(price) || 0))}
                   </span>
                 </div>
@@ -333,7 +333,7 @@ function ReceiptView({ receipt, onNew }: { receipt: Receipt; onNew: () => void }
         </div>
       ) : null}
 
-      <button onClick={onNew} className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--color-border)] px-4 py-2 text-xs text-white">
+      <button onClick={onNew} className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--color-border)] px-4 py-2 text-xs text-[color:var(--color-text-strong)]">
         <Receipt className="h-3.5 w-3.5" />
         Nova transação
       </button>
@@ -345,7 +345,7 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
   return (
     <div className="flex items-center justify-between">
       <span className="text-[color:var(--color-muted)]">{label}</span>
-      <span className={strong ? "font-mono font-semibold text-white" : "font-mono text-white"}>{value}</span>
+      <span className={strong ? "font-mono font-semibold text-[color:var(--color-text-strong)]" : "font-mono text-[color:var(--color-text-strong)]"}>{value}</span>
     </div>
   );
 }

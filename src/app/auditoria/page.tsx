@@ -59,7 +59,7 @@ export default async function AuditoriaPage() {
       ) : rows.length === 0 ? (
         <Card className="px-6 py-16 text-center">
           <Activity className="mx-auto h-8 w-8 text-[color:var(--color-muted)]" />
-          <h3 className="mt-3 text-base font-semibold text-white">Nenhum registro de auditoria</h3>
+          <h3 className="mt-3 text-base font-semibold text-[color:var(--color-text-strong)]">Nenhum registro de auditoria</h3>
           <p className="mx-auto mt-1 max-w-md text-sm text-[color:var(--color-muted)]">
             Se você já cadastrou itens e nada aparece aqui, rode o arquivo
             <code className="mx-1 rounded bg-[color:var(--color-surface-2)] px-1 text-xs">supabase/audit.sql</code>
@@ -81,7 +81,7 @@ export default async function AuditoriaPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <Badge variant={op.variant}>{op.label}</Badge>
-                      <span className="font-medium text-white">
+                      <span className="font-medium text-[color:var(--color-text-strong)]">
                         {TABLE_LABEL[table] ?? table}
                       </span>
                     </div>

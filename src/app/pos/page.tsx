@@ -20,7 +20,7 @@ export default function POSPage() {
             </div>
 
             <div className="mt-2 overflow-hidden rounded-[16px] bg-black p-4">
-              <div className="flex items-center justify-between text-[10px] text-white">
+              <div className="flex items-center justify-between text-[10px] text-[color:var(--color-text-strong)]">
                 <span className="font-semibold text-[color:var(--color-brand)]">SGO-FUEL</span>
                 <span>14:22</span>
               </div>
@@ -29,7 +29,7 @@ export default function POSPage() {
                 <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
                   Frota autorizada
                 </div>
-                <div className="mt-1 font-mono text-sm text-white">RDB-2B02</div>
+                <div className="mt-1 font-mono text-sm text-[color:var(--color-text-strong)]">RDB-2B02</div>
                 <div className="text-xs text-[color:var(--color-muted)]">Volvo FH 540 · Antônio L.</div>
               </div>
 
@@ -37,7 +37,7 @@ export default function POSPage() {
                 <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-brand)]">
                   Cota dinâmica liberada
                 </div>
-                <div className="mt-1 text-xl font-semibold text-white">240,00 L</div>
+                <div className="mt-1 text-xl font-semibold text-[color:var(--color-text-strong)]">240,00 L</div>
                 <div className="text-[10px] text-[color:var(--color-muted)]">
                   Rota RTA-1184 · 1.180 km
                 </div>
@@ -64,19 +64,19 @@ export default function POSPage() {
         {/* Como funciona */}
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="text-base font-semibold text-white">Por que substituir o cartão?</h3>
+            <h3 className="text-base font-semibold text-[color:var(--color-text-strong)]">Por que substituir o cartão?</h3>
             <ul className="mt-3 space-y-2 text-sm text-[color:var(--color-muted)]">
               <li className="flex gap-2">
                 <CheckCircle2 className="h-4 w-4 flex-none text-[color:var(--color-brand)]" />
                 <span>
-                  Cartões plásticos são <span className="text-white">clonáveis</span> e geralmente compartilhados
+                  Cartões plásticos são <span className="text-[color:var(--color-text-strong)]">clonáveis</span> e geralmente compartilhados
                   entre motoristas — sem cadeia de custódia.
                 </span>
               </li>
               <li className="flex gap-2">
                 <CheckCircle2 className="h-4 w-4 flex-none text-[color:var(--color-brand)]" />
                 <span>
-                  Tag NFC é <span className="text-white">amarrada à placa</span> e ao app do motorista; sem ambos,
+                  Tag NFC é <span className="text-[color:var(--color-text-strong)]">amarrada à placa</span> e ao app do motorista; sem ambos,
                   não há autorização.
                 </span>
               </li>
@@ -84,14 +84,14 @@ export default function POSPage() {
                 <CheckCircle2 className="h-4 w-4 flex-none text-[color:var(--color-brand)]" />
                 <span>
                   Posto recebe pagamento via{" "}
-                  <span className="text-white">conciliação automática</span> — sem dependência de adquirente.
+                  <span className="text-[color:var(--color-text-strong)]">conciliação automática</span> — sem dependência de adquirente.
                 </span>
               </li>
             </ul>
           </Card>
 
           <Card className="p-5">
-            <h3 className="text-base font-semibold text-white">Compatibilidade</h3>
+            <h3 className="text-base font-semibold text-[color:var(--color-text-strong)]">Compatibilidade</h3>
             <div className="mt-3 grid gap-3 sm:grid-cols-3">
               <Pos title="PAX A920 Pro" />
               <Pos title="Gertec GPOS720" />
@@ -126,7 +126,7 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-[color:var(--color-muted)]">{label}</span>
-      <span className="text-white">{value}</span>
+      <span className="text-[color:var(--color-text-strong)]">{value}</span>
     </div>
   );
 }
@@ -135,7 +135,7 @@ function Pos({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-2 rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3">
       <Smartphone className="h-4 w-4 text-[color:var(--color-brand)]" />
-      <span className="text-sm text-white">{title}</span>
+      <span className="text-sm text-[color:var(--color-text-strong)]">{title}</span>
     </div>
   );
 }

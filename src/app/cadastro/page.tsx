@@ -74,9 +74,9 @@ export default function CadastroPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand)]">
             <Mail className="h-6 w-6" />
           </div>
-          <h1 className="mt-4 text-lg font-semibold text-white">Confirme seu e-mail</h1>
+          <h1 className="mt-4 text-lg font-semibold text-[color:var(--color-text-strong)]">Confirme seu e-mail</h1>
           <p className="mt-2 text-sm text-[color:var(--color-muted)]">
-            Enviamos um link de confirmação para <span className="text-white">{email}</span>.
+            Enviamos um link de confirmação para <span className="text-[color:var(--color-text-strong)]">{email}</span>.
             Após confirmar, faça login para criar sua empresa.
           </p>
           <Link href="/login" className="mt-4 inline-block text-sm font-medium text-[color:var(--color-brand)] hover:underline">
@@ -95,7 +95,7 @@ export default function CadastroPage() {
             <Fuel className="h-5 w-5" />
           </div>
           <div className="leading-tight">
-            <div className="text-base font-semibold text-white">SGO-Fuel</div>
+            <div className="text-base font-semibold text-[color:var(--color-text-strong)]">SGO-Fuel</div>
             <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
               Cadastrar empresa
             </div>
@@ -103,7 +103,7 @@ export default function CadastroPage() {
         </div>
 
         <div className="rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-6">
-          <h1 className="text-xl font-semibold text-white">Criar conta</h1>
+          <h1 className="text-xl font-semibold text-[color:var(--color-text-strong)]">Criar conta</h1>
           <p className="mt-1 text-sm text-[color:var(--color-muted)]">
             Cadastre sua transportadora e comece a operar.
           </p>
@@ -209,7 +209,7 @@ function Field({
           autoComplete={autoComplete}
           required={required}
           placeholder={placeholder}
-          className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[color:var(--color-muted)]"
+          className="w-full bg-transparent text-sm text-[color:var(--color-text-strong)] outline-none placeholder:text-[color:var(--color-muted)]"
         />
       </div>
     </label>

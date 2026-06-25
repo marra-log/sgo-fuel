@@ -61,7 +61,7 @@ export default async function RelatoriosPage() {
       {/* Barra de ação — some na impressão */}
       <div className="border-b border-gray-200 bg-[color:var(--color-background)] px-4 py-3 print:hidden">
         <div className="mx-auto flex max-w-4xl items-center justify-between">
-          <Link href="/dashboard" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-white">
+          <Link href="/dashboard" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
             <ArrowLeft className="h-3 w-3" /> Voltar ao painel
           </Link>
           <PrintButton />

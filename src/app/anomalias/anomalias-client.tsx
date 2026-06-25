@@ -130,7 +130,7 @@ export function AnomaliasClient({ rows }: { rows: AnomalyRow[] }) {
           <div className="mx-auto inline-flex items-center justify-center rounded-full bg-[color:var(--color-brand-soft)] p-3 text-[color:var(--color-brand)]">
             <AlertTriangle className="h-5 w-5" />
           </div>
-          <h3 className="mt-3 text-base font-semibold text-white">
+          <h3 className="mt-3 text-base font-semibold text-[color:var(--color-text-strong)]">
             {rows.length === 0 ? "Sem anomalias registradas" : "Nenhuma anomalia com esses filtros"}
           </h3>
           <p className="mt-1 text-sm text-[color:var(--color-muted)]">
@@ -141,7 +141,7 @@ export function AnomaliasClient({ rows }: { rows: AnomalyRow[] }) {
           {rows.length === 0 ? (
             <Link
               href="/simular"
-              className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-2 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-white"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-2 text-xs font-medium text-black hover:bg-[color:var(--color-brand-deep)] hover:text-[color:var(--color-text-strong)]"
             >
               <Zap className="h-3 w-3" />
               Simular um bloqueio
@@ -161,12 +161,12 @@ export function AnomaliasClient({ rows }: { rows: AnomalyRow[] }) {
                       <div key={i} className="border-r border-b border-white/10" />
                     ))}
                   </div>
-                  <Video className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 text-white/30" />
-                  <div className="absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-white">
+                  <Video className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 text-[color:var(--color-text-strong)]/30" />
+                  <div className="absolute right-2 top-2 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-[color:var(--color-text-strong)]">
                     <Camera className="h-3 w-3 text-[color:var(--color-brand)]" />
                     ALPR
                   </div>
-                  <div className="absolute left-2 bottom-2 rounded-md bg-black/70 px-2 py-1 font-mono text-[10px] text-white">
+                  <div className="absolute left-2 bottom-2 rounded-md bg-black/70 px-2 py-1 font-mono text-[10px] text-[color:var(--color-text-strong)]">
                     {c.placa}
                   </div>
                 </div>
@@ -182,7 +182,7 @@ export function AnomaliasClient({ rows }: { rows: AnomalyRow[] }) {
                     </div>
                     <span className="text-xs text-[color:var(--color-muted)]">{timeAgo(c.detected_at)}</span>
                   </div>
-                  <h3 className="mt-2 text-lg font-semibold text-white">{TIPO_LABEL[c.type] ?? c.type}</h3>
+                  <h3 className="mt-2 text-lg font-semibold text-[color:var(--color-text-strong)]">{TIPO_LABEL[c.type] ?? c.type}</h3>
                   <p className="mt-1 text-sm text-[color:var(--color-muted)]">{c.description ?? "Sem descrição."}</p>
 
                   <div className="mt-4 grid gap-3 text-xs sm:grid-cols-3">
@@ -212,7 +212,7 @@ function Field({ label, value, mono }: { label: string; value: string; mono?: bo
   return (
     <div>
       <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">{label}</div>
-      <div className={`mt-0.5 text-sm text-white ${mono ? "font-mono" : ""}`}>{value}</div>
+      <div className={`mt-0.5 text-sm text-[color:var(--color-text-strong)] ${mono ? "font-mono" : ""}`}>{value}</div>
     </div>
   );
 }

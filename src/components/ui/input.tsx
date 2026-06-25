@@ -7,7 +7,7 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
       <input
         ref={ref}
         className={cn(
-          "w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-white outline-none placeholder:text-[color:var(--color-muted)] focus:border-[color:var(--color-brand)] disabled:opacity-60",
+          "w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-[color:var(--color-text-strong)] outline-none placeholder:text-[color:var(--color-muted)] focus:border-[color:var(--color-brand)] disabled:opacity-60",
           className
         )}
         {...props}
@@ -22,7 +22,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTML
       <textarea
         ref={ref}
         className={cn(
-          "w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-white outline-none placeholder:text-[color:var(--color-muted)] focus:border-[color:var(--color-brand)] disabled:opacity-60",
+          "w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-[color:var(--color-text-strong)] outline-none placeholder:text-[color:var(--color-muted)] focus:border-[color:var(--color-brand)] disabled:opacity-60",
           className
         )}
         {...props}
@@ -37,7 +37,7 @@ export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
       <select
         ref={ref}
         className={cn(
-          "w-full appearance-none rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-white outline-none focus:border-[color:var(--color-brand)] disabled:opacity-60",
+          "w-full appearance-none rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)] disabled:opacity-60",
           className
         )}
         {...props}

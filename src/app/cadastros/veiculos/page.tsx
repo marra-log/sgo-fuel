@@ -61,7 +61,7 @@ export default async function VeiculosPage() {
                     <td className="px-5 py-3">
                       <Link
                         href={`/cadastros/veiculos/${v.id}`}
-                        className="flex items-center gap-2 font-mono font-medium text-white hover:text-[color:var(--color-brand)]"
+                        className="flex items-center gap-2 font-mono font-medium text-[color:var(--color-text-strong)] hover:text-[color:var(--color-brand)]"
                       >
                         <Truck className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
                         {v.plate}
@@ -70,10 +70,10 @@ export default async function VeiculosPage() {
                     <td className="px-5 py-3 text-[color:var(--color-muted)]">{v.model ?? "—"}</td>
                     <td className="px-5 py-3 text-xs text-[color:var(--color-muted)]">{fuelLabel(v.fuel_type)}</td>
                     <td className="px-5 py-3 text-[color:var(--color-muted)]">{v.drivers?.name ?? "—"}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">
                       {v.avg_consumption ? `${v.avg_consumption} km/L` : "—"}
                     </td>
-                    <td className="px-5 py-3 text-right font-mono text-white">
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">
                       {v.current_odometer?.toLocaleString("pt-BR") ?? "—"}
                     </td>
                   </tr>

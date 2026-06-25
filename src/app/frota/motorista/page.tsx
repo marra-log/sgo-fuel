@@ -15,24 +15,24 @@ export default function PainelMotoristaPage() {
     <div className="min-h-screen">
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <Link href="/frota" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-white">
+        <Link href="/frota" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
           <ArrowLeft className="h-3 w-3" /> Plataforma Cartão Frota
         </Link>
 
         <div className="mt-3">
           <Badge variant="info" className="mb-2">Painel do Motorista</Badge>
-          <h1 className="text-xl font-semibold text-white sm:text-2xl">Olá, {MOTORISTA.nome}</h1>
+          <h1 className="text-xl font-semibold text-[color:var(--color-text-strong)] sm:text-2xl">Olá, {MOTORISTA.nome}</h1>
           <p className="text-xs text-[color:var(--color-muted)]">{MOTORISTA.veiculo} · {MOTORISTA.placa}</p>
         </div>
 
         {/* Cartão */}
-        <div className="mt-6 rounded-2xl bg-gradient-to-br from-[#2f6df6] to-[#16306e] p-5 text-white shadow-[0_20px_40px_-20px_rgba(47,109,246,0.6)]">
+        <div className="mt-6 surface-dark rounded-2xl bg-gradient-to-br from-[#2f6df6] to-[#16306e] p-5 text-[color:var(--color-text-strong)] shadow-[0_20px_40px_-20px_rgba(47,109,246,0.6)]">
           <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-widest text-white/80">SGO-Fuel · Cartão Frota</span>
+            <span className="text-xs uppercase tracking-widest text-[color:var(--color-text-strong)]/80">SGO-Fuel · Cartão Frota</span>
             <CreditCard className="h-5 w-5" />
           </div>
           <div className="mt-6 font-mono text-lg tracking-widest">{MOTORISTA.cartao}</div>
-          <div className="mt-3 flex items-center justify-between text-xs text-white/80">
+          <div className="mt-3 flex items-center justify-between text-xs text-[color:var(--color-text-strong)]/80">
             <span>{MOTORISTA.nome}</span>
             <Badge variant="success">Ativo</Badge>
           </div>
@@ -50,13 +50,13 @@ export default function PainelMotoristaPage() {
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-[color:var(--color-muted)]">
               <Fuel className="h-3.5 w-3.5" /> Consumido no mês
             </div>
-            <div className="mt-2 text-2xl font-semibold text-white">{formatBRL(MOTORISTA.consumidoMes)}</div>
+            <div className="mt-2 text-2xl font-semibold text-[color:var(--color-text-strong)]">{formatBRL(MOTORISTA.consumidoMes)}</div>
           </Card>
           <Card className="p-5">
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-[color:var(--color-muted)]">
               <CreditCard className="h-3.5 w-3.5" /> Limite mensal
             </div>
-            <div className="mt-2 text-2xl font-semibold text-white">{formatBRL(MOTORISTA.limiteMensal)}</div>
+            <div className="mt-2 text-2xl font-semibold text-[color:var(--color-text-strong)]">{formatBRL(MOTORISTA.limiteMensal)}</div>
             <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[color:var(--color-surface-2)]">
               <div className="h-full bg-[color:var(--color-brand)]" style={{ width: `${pctUso}%` }} />
             </div>
@@ -67,16 +67,16 @@ export default function PainelMotoristaPage() {
         {/* Últimos abastecimentos */}
         <Card className="mt-4 overflow-hidden">
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Últimos abastecimentos</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Últimos abastecimentos</h2>
           </div>
           <div className="divide-y divide-[color:var(--color-border)]">
             {MOTORISTA.ultimos.map((u, i) => (
               <div key={i} className="flex items-center justify-between px-5 py-3 text-sm">
                 <div>
-                  <div className="font-medium text-white">{u.posto}</div>
+                  <div className="font-medium text-[color:var(--color-text-strong)]">{u.posto}</div>
                   <div className="text-xs text-[color:var(--color-muted)]">{u.data} · {u.combustivel} · {formatNumber(u.litros)} L</div>
                 </div>
-                <div className="font-mono text-white">{formatBRL(u.valor)}</div>
+                <div className="font-mono text-[color:var(--color-text-strong)]">{formatBRL(u.valor)}</div>
               </div>
             ))}
           </div>
@@ -85,7 +85,7 @@ export default function PainelMotoristaPage() {
         {/* Postos credenciados */}
         <Card className="mt-4 overflow-hidden">
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Postos credenciados</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Postos credenciados</h2>
             <p className="text-xs text-[color:var(--color-muted)]">Onde seu cartão é aceito, com o preço negociado.</p>
           </div>
           <div className="divide-y divide-[color:var(--color-border)]">
@@ -94,12 +94,12 @@ export default function PainelMotoristaPage() {
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
                   <div>
-                    <div className="font-medium text-white">{p.posto}</div>
+                    <div className="font-medium text-[color:var(--color-text-strong)]">{p.posto}</div>
                     <div className="text-xs text-[color:var(--color-muted)]">{p.cidade}</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono text-sm text-white">{formatBRL(p.dieselS10)}</div>
+                  <div className="font-mono text-sm text-[color:var(--color-text-strong)]">{formatBRL(p.dieselS10)}</div>
                   <div className="text-[10px] text-[color:var(--color-muted)]">Diesel S-10</div>
                 </div>
               </div>

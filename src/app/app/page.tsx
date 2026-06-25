@@ -17,7 +17,7 @@ export default async function AppHomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icon.svg" alt="SGO-Fuel" className="h-10 w-10" />
         </div>
-        <h1 className="text-lg font-semibold text-white">SGO-Fuel · Motorista</h1>
+        <h1 className="text-lg font-semibold text-[color:var(--color-text-strong)]">SGO-Fuel · Motorista</h1>
         <p className="text-sm text-[color:var(--color-muted)]">
           Faça login para acessar o app do motorista.
         </p>

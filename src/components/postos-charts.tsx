@@ -131,7 +131,7 @@ export function MixLegend({ data }: { data: Array<{ name: string; value: number 
             <span className="h-2 w-2 rounded-full" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
             {d.name}
           </span>
-          <span className="font-mono text-white">{Math.round((d.value / total) * 100)}%</span>
+          <span className="font-mono text-[color:var(--color-text-strong)]">{Math.round((d.value / total) * 100)}%</span>
         </div>
       ))}
     </div>

@@ -56,7 +56,7 @@ export default function PostosPage() {
             <span className="mb-2 inline-block rounded-full border border-[color:var(--color-brand)]/40 bg-[color:var(--color-brand-soft)] px-3 py-1 text-xs font-medium text-[color:var(--color-brand)]">
               Rede de Postos
             </span>
-            <h1 className="text-2xl font-semibold text-white sm:text-3xl">Gestão da rede</h1>
+            <h1 className="text-2xl font-semibold text-[color:var(--color-text-strong)] sm:text-3xl">Gestão da rede</h1>
             <p className="mt-1 max-w-2xl text-sm text-[color:var(--color-muted)]">
               Visão consolidada de {kpis.totalPostos} postos · faturamento, volume, ticket médio e ranking.
               <span className="ml-1 text-[color:var(--color-muted)]">(dados de demonstração)</span>
@@ -100,7 +100,7 @@ export default function PostosPage() {
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           <Card className="lg:col-span-2">
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Faturamento da rede · 12 meses</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Faturamento da rede · 12 meses</h2>
               <p className="text-xs text-[color:var(--color-muted)]">Soma de todos os postos ativos.</p>
             </div>
             <div className="px-3 py-4">
@@ -110,7 +110,7 @@ export default function PostosPage() {
 
           <Card>
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Mix de combustível</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Mix de combustível</h2>
               <p className="text-xs text-[color:var(--color-muted)]">Participação no volume.</p>
             </div>
             <div className="px-5 py-4">
@@ -123,7 +123,7 @@ export default function PostosPage() {
         <div className="mt-4 grid gap-4 lg:grid-cols-3">
           <Card className="lg:col-span-2">
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Volume vendido · 12 meses</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Volume vendido · 12 meses</h2>
               <p className="text-xs text-[color:var(--color-muted)]">Litros consolidados por mês.</p>
             </div>
             <div className="px-3 py-4">
@@ -133,7 +133,7 @@ export default function PostosPage() {
 
           <Card>
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Top postos · faturamento</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Top postos · faturamento</h2>
               <p className="text-xs text-[color:var(--color-muted)]">Mês corrente.</p>
             </div>
             <div className="px-3 py-4">
@@ -146,7 +146,7 @@ export default function PostosPage() {
         <Card className="mt-6 overflow-hidden">
           <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
             <div>
-              <h2 className="text-base font-semibold text-white">Postos da rede</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Postos da rede</h2>
               <p className="text-xs text-[color:var(--color-muted)]">Clique para abrir o painel do posto.</p>
             </div>
             <Badge variant="info">
@@ -174,7 +174,7 @@ export default function PostosPage() {
                   return (
                     <tr key={p.id} className="transition-colors hover:bg-[color:var(--color-surface-2)]/50">
                       <td className="px-5 py-3">
-                        <Link href={`/postos/${p.id}`} className="flex items-center gap-2 font-medium text-white hover:text-[color:var(--color-brand)]">
+                        <Link href={`/postos/${p.id}`} className="flex items-center gap-2 font-medium text-[color:var(--color-text-strong)] hover:text-[color:var(--color-brand)]">
                           <Fuel className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
                           {p.nome}
                         </Link>
@@ -186,10 +186,10 @@ export default function PostosPage() {
                         </span>
                       </td>
                       <td className="px-5 py-3 text-[color:var(--color-muted)]">{p.bandeira}</td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{p.bombas}</td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{formatNumber(p.litrosMes)} L</td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(p.faturamentoMes)}</td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{p.margemPct}%</td>
+                      <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{p.bombas}</td>
+                      <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(p.litrosMes)} L</td>
+                      <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(p.faturamentoMes)}</td>
+                      <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{p.margemPct}%</td>
                       <td className="px-5 py-3 text-right">
                         <Badge variant={st.tone}>{st.label}</Badge>
                       </td>
@@ -228,7 +228,7 @@ function Kpi({
         <span className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">{title}</span>
         <span className="text-[color:var(--color-muted)]">{icon}</span>
       </div>
-      <div className="mt-3 text-2xl font-semibold text-white">{value}</div>
+      <div className="mt-3 text-2xl font-semibold text-[color:var(--color-text-strong)]">{value}</div>
       <div className="mt-2 inline-flex items-center gap-1 text-xs text-[color:var(--color-brand)]">
         <ArrowUpRight className="h-3 w-3" />
         {delta}

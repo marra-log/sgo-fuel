@@ -165,7 +165,7 @@ export function MotoristaApp({
       <div className="flex min-h-screen flex-col px-5 py-8">
         <Header />
         <div className="mt-8">
-          <h2 className="text-base font-semibold text-white">Quem é você?</h2>
+          <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Quem é você?</h2>
           <p className="mt-1 text-sm text-[color:var(--color-muted)]">
             Selecione seu nome para acessar sua cota e fazer check-in.
           </p>
@@ -190,7 +190,7 @@ export function MotoristaApp({
                     <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[color:var(--color-surface-2)] text-[color:var(--color-muted)]">
                       <UserIcon className="h-4 w-4" />
                     </span>
-                    <span className="font-medium text-white">{d.name}</span>
+                    <span className="font-medium text-[color:var(--color-text-strong)]">{d.name}</span>
                   </span>
                   <span className="text-xs text-[color:var(--color-muted)]">score {d.score}</span>
                 </button>
@@ -213,7 +213,7 @@ export function MotoristaApp({
           <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
             Olá, motorista
           </div>
-          <div className="text-lg font-semibold text-white">{driver.name}</div>
+          <div className="text-lg font-semibold text-[color:var(--color-text-strong)]">{driver.name}</div>
         </div>
         <button
           onClick={() => {
@@ -249,7 +249,7 @@ export function MotoristaApp({
         </div>
         {vehicle ? (
           <div className="mt-1">
-            <div className="font-mono text-sm text-white">{vehicle.plate}</div>
+            <div className="font-mono text-sm text-[color:var(--color-text-strong)]">{vehicle.plate}</div>
             <div className="text-xs text-[color:var(--color-muted)]">
               {vehicle.model ?? "—"} · {fuelLabel(vehicle.fuel_type)} ·{" "}
               {formatNumber(vehicle.current_odometer ?? 0)} km
@@ -270,7 +270,7 @@ export function MotoristaApp({
         <select
           value={pumpId}
           onChange={(e) => setPumpId(e.target.value)}
-          className="mt-2 w-full appearance-none rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-white outline-none focus:border-[color:var(--color-brand)]"
+          className="mt-2 w-full appearance-none rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]"
         >
           {pumps.length === 0 ? <option value="">Nenhuma bomba</option> : null}
           {pumps.map((p) => (
@@ -319,13 +319,13 @@ export function MotoristaApp({
                 className="flex items-center justify-between rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-4 py-3"
               >
                 <div>
-                  <div className="text-sm text-white">
+                  <div className="text-sm text-[color:var(--color-text-strong)]">
                     {h.status === "BLOCKED" ? "Bloqueado" : h.status === "COMPLETED" ? "Concluído" : "Autorizado"}
                   </div>
                   <div className="text-[11px] text-[color:var(--color-muted)]">{timeAgo(h.started_at)}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono text-sm text-white">
+                  <div className="font-mono text-sm text-[color:var(--color-text-strong)]">
                     {h.delivered_l != null ? `${formatNumber(h.delivered_l)} L` : `cota ${formatNumber(h.quota_l)} L`}
                   </div>
                   {h.status === "COMPLETED" ? (
@@ -350,7 +350,7 @@ function Header() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/icon.svg" alt="SGO-Fuel" className="h-8 w-8 rounded-lg" />
         <div className="leading-tight">
-          <div className="text-sm font-semibold text-white">SGO-Fuel</div>
+          <div className="text-sm font-semibold text-[color:var(--color-text-strong)]">SGO-Fuel</div>
           <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
             App do Motorista
           </div>

@@ -99,7 +99,7 @@ export function DriverForm({ initial }: { initial?: DriverFormData }) {
         <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(31) 99999-9999" />
       </FormField>
       <FormField label="Status">
-        <label className="flex items-center gap-2 text-sm text-white">
+        <label className="flex items-center gap-2 text-sm text-[color:var(--color-text-strong)]">
           <input
             type="checkbox"
             checked={active}

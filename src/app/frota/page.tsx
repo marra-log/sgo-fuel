@@ -40,7 +40,7 @@ export default function FrotaHubPage() {
             <CreditCard className="h-3 w-3" />
             Plataforma Cartão Frota
           </Badge>
-          <h1 className="text-3xl font-semibold text-white">Três painéis, uma plataforma</h1>
+          <h1 className="text-3xl font-semibold text-[color:var(--color-text-strong)]">Três painéis, uma plataforma</h1>
           <p className="mt-2 max-w-2xl text-sm text-[color:var(--color-muted)]">
             Estrutura completa de cartão de combustível para frotas — cliente, motorista e posto, cada
             um com seu painel e funcionalidades. <span className="text-[color:var(--color-muted)]">(dados de demonstração)</span>
@@ -54,7 +54,7 @@ export default function FrotaHubPage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand)]">
                   {p.icon}
                 </div>
-                <h2 className="mt-4 text-lg font-semibold text-white">{p.title}</h2>
+                <h2 className="mt-4 text-lg font-semibold text-[color:var(--color-text-strong)]">{p.title}</h2>
                 <p className="mt-1 text-sm text-[color:var(--color-muted)]">{p.desc}</p>
                 <ul className="mt-4 space-y-1.5">
                   {p.bullets.map((b) => (

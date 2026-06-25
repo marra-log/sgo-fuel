@@ -95,7 +95,7 @@ export default function EmpresaPage() {
       <div className="mb-4">
         <Link
           href="/cadastros"
-          className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-white"
+          className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]"
         >
           <ArrowLeft className="h-3 w-3" /> Voltar para cadastros
         </Link>
@@ -107,7 +107,7 @@ export default function EmpresaPage() {
             <Building2 className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-white">
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">
               {tenant ? "Editar empresa" : "Criar empresa"}
             </h2>
             <p className="text-xs text-[color:var(--color-muted)]">
@@ -190,7 +190,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         required={required}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-white outline-none placeholder:text-[color:var(--color-muted)] focus:border-[color:var(--color-brand)]"
+        className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2.5 text-sm text-[color:var(--color-text-strong)] outline-none placeholder:text-[color:var(--color-muted)] focus:border-[color:var(--color-brand)]"
       />
     </label>
   );

@@ -14,7 +14,7 @@ export default function LoginPage() {
             <Fuel className="h-5 w-5" />
           </div>
           <div className="leading-tight">
-            <div className="text-base font-semibold text-white">SGO-Fuel</div>
+            <div className="text-base font-semibold text-[color:var(--color-text-strong)]">SGO-Fuel</div>
             <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
               Aether IA · Portal do Gestor
             </div>
@@ -22,7 +22,7 @@ export default function LoginPage() {
         </div>
 
         <div className="rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-6">
-          <h1 className="text-xl font-semibold text-white">Entrar</h1>
+          <h1 className="text-xl font-semibold text-[color:var(--color-text-strong)]">Entrar</h1>
           <p className="mt-1 text-sm text-[color:var(--color-muted)]">
             Acesse o painel da sua empresa.
           </p>

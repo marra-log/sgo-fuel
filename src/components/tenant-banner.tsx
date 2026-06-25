@@ -73,7 +73,7 @@ export async function TenantBanner() {
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-[color:var(--color-brand)]">
             <CheckCircle2 className="h-4 w-4" />
-            <span className="text-sm font-medium text-white">
+            <span className="text-sm font-medium text-[color:var(--color-text-strong)]">
               Conectado · {tenantName}
             </span>
           </div>
@@ -89,7 +89,7 @@ export async function TenantBanner() {
               key={s.label}
               className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2 py-1 text-xs text-[color:var(--color-muted)]"
             >
-              <span className="font-mono text-white">{s.count}</span> {s.label}
+              <span className="font-mono text-[color:var(--color-text-strong)]">{s.count}</span> {s.label}
             </span>
           ))}
           <Link

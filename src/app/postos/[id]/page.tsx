@@ -39,7 +39,7 @@ export default async function PostoDetalhePage({ params }: { params: Promise<{ i
     <div className="min-h-screen">
       <SiteHeader />
       <main className="mx-auto max-w-7xl px-4 py-8">
-        <Link href="/postos" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-white">
+        <Link href="/postos" className="inline-flex items-center gap-1 text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]">
           <ArrowLeft className="h-3 w-3" /> Voltar para a rede
         </Link>
 
@@ -47,7 +47,7 @@ export default async function PostoDetalhePage({ params }: { params: Promise<{ i
         <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold text-white">{posto.nome}</h1>
+              <h1 className="text-2xl font-semibold text-[color:var(--color-text-strong)]">{posto.nome}</h1>
               <Badge variant={st.tone}>{st.label}</Badge>
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-[color:var(--color-muted)]">
@@ -77,7 +77,7 @@ export default async function PostoDetalhePage({ params }: { params: Promise<{ i
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           <Card className="lg:col-span-2">
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Faturamento · 12 meses</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Faturamento · 12 meses</h2>
             </div>
             <div className="px-3 py-4">
               <PostoSerieLine data={posto.serie} />
@@ -85,7 +85,7 @@ export default async function PostoDetalhePage({ params }: { params: Promise<{ i
           </Card>
           <Card>
             <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Mix do posto</h2>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Mix do posto</h2>
             </div>
             <div className="px-5 py-4">
               <MixPie data={mix} />
@@ -97,7 +97,7 @@ export default async function PostoDetalhePage({ params }: { params: Promise<{ i
         {/* Vendas por combustível */}
         <Card className="mt-6 overflow-hidden">
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-white">Vendas por combustível · mês</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Vendas por combustível · mês</h2>
             <p className="text-xs text-[color:var(--color-muted)]">Volume × preço médio de venda.</p>
           </div>
           <div className="overflow-x-auto">
@@ -113,10 +113,10 @@ export default async function PostoDetalhePage({ params }: { params: Promise<{ i
               <tbody className="divide-y divide-[color:var(--color-border)]">
                 {posto.mix.map((m) => (
                   <tr key={m.tipo}>
-                    <td className="px-5 py-3 font-medium text-white">{FUEL_LABEL[m.tipo]}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{formatNumber(m.litros)} L</td>
+                    <td className="px-5 py-3 font-medium text-[color:var(--color-text-strong)]">{FUEL_LABEL[m.tipo]}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(m.litros)} L</td>
                     <td className="px-5 py-3 text-right font-mono text-[color:var(--color-muted)]">{formatBRL(PRECO[m.tipo])}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(m.litros * PRECO[m.tipo])}</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatBRL(m.litros * PRECO[m.tipo])}</td>
                   </tr>
                 ))}
               </tbody>
@@ -135,7 +135,7 @@ function Kpi({ icon, title, value }: { icon: React.ReactNode; title: string; val
         <span className="text-xs uppercase tracking-wider text-[color:var(--color-muted)]">{title}</span>
         <span className="text-[color:var(--color-muted)]">{icon}</span>
       </div>
-      <div className="mt-3 text-2xl font-semibold text-white">{value}</div>
+      <div className="mt-3 text-2xl font-semibold text-[color:var(--color-text-strong)]">{value}</div>
     </Card>
   );
 }

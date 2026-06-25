@@ -169,7 +169,7 @@ export function SimuladorClient({
             <AlertTriangle className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-white">
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">
               Faltam cadastros para simular
             </h2>
             <p className="mt-1 text-sm text-[color:var(--color-muted)]">
@@ -179,17 +179,17 @@ export function SimuladorClient({
         </div>
         <div className="mt-6 flex flex-wrap gap-2">
           {drivers.length === 0 && (
-            <Link href="/cadastros/motoristas/novo" className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+            <Link href="/cadastros/motoristas/novo" className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
               Cadastrar motorista <ArrowRight className="h-3 w-3" />
             </Link>
           )}
           {vehicles.length === 0 && (
-            <Link href="/cadastros/veiculos/novo" className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+            <Link href="/cadastros/veiculos/novo" className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
               Cadastrar veículo <ArrowRight className="h-3 w-3" />
             </Link>
           )}
           {pumps.length === 0 && (
-            <Link href="/cadastros/bombas/novo" className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+            <Link href="/cadastros/bombas/novo" className="inline-flex items-center gap-1 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
               Cadastrar bomba <ArrowRight className="h-3 w-3" />
             </Link>
           )}
@@ -203,7 +203,7 @@ export function SimuladorClient({
       <Card className="p-6">
         <div className="flex items-center gap-2">
           <Zap className="h-4 w-4 text-[color:var(--color-brand)]" />
-          <h2 className="text-base font-semibold text-white">Disparar evento</h2>
+          <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Disparar evento</h2>
         </div>
         <p className="mt-1 text-xs text-[color:var(--color-muted)]">
           Tudo o que você criar aqui vira linha real no banco, com RLS isolando por empresa.
@@ -299,21 +299,21 @@ export function SimuladorClient({
       </Card>
 
       <Card className="p-6">
-        <h3 className="text-sm font-semibold text-white">Atalhos</h3>
+        <h3 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Atalhos</h3>
         <p className="mt-1 text-xs text-[color:var(--color-muted)]">
           O simulador é o substituto temporário do Totem IoT (Bloco B1). Quando o hardware
           entrar, os mesmos campos virão preenchidos pela câmera e relé.
         </p>
         <div className="mt-4 space-y-2">
-          <Link href="/dashboard" className="flex items-center gap-2 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+          <Link href="/dashboard" className="flex items-center gap-2 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
             <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
             Ver eventos no Dashboard
           </Link>
-          <Link href="/anomalias" className="flex items-center gap-2 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+          <Link href="/anomalias" className="flex items-center gap-2 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
             <AlertTriangle className="h-3.5 w-3.5 text-[color:var(--color-danger)]" />
             Ver anomalias abertas
           </Link>
-          <Link href="/ranking" className="flex items-center gap-2 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-white hover:bg-[color:var(--color-surface-2)]">
+          <Link href="/ranking" className="flex items-center gap-2 rounded-md border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
             <CheckCircle2 className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
             Ver ranking de motoristas
           </Link>

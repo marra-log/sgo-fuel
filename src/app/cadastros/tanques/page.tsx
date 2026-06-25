@@ -62,7 +62,7 @@ export default async function TanquesPage() {
                     <td className="px-5 py-3">
                       <Link
                         href={`/cadastros/tanques/${t.id}`}
-                        className="flex items-center gap-2 font-medium text-white hover:text-[color:var(--color-brand)]"
+                        className="flex items-center gap-2 font-medium text-[color:var(--color-text-strong)] hover:text-[color:var(--color-brand)]"
                       >
                         <Fuel className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
                         {t.name}
@@ -70,7 +70,7 @@ export default async function TanquesPage() {
                     </td>
                     <td className="px-5 py-3 text-[color:var(--color-muted)]">{t.yards?.name ?? "—"}</td>
                     <td className="px-5 py-3 text-xs text-[color:var(--color-muted)]">{FUEL[t.fuel_type] ?? t.fuel_type}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">{t.capacity_l.toLocaleString("pt-BR")} L</td>
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{t.capacity_l.toLocaleString("pt-BR")} L</td>
                   </tr>
                 ))}
               </tbody>

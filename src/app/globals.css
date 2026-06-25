@@ -19,12 +19,37 @@
   --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace;
 }
 
+/* ===== Tema CLARO (override das variáveis) ===== */
+html[data-theme="light"] {
+  --color-background: #f3f5f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #eceff4;
+  --color-border: #dde2ea;
+  --color-muted: #5a6472;
+  --color-text: #1f2630;
+  --color-text-strong: #0d1117;
+  --color-brand-soft: rgba(25, 195, 125, 0.14);
+}
+
+/* Blocos que devem permanecer SEMPRE escuros (cartões, terminal, mockups),
+   mesmo no tema claro — força as variáveis para a paleta escura localmente. */
+.surface-dark,
+html[data-theme="light"] .bg-black {
+  --color-surface: #0e1014;
+  --color-surface-2: #14171d;
+  --color-border: #1f232c;
+  --color-muted: #9aa3b2;
+  --color-text: #e7ebf3;
+  --color-text-strong: #ffffff;
+}
+
 html, body {
   background-color: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 * {

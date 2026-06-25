@@ -98,7 +98,7 @@ function Field({
           onChange={(e) => onChange(e.target.value)}
           autoComplete={autoComplete}
           required={required}
-          className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[color:var(--color-muted)]"
+          className="w-full bg-transparent text-sm text-[color:var(--color-text-strong)] outline-none placeholder:text-[color:var(--color-muted)]"
         />
       </div>
     </label>

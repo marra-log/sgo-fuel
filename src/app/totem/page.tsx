@@ -19,7 +19,7 @@ export default function TotemPage() {
               <div className="absolute inset-0 grid-backdrop opacity-90" />
               <div className="relative flex h-full flex-col p-5">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs text-white">
+                  <div className="flex items-center gap-1.5 text-xs text-[color:var(--color-text-strong)]">
                     <Cpu className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
                     Aether IA · v2.4
                   </div>
@@ -42,7 +42,7 @@ export default function TotemPage() {
                       <div className="text-[8px] uppercase tracking-wider text-[color:var(--color-brand)]">
                         Placa
                       </div>
-                      <div className="font-mono text-xs text-white">RDA-1A01</div>
+                      <div className="font-mono text-xs text-[color:var(--color-text-strong)]">RDA-1A01</div>
                     </div>
                     <div className="absolute inset-x-0 h-8 scanline" />
                   </div>
@@ -76,7 +76,7 @@ export default function TotemPage() {
         {/* Specs */}
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="text-base font-semibold text-white">O que tem dentro</h3>
+            <h3 className="text-base font-semibold text-[color:var(--color-text-strong)]">O que tem dentro</h3>
             <p className="mt-1 text-sm text-[color:var(--color-muted)]">
               Componentes de prateleira coordenados por backend robusto em Node.js — preço pulverizado.
             </p>
@@ -89,7 +89,7 @@ export default function TotemPage() {
           </Card>
 
           <Card className="p-5">
-            <h3 className="text-base font-semibold text-white">Fluxo de autorização</h3>
+            <h3 className="text-base font-semibold text-[color:var(--color-text-strong)]">Fluxo de autorização</h3>
             <ol className="mt-3 space-y-3 text-sm text-[color:var(--color-text)]">
               <Step n={1} title="Motorista faz check-in no app" desc="Envia placa, rota e cota dinâmica calculada pela IA." />
               <Step n={2} title="Câmera lê a placa (ALPR)" desc="Cruza com a placa cadastrada para o motorista no momento." />
@@ -125,7 +125,7 @@ function Row({ label, value, ok }: { label: string; value: string; ok?: boolean 
   return (
     <div className="flex items-center justify-between">
       <span className="text-[color:var(--color-muted)]">{label}</span>
-      <span className={ok ? "text-[color:var(--color-brand)]" : "text-white"}>{value}</span>
+      <span className={ok ? "text-[color:var(--color-brand)]" : "text-[color:var(--color-text-strong)]"}>{value}</span>
     </div>
   );
 }
@@ -135,7 +135,7 @@ function Spec({ icon, title, desc }: { icon: React.ReactNode; title: string; des
     <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3">
       <div className="flex items-center gap-2 text-[color:var(--color-brand)]">
         {icon}
-        <span className="text-sm font-medium text-white">{title}</span>
+        <span className="text-sm font-medium text-[color:var(--color-text-strong)]">{title}</span>
       </div>
       <div className="mt-1 text-xs text-[color:var(--color-muted)]">{desc}</div>
     </div>
@@ -149,7 +149,7 @@ function Step({ n, title, desc }: { n: number; title: string; desc: string }) {
         {n}
       </span>
       <div>
-        <div className="text-sm font-medium text-white">{title}</div>
+        <div className="text-sm font-medium text-[color:var(--color-text-strong)]">{title}</div>
         <div className="text-xs text-[color:var(--color-muted)]">{desc}</div>
       </div>
     </li>

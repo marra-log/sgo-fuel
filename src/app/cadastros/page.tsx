@@ -118,7 +118,7 @@ export default async function CadastrosPage() {
                 <Badge variant="warning">A2</Badge>
               )}
             </div>
-            <h3 className="mt-4 text-base font-semibold text-white">{b.title}</h3>
+            <h3 className="mt-4 text-base font-semibold text-[color:var(--color-text-strong)]">{b.title}</h3>
             <p className="mt-1 text-sm text-[color:var(--color-muted)]">{b.desc}</p>
 
             {b.ready ? (

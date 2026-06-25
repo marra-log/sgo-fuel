@@ -84,7 +84,7 @@ export default async function ConciliacaoPage() {
       <Card className="mb-6 p-5">
         <div className="flex items-center gap-2">
           <Upload className="h-4 w-4 text-[color:var(--color-brand)]" />
-          <h2 className="text-base font-semibold text-white">Importar NFe (XML)</h2>
+          <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Importar NFe (XML)</h2>
         </div>
         <p className="mt-1 text-xs text-[color:var(--color-muted)]">
           Aceita o XML da NFe modelo 55. O parser identifica diesel, gasolina, etanol e arla
@@ -99,7 +99,7 @@ export default async function ConciliacaoPage() {
       <Card className="mb-6">
         <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
           <div>
-            <h2 className="text-base font-semibold text-white">Tanques físicos</h2>
+            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Tanques físicos</h2>
             <p className="text-xs text-[color:var(--color-muted)]">
               Entrada (NFe) × Saída (IoT, mês corrente). Diferença técnica esperada: até 0,8%.
             </p>
@@ -130,7 +130,7 @@ export default async function ConciliacaoPage() {
                 <div key={t.id} className="px-5 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <span className="text-sm font-medium text-white">{t.name}</span>
+                      <span className="text-sm font-medium text-[color:var(--color-text-strong)]">{t.name}</span>
                       <span className="ml-2 text-xs text-[color:var(--color-muted)]">
                         {FUEL[t.fuel_type] ?? t.fuel_type}
                       </span>
@@ -144,15 +144,15 @@ export default async function ConciliacaoPage() {
                   <div className="mt-2 grid grid-cols-1 gap-1.5 text-xs text-[color:var(--color-muted)] sm:grid-cols-3 sm:gap-3">
                     <span>
                       Entrada (NFe):{" "}
-                      <span className="font-mono text-white">{formatNumber(Math.round(entrada))} L</span>
+                      <span className="font-mono text-[color:var(--color-text-strong)]">{formatNumber(Math.round(entrada))} L</span>
                     </span>
                     <span>
                       Saída (IoT):{" "}
-                      <span className="font-mono text-white">{formatNumber(Math.round(saida))} L</span>
+                      <span className="font-mono text-[color:var(--color-text-strong)]">{formatNumber(Math.round(saida))} L</span>
                     </span>
                     <span className="sm:text-right">
                       Diferença:{" "}
-                      <span className="font-mono text-white">{formatNumber(Math.round(diff))} L</span>
+                      <span className="font-mono text-[color:var(--color-text-strong)]">{formatNumber(Math.round(diff))} L</span>
                     </span>
                   </div>
                   <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[color:var(--color-surface-2)]">
@@ -168,7 +168,7 @@ export default async function ConciliacaoPage() {
       {/* NFes importadas */}
       <Card>
         <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-          <h2 className="text-base font-semibold text-white">NFes de compra importadas</h2>
+          <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">NFes de compra importadas</h2>
           <p className="text-xs text-[color:var(--color-muted)]">
             {invoices.length} nota{invoices.length === 1 ? "" : "s"} no sistema.
           </p>
@@ -199,17 +199,17 @@ export default async function ConciliacaoPage() {
                     <td className="px-5 py-3 font-mono text-[11px] text-[color:var(--color-muted)]">
                       …{inv.access_key.slice(-12)}
                     </td>
-                    <td className="px-5 py-3 text-white">{inv.supplier ?? "—"}</td>
+                    <td className="px-5 py-3 text-[color:var(--color-text-strong)]">{inv.supplier ?? "—"}</td>
                     <td className="px-5 py-3 text-[color:var(--color-muted)]">
                       {inv.tank_id ? tankById.get(inv.tank_id)?.name ?? "—" : "—"}
                     </td>
                     <td className="px-5 py-3 text-[color:var(--color-muted)]">
                       {inv.issued_at ? new Date(inv.issued_at).toLocaleDateString("pt-BR") : "—"}
                     </td>
-                    <td className="px-5 py-3 text-right font-mono text-white">
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">
                       {formatNumber(Math.round(Number(inv.volume_l ?? 0)))} L
                     </td>
-                    <td className="px-5 py-3 text-right font-mono text-white">
+                    <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">
                       {formatBRL(Number(inv.value_brl ?? 0))}
                     </td>
                   </tr>

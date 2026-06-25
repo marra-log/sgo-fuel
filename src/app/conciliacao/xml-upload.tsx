@@ -125,7 +125,7 @@ export function XmlUpload({ tanks }: { tanks: Tank[] }) {
         <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-4">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-[color:var(--color-brand)]" />
-            <span className="text-sm font-medium text-white">{preview.fileName}</span>
+            <span className="text-sm font-medium text-[color:var(--color-text-strong)]">{preview.fileName}</span>
             {preview.fuelGuess ? <Badge variant="info">{preview.fuelGuess}</Badge> : null}
           </div>
 
@@ -199,7 +199,7 @@ function Info({
   return (
     <div className={className}>
       <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">{label}</div>
-      <div className={`mt-0.5 break-all text-white ${mono ? "font-mono text-xs" : "text-sm"}`}>{value}</div>
+      <div className={`mt-0.5 break-all text-[color:var(--color-text-strong)] ${mono ? "font-mono text-xs" : "text-sm"}`}>{value}</div>
     </div>
   );
 }
