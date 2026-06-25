@@ -46,6 +46,7 @@ declare module "lucide-react" {
   export const MapPin: LucideIcon;
   export const Medal: LucideIcon;
   export const Menu: LucideIcon;
+  export const MessageSquare: LucideIcon;
   export const Navigation: LucideIcon;
   export const Nfc: LucideIcon;
   export const Pencil: LucideIcon;
@@ -70,6 +71,7 @@ declare module "lucide-react" {
   export const Trophy: LucideIcon;
   export const Truck: LucideIcon;
   export const Upload: LucideIcon;
+  export const Unlock: LucideIcon;
   export const User: LucideIcon;
   export const Users: LucideIcon;
   export const Video: LucideIcon;

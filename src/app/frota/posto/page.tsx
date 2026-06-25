@@ -20,7 +20,9 @@ import {
   HISTORICO,
   cartoesFrota,
   transacoesRecentes,
+  novosCartoes,
 } from "@/lib/frota-mock";
+import { CartoesGestao } from "@/components/frota/cartoes-gestao";
 import { formatBRL, formatNumber } from "@/lib/utils";
 
 export const metadata = { title: "SGO-Fuel · Gestão do Posto" };
@@ -28,6 +30,7 @@ export const metadata = { title: "SGO-Fuel · Gestão do Posto" };
 export default function GestaoPostoPage() {
   const cartoes = cartoesFrota();
   const txs = transacoesRecentes(12);
+  const novos = novosCartoes();
 
   return (
     <div className="min-h-screen">
@@ -117,29 +120,32 @@ export default function GestaoPostoPage() {
               <Plus className="h-3 w-3" /> Emitir cartão (real)
             </Link>
           </div>
+          <CartoesGestao rows={cartoes} />
+        </Card>
+
+        {/* Novos cartões */}
+        <Card className="mt-6 overflow-hidden">
+          <div className="border-b border-[color:var(--color-border)] px-5 py-4">
+            <h2 className="text-base font-semibold text-white">Novos cartões emitidos</h2>
+            <p className="text-xs text-[color:var(--color-muted)]">Últimas emissões com número e data.</p>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[color:var(--color-surface-2)] text-left">
+                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Usuário</th>
                   <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Cartão</th>
-                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Motorista</th>
-                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Placa</th>
-                  <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Consumido / Limite</th>
-                  <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Status</th>
+                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Data</th>
+                  <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Hora</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[color:var(--color-border)]">
-                {cartoes.map((c, i) => (
+                {novos.map((n, i) => (
                   <tr key={i}>
-                    <td className="px-5 py-3 font-mono text-white">{c.numero}</td>
-                    <td className="px-5 py-3 text-[color:var(--color-muted)]">{c.motorista}</td>
-                    <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{c.placa}</td>
-                    <td className="px-5 py-3 text-right font-mono text-white">
-                      {formatBRL(c.consumido)} <span className="text-[color:var(--color-muted)]">/ {formatBRL(c.limite)}</span>
-                    </td>
-                    <td className="px-5 py-3 text-right">
-                      <Badge variant={c.status === "Ativo" ? "success" : "warning"}>{c.status}</Badge>
-                    </td>
+                    <td className="px-5 py-3 font-mono text-white">{n.usuario}</td>
+                    <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{n.cartao}</td>
+                    <td className="px-5 py-3 text-[color:var(--color-muted)]">{n.data}</td>
+                    <td className="px-5 py-3 text-right text-[color:var(--color-muted)]">{n.hora}</td>
                   </tr>
                 ))}
               </tbody>

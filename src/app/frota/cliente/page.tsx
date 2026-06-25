@@ -4,6 +4,10 @@ import { SiteHeader } from "@/components/site-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ConsumoDeptoBar, HistoricoArea } from "@/components/frota-charts";
+import { TransacoesInvalidasInterativo } from "@/components/frota/transacoes-invalidas";
+import { SaldosFiltravel } from "@/components/frota/saldos-filtravel";
+import { ExportDebitos } from "@/components/frota/export-debitos";
+import { MapaPostos } from "@/components/frota/mapa-postos";
 import {
   EMPRESA,
   DEPARTAMENTOS,
@@ -26,6 +30,7 @@ const STATUS_TONE: Record<string, "success" | "warning" | "info"> = {
 };
 
 export default function PainelClientePage() {
+  const debitos = relatorioDebitos(14);
   return (
     <div className="min-h-screen">
       <SiteHeader />
@@ -91,46 +96,18 @@ export default function PainelClientePage() {
           </Card>
         </div>
 
-        {/* Transações inválidas */}
+        {/* Transações inválidas (interativo: justificar / aprovar / negar) */}
         <Card className="mt-6 overflow-hidden">
-          <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
-            <div>
-              <h2 className="text-base font-semibold text-white">Transações inválidas passíveis de autorização</h2>
-              <p className="text-xs text-[color:var(--color-muted)]">A IA sinaliza inconsistências de KM, consumo e volume.</p>
-            </div>
-            <Badge variant="warning">
-              <AlertTriangle className="h-3 w-3" />
-              {TRANSACOES_INVALIDAS.length} alertas
-            </Badge>
+          <TransacoesInvalidasInterativo rows={TRANSACOES_INVALIDAS} />
+        </Card>
+
+        {/* Mapa de postos credenciados (geolocalização) */}
+        <Card className="mt-6 p-5">
+          <div className="mb-4">
+            <h2 className="text-base font-semibold text-white">Onde a frota abastece</h2>
+            <p className="text-xs text-[color:var(--color-muted)]">Postos credenciados e rotas (geolocalização).</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-[color:var(--color-surface-2)] text-left">
-                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Tipo</th>
-                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Data</th>
-                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Veículo</th>
-                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Placa</th>
-                  <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Motorista</th>
-                  <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[color:var(--color-border)]">
-                {TRANSACOES_INVALIDAS.map((t, i) => (
-                  <tr key={i} className="align-top">
-                    <td className="px-5 py-3 text-white">{t.tipo}</td>
-                    <td className="px-5 py-3 whitespace-nowrap text-[color:var(--color-muted)]">{t.data}</td>
-                    <td className="px-5 py-3 text-[color:var(--color-muted)]">{t.veiculo}</td>
-                    <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{t.placa}</td>
-                    <td className="px-5 py-3 text-[color:var(--color-muted)]">{t.motorista}</td>
-                    <td className="px-5 py-3 text-right">
-                      <Badge variant={STATUS_TONE[t.status]}>{t.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <MapaPostos />
         </Card>
 
         {/* Preços por estabelecimento */}
@@ -186,6 +163,7 @@ export default function PainelClientePage() {
               <span className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-1.5 text-[color:var(--color-muted)]">01/06/2026</span>
               <span className="text-[color:var(--color-muted)]">→</span>
               <span className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-1.5 text-[color:var(--color-muted)]">24/06/2026</span>
+              <ExportDebitos rows={debitos} />
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -205,7 +183,7 @@ export default function PainelClientePage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[color:var(--color-border)]">
-                {relatorioDebitos(14).map((d, i) => (
+                {debitos.map((d, i) => (
                   <tr key={i}>
                     <td className="px-4 py-3 font-mono text-white">{d.placa}</td>
                     <td className="px-4 py-3 text-[color:var(--color-muted)]">{d.motorista}</td>
@@ -254,32 +232,7 @@ export default function PainelClientePage() {
           </Card>
 
           <Card id="saldos" className="overflow-hidden scroll-mt-20">
-            <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-              <h2 className="text-base font-semibold text-white">Saldos por usuário</h2>
-              <p className="text-xs text-[color:var(--color-muted)]">Departamento, centro de custo e saldo atual.</p>
-            </div>
-            <div className="max-h-[420px] overflow-auto">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0">
-                  <tr className="bg-[color:var(--color-surface-2)] text-left">
-                    <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Usuário</th>
-                    <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Depto</th>
-                    <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Centro</th>
-                    <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Saldo</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[color:var(--color-border)]">
-                  {saldosUsuarios().map((s, i) => (
-                    <tr key={i}>
-                      <td className="px-5 py-3 font-mono text-white">{s.usuario}</td>
-                      <td className="px-5 py-3 text-[color:var(--color-muted)]">{s.departamento}</td>
-                      <td className="px-5 py-3 text-[color:var(--color-muted)]">{s.centroCusto}</td>
-                      <td className="px-5 py-3 text-right font-mono text-white">{formatBRL(s.saldoAtual)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <SaldosFiltravel rows={saldosUsuarios()} />
           </Card>
         </div>
 
