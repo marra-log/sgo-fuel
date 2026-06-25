@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ConsumoDeptoBar, HistoricoArea } from "@/components/frota-charts";
 import { TransacoesInvalidasInterativo } from "@/components/frota/transacoes-invalidas";
 import { SaldosFiltravel } from "@/components/frota/saldos-filtravel";
-import { ExportDebitos } from "@/components/frota/export-debitos";
+import { RelatorioDebitos } from "@/components/frota/relatorio-debitos";
 import { MapaPostos } from "@/components/frota/mapa-postos";
 import {
   EMPRESA,
@@ -152,54 +152,9 @@ export default function PainelClientePage() {
           </div>
         </Card>
 
-        {/* Relatório gerencial de débitos */}
+        {/* Relatório gerencial de débitos (filtro + busca + export) */}
         <Card id="debitos" className="mt-6 overflow-hidden scroll-mt-20">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[color:var(--color-border)] px-5 py-4">
-            <div>
-              <h2 className="text-base font-semibold text-white">Relatório gerencial de débitos</h2>
-              <p className="text-xs text-[color:var(--color-muted)]">Cada abastecimento com KM, consumo médio, valor e desconto.</p>
-            </div>
-            <div className="flex items-center gap-2 text-xs">
-              <span className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-1.5 text-[color:var(--color-muted)]">01/06/2026</span>
-              <span className="text-[color:var(--color-muted)]">→</span>
-              <span className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-1.5 text-[color:var(--color-muted)]">24/06/2026</span>
-              <ExportDebitos rows={debitos} />
-            </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-[color:var(--color-surface-2)] text-left">
-                  <th className="px-4 py-3 font-medium text-[color:var(--color-muted)]">Veículo</th>
-                  <th className="px-4 py-3 font-medium text-[color:var(--color-muted)]">Motorista</th>
-                  <th className="px-4 py-3 text-right font-medium text-[color:var(--color-muted)]">KM</th>
-                  <th className="px-4 py-3 text-right font-medium text-[color:var(--color-muted)]">Cons. médio</th>
-                  <th className="px-4 py-3 font-medium text-[color:var(--color-muted)]">Estabelecimento</th>
-                  <th className="px-4 py-3 font-medium text-[color:var(--color-muted)]">Data</th>
-                  <th className="px-4 py-3 text-right font-medium text-[color:var(--color-muted)]">Qtd (L)</th>
-                  <th className="px-4 py-3 text-right font-medium text-[color:var(--color-muted)]">Valor</th>
-                  <th className="px-4 py-3 text-right font-medium text-[color:var(--color-muted)]">Desc.</th>
-                  <th className="px-4 py-3 text-right font-medium text-[color:var(--color-muted)]">Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[color:var(--color-border)]">
-                {debitos.map((d, i) => (
-                  <tr key={i}>
-                    <td className="px-4 py-3 font-mono text-white">{d.placa}</td>
-                    <td className="px-4 py-3 text-[color:var(--color-muted)]">{d.motorista}</td>
-                    <td className="px-4 py-3 text-right font-mono text-[color:var(--color-muted)]">{formatNumber(d.km)}</td>
-                    <td className="px-4 py-3 text-right font-mono text-white">{d.consumoMedio.toFixed(2)}</td>
-                    <td className="px-4 py-3 text-[color:var(--color-muted)]">{d.estabelecimento}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-[color:var(--color-muted)]">{d.data}</td>
-                    <td className="px-4 py-3 text-right font-mono text-white">{formatNumber(d.quantidade)}</td>
-                    <td className="px-4 py-3 text-right font-mono text-[color:var(--color-muted)]">{formatBRL(d.valor)}</td>
-                    <td className="px-4 py-3 text-right font-mono text-[color:var(--color-muted)]">{formatBRL(d.desconto)}</td>
-                    <td className="px-4 py-3 text-right font-mono text-white">{formatBRL(d.total)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <RelatorioDebitos rows={debitos} />
         </Card>
 
         {/* Créditos + Saldos */}

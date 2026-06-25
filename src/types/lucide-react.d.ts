@@ -59,6 +59,7 @@ declare module "lucide-react" {
   export const Radar: LucideIcon;
   export const Receipt: LucideIcon;
   export const Save: LucideIcon;
+  export const Search: LucideIcon;
   export const Shuffle: LucideIcon;
   export const Scan: LucideIcon;
   export const Settings: LucideIcon;
