@@ -1,8 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, Building2, CreditCard, Store, Truck } from "lucide-react";
+import { ArrowRight, Building2, ClipboardCheck, CreditCard, FileWarning, Store, Truck } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
+const MODULOS = [
+  { href: "/multas", icon: <FileWarning className="h-5 w-5" />, title: "Multas & Infrações", desc: "Notificações, prazos de pagamento e pontuação por motorista." },
+  { href: "/vistoria", icon: <ClipboardCheck className="h-5 w-5" />, title: "Vistoria / Check-list", desc: "Check-in e check-out de veículos com itens conferidos." },
+  { href: "/cartoes", icon: <CreditCard className="h-5 w-5" />, title: "Cartões & Maquininha", desc: "Emissão de cartões NFC e terminal de autorização." },
+];
 
 export const metadata = { title: "SGO-Fuel · Plataforma Cartão Frota" };
 
@@ -70,6 +76,26 @@ export default function FrotaHubPage() {
               </Card>
             </Link>
           ))}
+        </div>
+
+        {/* Módulos complementares */}
+        <div className="mt-8">
+          <h2 className="text-sm font-medium uppercase tracking-wider text-[color:var(--color-muted)]">Módulos complementares</h2>
+          <div className="mt-3 grid gap-4 sm:grid-cols-3">
+            {MODULOS.map((m) => (
+              <Link key={m.href} href={m.href} className="group">
+                <Card className="flex h-full items-start gap-3 p-5 transition-colors hover:border-[color:var(--color-brand)]/60">
+                  <div className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand)]">
+                    {m.icon}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-[color:var(--color-text-strong)]">{m.title}</div>
+                    <div className="mt-0.5 text-xs text-[color:var(--color-muted)]">{m.desc}</div>
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
       </main>
     </div>

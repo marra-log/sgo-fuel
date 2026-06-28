@@ -53,16 +53,31 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
   const [vehicles, setVehicles] = useState<Array<{ id: string; plate: string }>>([]);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [loadHint, setLoadHint] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
     (async () => {
-      const [d, v] = await Promise.all([
-        supabase.from("drivers").select("id, name").eq("active", true).order("name"),
-        supabase.from("vehicles").select("id, plate").order("plate"),
-      ]);
-      setDrivers(d.data ?? []);
-      setVehicles(v.data ?? []);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setLoadHint("Sessão expirada — faça login novamente para listar motoristas e veículos.");
+          return;
+        }
+        const [d, v] = await Promise.all([
+          supabase.from("drivers").select("id, name").eq("active", true).order("name"),
+          supabase.from("vehicles").select("id, plate").order("plate"),
+        ]);
+        setDrivers(d.data ?? []);
+        setVehicles(v.data ?? []);
+        if (d.error || v.error) {
+          setLoadHint("Não consegui carregar motoristas/veículos: " + (d.error?.message ?? v.error?.message));
+        } else if ((d.data?.length ?? 0) === 0 && (v.data?.length ?? 0) === 0) {
+          setLoadHint("Nenhum motorista/veículo cadastrado ainda — você pode emitir o cartão sem vínculo e ligar depois.");
+        }
+      } catch (e) {
+        setLoadHint("Falha ao carregar dados: " + (e instanceof Error ? e.message : String(e)));
+      }
     })();
   }, []);
 
@@ -72,37 +87,57 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
     setMsg(null);
     const supabase = createSupabaseBrowserClient();
 
-    const { data: member } = await supabase.from("tenant_members").select("tenant_id").limit(1).maybeSingle();
-    const tenantId = member?.tenant_id;
-    if (!tenantId) {
-      setMsg({ kind: "err", text: "Sua conta ainda não tem empresa." });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setMsg({ kind: "err", text: "Sessão expirada. Faça login novamente e tente outra vez." });
+        return;
+      }
+
+      const { data: member, error: memberErr } = await supabase
+        .from("tenant_members")
+        .select("tenant_id")
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (memberErr) {
+        setMsg({ kind: "err", text: traduzSupabaseError(memberErr.message) });
+        return;
+      }
+      const tenantId = member?.tenant_id;
+      if (!tenantId) {
+        setMsg({ kind: "err", text: "Sua conta ainda não tem empresa vinculada. Crie a empresa em Cadastros." });
+        return;
+      }
+
+      const payload = {
+        card_number: cardNumber.replace(/\s/g, ""),
+        nfc_uid: nfc ? normalizeUid(nfc) : null,
+        holder_name: holder || null,
+        status,
+        monthly_limit_l: Number(limit || 0),
+        pin: pin || null,
+        driver_id: driverId || null,
+        vehicle_id: vehicleId || null,
+      };
+
+      if (editing && initial?.id) {
+        const { error } = await supabase.from("fleet_cards").update(payload).eq("id", initial.id);
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        setMsg({ kind: "ok", text: "Cartão atualizado." });
+        router.refresh();
+      } else {
+        const { error } = await supabase.from("fleet_cards").insert({ ...payload, tenant_id: tenantId });
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        setMsg({ kind: "ok", text: "Cartão emitido com sucesso. Redirecionando…" });
+        router.push("/cartoes");
+        router.refresh();
+      }
+    } catch (e) {
+      setMsg({ kind: "err", text: "Erro inesperado: " + (e instanceof Error ? e.message : String(e)) });
+    } finally {
       setSaving(false);
-      return;
     }
-
-    const payload = {
-      card_number: cardNumber.replace(/\s/g, ""),
-      nfc_uid: nfc ? normalizeUid(nfc) : null,
-      holder_name: holder || null,
-      status,
-      monthly_limit_l: Number(limit || 0),
-      pin: pin || null,
-      driver_id: driverId || null,
-      vehicle_id: vehicleId || null,
-    };
-
-    if (editing && initial?.id) {
-      const { error } = await supabase.from("fleet_cards").update(payload).eq("id", initial.id);
-      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
-      setMsg({ kind: "ok", text: "Cartão atualizado." });
-      router.refresh();
-    } else {
-      const { error } = await supabase.from("fleet_cards").insert({ ...payload, tenant_id: tenantId });
-      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
-      router.push("/cartoes");
-      router.refresh();
-    }
-    setSaving(false);
   }
 
   return (
@@ -184,6 +219,12 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
           </Select>
         </FormField>
       </div>
+
+      {loadHint ? (
+        <p className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2 text-xs text-[color:var(--color-muted)]">
+          {loadHint}
+        </p>
+      ) : null}
 
       {msg ? <FormMessage kind={msg.kind}>{msg.text}</FormMessage> : null}
 

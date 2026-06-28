@@ -3,10 +3,39 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Fuel, Menu, X } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Building2,
+  ClipboardCheck,
+  Cpu,
+  CreditCard,
+  Database,
+  DollarSign,
+  FileText,
+  FileWarning,
+  Fuel,
+  Gauge,
+  MapPin,
+  Menu,
+  Receipt,
+  Scan,
+  Shield,
+  Smartphone,
+  Store,
+  Trophy,
+  Truck,
+  Users,
+  X,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "./user-menu";
 import { ThemeToggle } from "./theme-toggle";
+
+type NavItem = { href: string; label: string; icon: LucideIcon; desc?: string };
 
 // Links principais mostrados inline no desktop
 const primary = [
@@ -18,54 +47,61 @@ const primary = [
   { href: "/relatorios", label: "Relatórios" },
 ];
 
-// Menu completo agrupado (drawer)
-const groups: { title: string; items: { href: string; label: string }[] }[] = [
+// Menu completo agrupado por categoria (drawer)
+const groups: { title: string; items: NavItem[] }[] = [
   {
     title: "Principal",
     items: [
-      { href: "/", label: "Visão Geral" },
-      { href: "/dashboard", label: "Portal do Gestor" },
+      { href: "/", label: "Visão Geral", icon: Gauge, desc: "Página inicial / pitch" },
+      { href: "/dashboard", label: "Portal do Gestor", icon: BarChart3, desc: "Faturamento e alertas" },
+    ],
+  },
+  {
+    title: "Financeiro",
+    items: [
+      { href: "/cartoes", label: "Gestão dos Cartões", icon: CreditCard, desc: "Emitir, bloquear e limites" },
+      { href: "/maquininha", label: "Maquininha", icon: Smartphone, desc: "Terminal de autorização" },
+      { href: "/faturamento", label: "Faturamento", icon: Receipt, desc: "Fechamento e cobrança" },
+      { href: "/conciliacao", label: "Conciliação SEFAZ", icon: FileText, desc: "Notas x abastecimentos" },
+      { href: "/relatorios", label: "Relatórios & Débitos", icon: DollarSign, desc: "Gerencial e exportação" },
     ],
   },
   {
     title: "Cartão Frota",
     items: [
-      { href: "/frota", label: "Plataforma (hub)" },
-      { href: "/frota/cliente", label: "Painel do Cliente" },
-      { href: "/frota/motorista", label: "Painel do Motorista" },
-      { href: "/frota/posto", label: "Gestão do Posto" },
-      { href: "/cartoes", label: "Cartões" },
-      { href: "/maquininha", label: "Maquininha" },
-      { href: "/faturamento", label: "Faturamento" },
+      { href: "/frota", label: "Plataforma (hub)", icon: CreditCard, desc: "Três painéis em um lugar" },
+      { href: "/frota/cliente", label: "Painel do Cliente", icon: Building2, desc: "Transportadora / gestor" },
+      { href: "/frota/motorista", label: "Painel do Motorista", icon: Truck, desc: "Saldo e abastecimentos" },
+      { href: "/frota/posto", label: "Gestão do Posto", icon: Store, desc: "Rede credenciada" },
     ],
   },
   {
     title: "Operação",
     items: [
-      { href: "/simular", label: "Simular" },
-      { href: "/anomalias", label: "Anomalias" },
-      { href: "/conciliacao", label: "Conciliação SEFAZ" },
-      { href: "/ranking", label: "Ranking" },
-      { href: "/relatorios", label: "Relatórios" },
-      { href: "/auditoria", label: "Auditoria" },
-      { href: "/diagnostico", label: "Diagnóstico" },
+      { href: "/simular", label: "Simular abastecimento", icon: Zap, desc: "Gerar evento de teste" },
+      { href: "/anomalias", label: "Anomalias", icon: AlertTriangle, desc: "Transações suspeitas" },
+      { href: "/multas", label: "Multas & Infrações", icon: FileWarning, desc: "Prazos e pontuação" },
+      { href: "/vistoria", label: "Vistoria / Check-list", icon: ClipboardCheck, desc: "Check-in e check-out" },
+      { href: "/ranking", label: "Ranking", icon: Trophy, desc: "Eficiência por motorista" },
+      { href: "/auditoria", label: "Auditoria", icon: Shield, desc: "Trilha de alterações" },
+      { href: "/diagnostico", label: "Diagnóstico", icon: Activity, desc: "Saúde do cadastro" },
     ],
   },
   {
     title: "Cadastros & Equipe",
     items: [
-      { href: "/cadastros", label: "Cadastros da frota" },
-      { href: "/usuarios", label: "Usuários & acessos" },
+      { href: "/cadastros", label: "Cadastros da frota", icon: Database, desc: "Motoristas, veículos, bombas" },
+      { href: "/usuarios", label: "Usuários & acessos", icon: Users, desc: "Liberar e definir papéis" },
     ],
   },
   {
-    title: "Rede & Vitrine",
+    title: "Rede & Apps",
     items: [
-      { href: "/postos", label: "Rede de Postos" },
-      { href: "/app", label: "App Motorista (PWA)" },
-      { href: "/totem", label: "Totem IoT" },
-      { href: "/pos", label: "Smart POS" },
-      { href: "/motorista", label: "Vitrine" },
+      { href: "/postos", label: "Rede de Postos", icon: MapPin, desc: "Mapa e preços" },
+      { href: "/app", label: "App do Motorista (PWA)", icon: Smartphone, desc: "Check-in pelo celular" },
+      { href: "/totem", label: "Totem IoT", icon: Cpu, desc: "Autoatendimento no posto" },
+      { href: "/pos", label: "Smart POS", icon: Scan, desc: "Maquininha inteligente" },
+      { href: "/motorista", label: "Vitrine", icon: Store, desc: "Página de demonstração" },
     ],
   },
 ];
@@ -131,7 +167,7 @@ export function SiteHeader() {
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Abrir menu"
-            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 text-xs text-[color:var(--color-text-strong)] transition-colors hover:bg-[color:var(--color-surface-2)]"
+            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-2.5 text-xs font-medium text-[color:var(--color-text-strong)] transition-colors hover:bg-[color:var(--color-surface-2)]"
           >
             <Menu className="h-4 w-4" />
             <span className="hidden sm:inline">Menu</span>
@@ -148,15 +184,18 @@ export function SiteHeader() {
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
           />
-          <div className="absolute right-0 top-0 flex h-full w-[88%] max-w-sm flex-col border-l border-[color:var(--color-border)] bg-[color:var(--color-background)] shadow-2xl">
-            <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-4 py-3">
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[color:var(--color-brand)] text-black">
+          <div className="absolute right-0 top-0 flex h-full w-[92%] max-w-md flex-col border-l border-[color:var(--color-border)] bg-[color:var(--color-background)] shadow-2xl">
+            {/* Cabeçalho do drawer */}
+            <div className="flex flex-none items-center justify-between border-b border-[color:var(--color-border)] px-4 py-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color:var(--color-brand)] text-black">
                   <Fuel className="h-4 w-4" />
                 </div>
                 <div className="leading-tight">
                   <div className="text-sm font-semibold text-[color:var(--color-text-strong)]">SGO-Fuel</div>
-                  <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">Menu</div>
+                  <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
+                    Todas as funcionalidades
+                  </div>
                 </div>
               </div>
               <button
@@ -169,29 +208,57 @@ export function SiteHeader() {
               </button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto px-3 py-4">
+            {/* Lista rolável */}
+            <nav className="min-h-0 flex-1 overflow-y-auto px-3 py-4">
               {groups.map((g) => (
-                <div key={g.title} className="mb-4">
-                  <div className="mb-1.5 px-2 text-[10px] font-medium uppercase tracking-wider text-[color:var(--color-muted)]">
-                    {g.title}
+                <div key={g.title} className="mb-5">
+                  <div className="mb-2 flex items-center gap-2 px-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[color:var(--color-muted)]">
+                      {g.title}
+                    </span>
+                    <span className="h-px flex-1 bg-[color:var(--color-border)]" />
                   </div>
-                  <ul className="space-y-0.5">
+                  <ul className="space-y-1">
                     {g.items.map((l) => {
                       const active = pathname === l.href;
+                      const Icon = l.icon;
                       return (
                         <li key={l.href}>
                           <Link
                             href={l.href}
                             onClick={() => setOpen(false)}
                             className={cn(
-                              "flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors",
+                              "flex items-center gap-3 rounded-lg px-2.5 py-2 transition-colors",
                               active
-                                ? "bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand)]"
-                                : "text-[color:var(--color-text)] hover:bg-[color:var(--color-surface-2)]"
+                                ? "bg-[color:var(--color-brand-soft)]"
+                                : "hover:bg-[color:var(--color-surface-2)]"
                             )}
                           >
-                            <span>{l.label}</span>
-                            {active ? <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--color-brand)]" /> : null}
+                            <span
+                              className={cn(
+                                "flex h-9 w-9 flex-none items-center justify-center rounded-lg border",
+                                active
+                                  ? "border-transparent bg-[color:var(--color-brand)] text-black"
+                                  : "border-[color:var(--color-border)] bg-[color:var(--color-surface)] text-[color:var(--color-muted)]"
+                              )}
+                            >
+                              <Icon className="h-4 w-4" />
+                            </span>
+                            <span className="min-w-0">
+                              <span
+                                className={cn(
+                                  "block truncate text-sm font-medium",
+                                  active ? "text-[color:var(--color-brand)]" : "text-[color:var(--color-text-strong)]"
+                                )}
+                              >
+                                {l.label}
+                              </span>
+                              {l.desc ? (
+                                <span className="block truncate text-[11px] text-[color:var(--color-muted)]">
+                                  {l.desc}
+                                </span>
+                              ) : null}
+                            </span>
                           </Link>
                         </li>
                       );

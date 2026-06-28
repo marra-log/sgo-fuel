@@ -27,6 +27,7 @@ declare module "lucide-react" {
   export const Camera: LucideIcon;
   export const Check: LucideIcon;
   export const CheckCircle2: LucideIcon;
+  export const ClipboardCheck: LucideIcon;
   export const Copy: LucideIcon;
   export const Cpu: LucideIcon;
   export const CreditCard: LucideIcon;
@@ -36,6 +37,7 @@ declare module "lucide-react" {
   export const Droplet: LucideIcon;
   export const Eye: LucideIcon;
   export const FileText: LucideIcon;
+  export const FileWarning: LucideIcon;
   export const Filter: LucideIcon;
   export const Fuel: LucideIcon;
   export const Gauge: LucideIcon;
