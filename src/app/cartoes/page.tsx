@@ -1,18 +1,12 @@
 import Link from "next/link";
 import { CreditCard, Nfc, Wallet } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
-import { Badge } from "@/components/ui/badge";
 import { ListShell, EmptyState } from "@/components/cadastros/crud-shell";
+import { CardStatusToggle } from "@/components/cartoes/card-status-toggle";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatBRL, formatNumber } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
-
-const STATUS: Record<string, { label: string; tone: "success" | "warning" | "danger" }> = {
-  ACTIVE: { label: "Ativo", tone: "success" },
-  BLOCKED: { label: "Bloqueado", tone: "warning" },
-  LOST: { label: "Perdido", tone: "danger" },
-};
 
 type Card = {
   id: string;
@@ -89,7 +83,6 @@ export default async function CartoesPage() {
               </thead>
               <tbody className="divide-y divide-[color:var(--color-border)]">
                 {rows.map((c) => {
-                  const st = STATUS[c.status] ?? { label: c.status, tone: "warning" as const };
                   return (
                     <tr key={c.id} className="transition-colors hover:bg-[color:var(--color-surface-2)]/50">
                       <td className="px-5 py-3">
@@ -104,8 +97,8 @@ export default async function CartoesPage() {
                       <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{c.vehicles?.plate ?? "—"}</td>
                       <td className="px-5 py-3 text-right font-mono font-medium text-[color:var(--color-brand)]">{formatBRL(Number(c.balance_brl ?? 0))}</td>
                       <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(c.monthly_limit_l)} L</td>
-                      <td className="px-5 py-3 text-right">
-                        <Badge variant={st.tone}>{st.label}</Badge>
+                      <td className="px-5 py-3">
+                        <CardStatusToggle id={c.id} status={c.status} />
                       </td>
                     </tr>
                   );

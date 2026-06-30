@@ -65,6 +65,7 @@ const groups: { title: string; items: NavItem[] }[] = [
       { href: "/cartoes/recarga", label: "Recarregar saldo", icon: Wallet, desc: "Adicionar saldo por cartão/motorista" },
       { href: "/maquininha", label: "Maquininha", icon: Smartphone, desc: "Terminal de autorização" },
       { href: "/faturamento", label: "Faturamento", icon: Receipt, desc: "Fechamento e cobrança" },
+      { href: "/transacoes", label: "Transações do cartão", icon: Receipt, desc: "Extrato e movimento" },
       { href: "/conciliacao", label: "Conciliação SEFAZ", icon: FileText, desc: "Notas x abastecimentos" },
       { href: "/relatorios", label: "Relatórios & Débitos", icon: DollarSign, desc: "Gerencial e exportação" },
     ],
