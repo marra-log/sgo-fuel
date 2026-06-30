@@ -52,7 +52,8 @@ declare t text;
 begin
   foreach t in array array[
     'drivers','vehicles','yards','tanks','pumps','routes',
-    'fuelings','anomalies','fiscal_invoices','tenants'
+    'fuelings','anomalies','fiscal_invoices','tenants',
+    'fleet_cards','card_recharges'
   ]
   loop
     execute format('drop trigger if exists trg_audit_%1$s on %1$s', t);

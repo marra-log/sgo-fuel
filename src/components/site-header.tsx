@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Activity,
   AlertTriangle,
   BarChart3,
+  Bell,
   Building2,
   ClipboardCheck,
   Cpu,
@@ -36,6 +38,7 @@ import {
 import { cn } from "@/lib/utils";
 import { UserMenu } from "./user-menu";
 import { ThemeToggle } from "./theme-toggle";
+import { AlertsBell } from "./alerts-bell";
 
 type NavItem = { href: string; label: string; icon: LucideIcon; desc?: string };
 
@@ -82,6 +85,7 @@ const groups: { title: string; items: NavItem[] }[] = [
   {
     title: "Operação",
     items: [
+      { href: "/alertas", label: "Alertas", icon: Bell, desc: "Saldo baixo, bloqueios, recusas" },
       { href: "/simular", label: "Simular abastecimento", icon: Zap, desc: "Gerar evento de teste" },
       { href: "/anomalias", label: "Anomalias", icon: AlertTriangle, desc: "Transações suspeitas" },
       { href: "/multas", label: "Multas & Infrações", icon: FileWarning, desc: "Prazos e pontuação" },
@@ -114,6 +118,11 @@ const groups: { title: string; items: NavItem[] }[] = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setOpen(false);
@@ -166,6 +175,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex flex-none items-center gap-2">
+          <AlertsBell />
           <ThemeToggle />
           <UserMenu />
           <button
@@ -180,9 +190,10 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Drawer completo (mobile e desktop) */}
-      {open ? (
-        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
+      {/* Drawer completo via portal no body — escapa do containing block do header (backdrop-blur) */}
+      {mounted && open
+        ? createPortal(
+            <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true">
           <button
             type="button"
             aria-label="Fechar menu"
@@ -273,8 +284,10 @@ export function SiteHeader() {
               ))}
             </nav>
           </div>
-        </div>
-      ) : null}
+        </div>,
+            document.body
+          )
+        : null}
     </header>
   );
 }
