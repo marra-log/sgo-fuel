@@ -16,8 +16,28 @@ export function RechargeForm({ cardId, initialBalance }: { cardId: string; initi
   const [method, setMethod] = useState("MANUAL");
   const [note, setNote] = useState("");
   const [showPix, setShowPix] = useState(false);
+  const [pixTxid, setPixTxid] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  // Gera o QR PIX e registra a cobrança PENDENTE (o webhook credita ao confirmar)
+  async function gerarPix() {
+    const value = Number(amount);
+    if (!value || value <= 0) {
+      setMsg({ kind: "err", text: "Informe um valor válido antes de gerar o PIX." });
+      return;
+    }
+    const txid = `SGO${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    setPixTxid(txid);
+    setShowPix(true);
+    // best-effort: se pix.sql não estiver aplicado, segue só com o QR manual
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.rpc("fn_create_pix_charge", { p_card_id: cardId, p_amount: value, p_txid: txid, p_provider: "manual" });
+    } catch {
+      /* estrutura PIX automática ainda não habilitada — ok */
+    }
+  }
 
   async function recarregar() {
     setBusy(true);
@@ -122,16 +142,17 @@ export function RechargeForm({ cardId, initialBalance }: { cardId: string; initi
           <div className="mt-3">
             <button
               type="button"
-              onClick={() => setShowPix((v) => !v)}
+              onClick={() => (showPix ? setShowPix(false) : gerarPix())}
               className="inline-flex items-center gap-1.5 text-xs text-[color:var(--color-brand)] hover:underline"
             >
               <QrCode className="h-3.5 w-3.5" /> {showPix ? "Ocultar QR PIX" : "Gerar QR PIX para o cliente pagar"}
             </button>
-            {showPix && Number(amount) > 0 ? (
+            {showPix && pixTxid && Number(amount) > 0 ? (
               <div className="mt-2">
-                <PixCharge valor={Number(amount)} txid={`RECARGA${Date.now().toString().slice(-8)}`} />
+                <PixCharge valor={Number(amount)} txid={pixTxid} />
                 <p className="mt-1 text-[11px] text-[color:var(--color-muted)]">
-                  Quando o PIX cair na conta, clique em <b>Confirmar recarga</b> para creditar o saldo.
+                  Com o PSP conectado (Asaas/Efí), o saldo é creditado <b>automaticamente</b> ao confirmar o PIX.
+                  Sem PSP, clique em <b>Confirmar recarga</b> quando o dinheiro cair.
                 </p>
               </div>
             ) : null}

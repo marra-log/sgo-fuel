@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, CreditCard, Nfc, Receipt as ReceiptIcon, Wallet, XCircle } from "lucide-react";
+import { CheckCircle2, CreditCard, Nfc, Printer, Receipt as ReceiptIcon, Wallet, XCircle } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { NfcReaderButton } from "@/components/nfc-reader-button";
 import { normalizeUid } from "@/lib/web-nfc";
@@ -273,12 +273,58 @@ function ReceiptView({ receipt, onNew }: { receipt: Receipt; onNew: () => void }
         </div>
       ) : null}
 
-      <button onClick={onNew} className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--color-border)] px-4 py-2 text-xs text-[color:var(--color-text-strong)]">
-        <ReceiptIcon className="h-3.5 w-3.5" />
-        Nova transação
-      </button>
+      <div className="mt-4 flex items-center justify-center gap-2">
+        {receipt.ok ? (
+          <button onClick={() => printReceipt(receipt)} className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
+            <Printer className="h-3.5 w-3.5" />
+            Imprimir
+          </button>
+        ) : null}
+        <button onClick={onNew} className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--color-border)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
+          <ReceiptIcon className="h-3.5 w-3.5" />
+          Nova transação
+        </button>
+      </div>
     </div>
   );
+}
+
+/** Imprime o comprovante (no navegador da POS/Totem). A impressão térmica
+ *  via bobina é a fase APK (SDK Sunmi/PAX). */
+function printReceipt(r: Receipt) {
+  if (typeof window === "undefined") return;
+  const linha = (label: string, value: string, big = false) =>
+    `<div class="row${big ? " big" : ""}"><span>${label}</span><span>${value}</span></div>`;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Comprovante</title>
+  <style>
+    *{font-family:ui-monospace,Menlo,Consolas,monospace}
+    body{width:280px;margin:0 auto;padding:12px;color:#000}
+    h1{font-size:13px;text-align:center;margin:0 0 6px}
+    .center{text-align:center}
+    .row{display:flex;justify-content:space-between;font-size:12px;margin:2px 0}
+    .big{font-size:15px;font-weight:bold}
+    .hr{border-top:1px dashed #000;margin:8px 0}
+  </style></head>
+  <body onload="window.print();setTimeout(function(){window.close()},300)">
+    <h1>SGO-Fuel · Comprovante</h1>
+    <div class="center" style="font-size:13px;font-weight:bold">${r.ok ? "APROVADO" : "NEGADO"}</div>
+    <div class="hr"></div>
+    ${linha("Comprovante", r.txId ? r.txId.slice(0, 8).toUpperCase() : "—")}
+    ${linha("Cartão", r.card)}
+    ${r.holder ? linha("Titular", r.holder) : ""}
+    ${linha("Litros", `${formatNumber(r.liters)} L`)}
+    ${linha("Preço/L", formatBRL(r.price))}
+    <div class="hr"></div>
+    ${linha("Debitado", formatBRL(r.amount), true)}
+    ${r.balanceAfter != null ? linha("Saldo atual", formatBRL(r.balanceAfter)) : ""}
+    ${linha("Data", r.at)}
+    <div class="hr"></div>
+    <div class="center" style="font-size:10px">Obrigado! · SGO-Fuel</div>
+  </body></html>`;
+  const w = window.open("", "_blank", "width=320,height=640");
+  if (!w) return;
+  w.document.write(html);
+  w.document.close();
 }
 
 function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {

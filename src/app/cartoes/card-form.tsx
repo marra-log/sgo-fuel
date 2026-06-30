@@ -110,6 +110,20 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
         return;
       }
 
+      // Regra: um motorista pode ter apenas UM cartão.
+      if (driverId) {
+        let dupQuery = supabase.from("fleet_cards").select("card_number").eq("driver_id", driverId);
+        if (editing && initial?.id) dupQuery = dupQuery.neq("id", initial.id);
+        const { data: dup } = await dupQuery.limit(1).maybeSingle();
+        if (dup) {
+          setMsg({
+            kind: "err",
+            text: `Esse motorista já tem o cartão ••••${dup.card_number.slice(-4)}. Cada motorista pode ter só um cartão — desvincule o outro antes.`,
+          });
+          return;
+        }
+      }
+
       const payload = {
         card_number: cardNumber.replace(/\s/g, ""),
         nfc_uid: nfc ? normalizeUid(nfc) : null,
@@ -138,6 +152,13 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
     } finally {
       setSaving(false);
     }
+  }
+
+  // Atribui o cartão a um único motorista e já sugere o nome impresso.
+  function onDriverChange(id: string) {
+    setDriverId(id);
+    const d = drivers.find((x) => x.id === id);
+    if (d && !holder.trim()) setHolder(d.name.toUpperCase());
   }
 
   return (
@@ -202,8 +223,8 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField label="Motorista vinculado">
-          <Select value={driverId} onChange={(e) => setDriverId(e.target.value)}>
+        <FormField label="Motorista vinculado" hint="Cada motorista pode ter só um cartão.">
+          <Select value={driverId} onChange={(e) => onDriverChange(e.target.value)}>
             <option value="">— sem vínculo —</option>
             {drivers.map((d) => (
               <option key={d.id} value={d.id}>{d.name}</option>
