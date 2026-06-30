@@ -4,7 +4,7 @@ import { SectionShell } from "@/components/section-shell";
 import { Badge } from "@/components/ui/badge";
 import { ListShell, EmptyState } from "@/components/cadastros/crud-shell";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { formatNumber } from "@/lib/utils";
+import { formatBRL, formatNumber } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +21,7 @@ type Card = {
   holder_name: string | null;
   status: string;
   monthly_limit_l: number;
+  balance_brl: number | null;
   drivers: { name: string } | null;
   vehicles: { plate: string } | null;
 };
@@ -35,7 +36,7 @@ export default async function CartoesPage() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("fleet_cards")
-    .select("id, card_number, nfc_uid, holder_name, status, monthly_limit_l, drivers(name), vehicles(plate)")
+    .select("id, card_number, nfc_uid, holder_name, status, monthly_limit_l, balance_brl, drivers(name), vehicles(plate)")
     .order("created_at", { ascending: false });
 
   const rows = (data ?? []) as unknown as Card[];
@@ -44,7 +45,7 @@ export default async function CartoesPage() {
     <SectionShell
       badge="Cartões de frota"
       title="Cartão exclusivo da empresa"
-      description="Cartões private label (fechados) identificados por número e NFC. Cada um tem cota mensal e pode ser bloqueado na hora. Use a Maquininha para validar."
+      description="Cartões private label (fechados) identificados por número e NFC. Cada um tem saldo pré-pago (R$) — recarregue no cartão e o motorista debita na Smart POS. Bloqueio na hora."
     >
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <Link href="/maquininha" className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
@@ -77,6 +78,7 @@ export default async function CartoesPage() {
                   <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Titular</th>
                   <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Motorista</th>
                   <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Veículo</th>
+                  <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Saldo</th>
                   <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Cota/mês</th>
                   <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Status</th>
                 </tr>
@@ -96,6 +98,7 @@ export default async function CartoesPage() {
                       <td className="px-5 py-3 text-[color:var(--color-muted)]">{c.holder_name ?? "—"}</td>
                       <td className="px-5 py-3 text-[color:var(--color-muted)]">{c.drivers?.name ?? "—"}</td>
                       <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{c.vehicles?.plate ?? "—"}</td>
+                      <td className="px-5 py-3 text-right font-mono font-medium text-[color:var(--color-brand)]">{formatBRL(Number(c.balance_brl ?? 0))}</td>
                       <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(c.monthly_limit_l)} L</td>
                       <td className="px-5 py-3 text-right">
                         <Badge variant={st.tone}>{st.label}</Badge>

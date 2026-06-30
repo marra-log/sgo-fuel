@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, CreditCard, Nfc, Receipt, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, CreditCard, Nfc, Receipt, Wallet, XCircle } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { NfcReaderButton } from "@/components/nfc-reader-button";
-import { PixCharge } from "@/components/pix-charge";
 import { normalizeUid } from "@/lib/web-nfc";
 import { formatBRL, formatNumber } from "@/lib/utils";
 
@@ -26,12 +25,19 @@ type Receipt = {
   price: number;
   amount: number;
   at: string;
+  balanceBefore?: number | null;
+  balanceAfter?: number | null;
+  txId?: string | null;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  ACTIVE: "ativo",
-  BLOCKED: "bloqueado",
-  LOST: "perdido",
+type AuthResult = {
+  ok: boolean;
+  reason?: string;
+  tx_id?: string;
+  holder?: string | null;
+  amount?: number;
+  balance_before?: number | null;
+  balance_after?: number | null;
 };
 
 export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardLite[] }) {
@@ -66,109 +72,51 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
     setReceipt(null);
     const supabase = createSupabaseBrowserClient();
 
-    const { data: member } = await supabase.from("tenant_members").select("tenant_id").limit(1).maybeSingle();
-    const tenantId = member?.tenant_id;
-    if (!tenantId) {
-      setBusy(false);
-      setReceipt(makeReceipt(false, "Conta sem empresa.", cardNumber, null, 0, 0));
-      return;
-    }
-
     const litersN = Number(liters || 0);
     const priceN = Number(price || 0);
-    const amount = Math.round(litersN * priceN * 100) / 100;
     const clean = cardNumber.replace(/\s/g, "");
 
-    // Busca cartão
-    const { data: card } = await supabase
-      .from("fleet_cards")
-      .select("id, card_number, holder_name, status, monthly_limit_l, pin, driver_id, vehicle_id")
-      .eq("card_number", clean)
-      .maybeSingle();
-
-    let ok = true;
-    let reason = "";
-
-    if (!card) {
-      ok = false;
-      reason = "Cartão não reconhecido nesta rede.";
-    } else if (card.status !== "ACTIVE") {
-      ok = false;
-      reason = `Cartão ${STATUS_LABEL[card.status] ?? "inválido"}.`;
-    } else if (card.pin && pin && card.pin !== pin) {
-      ok = false;
-      reason = "PIN incorreto.";
-    } else if (card.pin && !pin) {
-      ok = false;
-      reason = "PIN obrigatório para este cartão.";
-    } else {
-      // Cota do mês
-      const monthStart = new Date();
-      monthStart.setDate(1);
-      monthStart.setHours(0, 0, 0, 0);
-      const { data: txs } = await supabase
-        .from("card_transactions")
-        .select("liters, status, created_at")
-        .eq("card_id", card.id)
-        .eq("status", "APPROVED")
-        .gte("created_at", monthStart.toISOString());
-      const usado = (txs ?? []).reduce((a, t) => a + Number(t.liters), 0);
-      if (usado + litersN > Number(card.monthly_limit_l)) {
-        ok = false;
-        reason = `Cota mensal excedida (resta ${formatNumber(Math.max(0, Number(card.monthly_limit_l) - usado))} L).`;
-      }
-    }
-
-    // Registra a transação (aprovada ou negada)
-    await supabase.from("card_transactions").insert({
-      tenant_id: tenantId,
-      card_id: card?.id ?? null,
-      card_number: clean,
-      pump_id: pumpId || null,
-      driver_id: card?.driver_id ?? null,
-      vehicle_id: card?.vehicle_id ?? null,
-      liters: litersN,
-      price_per_l: priceN,
-      amount_brl: amount,
-      status: ok ? "APPROVED" : "DECLINED",
-      decline_reason: ok ? null : reason,
-    });
-
-    // Se aprovado e cartão tem vínculo, gera um abastecimento autorizado
-    if (ok && card?.driver_id && card?.vehicle_id && pumpId) {
-      await supabase.from("fuelings").insert({
-        tenant_id: tenantId,
-        pump_id: pumpId,
-        vehicle_id: card.vehicle_id,
-        driver_id: card.driver_id,
-        quota_l: litersN,
-        delivered_l: litersN,
-        status: "COMPLETED",
-        cost_brl: amount,
+    try {
+      // Débito atômico no servidor: valida status, PIN e SALDO, debita e registra.
+      const { data, error } = await supabase.rpc("fn_authorize_card", {
+        p_card_number: clean,
+        p_pin: pin || null,
+        p_liters: litersN,
+        p_price: priceN,
+        p_pump_id: pumpId || null,
       });
-    }
 
-    setReceipt(makeReceipt(ok, reason, clean, card?.holder_name ?? null, litersN, priceN));
-    setBusy(false);
+      if (error) {
+        const reason = /does not exist|schema cache|function/i.test(error.message)
+          ? "Carteira não habilitada — rode supabase/wallet.sql no Supabase."
+          : error.message;
+        setReceipt(makeReceipt({ ok: false, reason }, clean, litersN, priceN));
+        return;
+      }
+
+      setReceipt(makeReceipt((data ?? { ok: false, reason: "Sem resposta do terminal." }) as AuthResult, clean, litersN, priceN));
+    } catch (e) {
+      setReceipt(
+        makeReceipt({ ok: false, reason: "Erro: " + (e instanceof Error ? e.message : String(e)) }, clean, litersN, priceN)
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
-  function makeReceipt(
-    ok: boolean,
-    reason: string,
-    card: string,
-    holder: string | null,
-    litersN: number,
-    priceN: number
-  ): Receipt {
+  function makeReceipt(r: AuthResult, card: string, litersN: number, priceN: number): Receipt {
     return {
-      ok,
-      reason: ok ? undefined : reason,
+      ok: r.ok,
+      reason: r.ok ? undefined : r.reason,
       card: card.length > 4 ? `•••• ${card.slice(-4)}` : card,
-      holder,
+      holder: r.holder ?? null,
       liters: litersN,
       price: priceN,
-      amount: Math.round(litersN * priceN * 100) / 100,
+      amount: r.amount ?? Math.round(litersN * priceN * 100) / 100,
       at: new Date().toLocaleString("pt-BR"),
+      balanceBefore: r.balance_before ?? null,
+      balanceAfter: r.balance_after ?? null,
+      txId: r.tx_id ?? null,
     };
   }
 
@@ -289,7 +237,7 @@ export function MaquininhaClient({ pumps, cards }: { pumps: Pump[]; cards: CardL
           </div>
 
           <div className="mt-3 px-1 text-center text-[10px] text-[color:var(--color-muted)]">
-            Terminal de demonstração · valida cota, status e PIN do cartão private label
+            Terminal de demonstração · valida saldo, status e PIN e debita a carteira do cartão
           </div>
         </div>
       </div>
@@ -318,18 +266,25 @@ function ReceiptView({ receipt, onNew }: { receipt: Receipt; onNew: () => void }
       {!receipt.ok ? <div className="mt-1 text-xs text-[color:var(--color-muted)]">{receipt.reason}</div> : null}
 
       <div className="mt-4 space-y-1.5 rounded-lg border border-dashed border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-3 text-left text-xs">
+        <Row label="Comprovante" value={receipt.txId ? receipt.txId.slice(0, 8).toUpperCase() : "—"} />
         <Row label="Cartão" value={receipt.card} />
         {receipt.holder ? <Row label="Titular" value={receipt.holder} /> : null}
         <Row label="Litros" value={`${formatNumber(receipt.liters)} L`} />
         <Row label="Preço/L" value={formatBRL(receipt.price)} />
         <div className="my-1 border-t border-dashed border-[color:var(--color-border)]" />
-        <Row label="Total" value={formatBRL(receipt.amount)} strong />
+        <Row label="Valor debitado" value={formatBRL(receipt.amount)} strong />
         <Row label="Data" value={receipt.at} />
       </div>
 
-      {receipt.ok && receipt.amount > 0 ? (
-        <div className="mt-4 text-left">
-          <PixCharge valor={receipt.amount} txid={`SGOFUEL${Date.now().toString().slice(-8)}`} />
+      {receipt.ok && receipt.balanceAfter != null ? (
+        <div className="mt-3 rounded-lg border border-[color:var(--color-brand)]/30 bg-[color:var(--color-brand-soft)] p-3 text-left">
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-[color:var(--color-brand)]">
+            <Wallet className="h-3.5 w-3.5" /> Carteira do cartão
+          </div>
+          <div className="mt-2 space-y-1 text-xs">
+            {receipt.balanceBefore != null ? <Row label="Saldo anterior" value={formatBRL(receipt.balanceBefore)} /> : null}
+            <Row label="Saldo atual" value={formatBRL(receipt.balanceAfter)} strong />
+          </div>
         </div>
       ) : null}
 

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, Plus, XCircle } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
 import { FormShell } from "@/components/cadastros/crud-shell";
 import { Card } from "@/components/ui/card";
@@ -7,6 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatBRL, formatNumber, timeAgo } from "@/lib/utils";
 import { CardForm } from "../card-form";
+import { RechargeForm } from "@/components/cartoes/recharge-form";
+
+const METHOD_LABEL: Record<string, string> = {
+  MANUAL: "Manual",
+  PIX: "PIX",
+  BOLETO: "Boleto",
+  TED: "TED",
+};
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +51,21 @@ export default async function CartaoEditPage({ params }: { params: Promise<{ id:
   const restante = Math.max(0, Number(data.monthly_limit_l) - usadoMes);
   const pctUso = data.monthly_limit_l > 0 ? Math.min(100, (usadoMes / data.monthly_limit_l) * 100) : 0;
 
+  // Recargas (carteira pré-paga)
+  const { data: recData } = await supabase
+    .from("card_recharges")
+    .select("id, amount_brl, method, note, created_at")
+    .eq("card_id", id)
+    .order("created_at", { ascending: false })
+    .limit(10);
+  const recargas = (recData ?? []) as Array<{
+    id: string;
+    amount_brl: number;
+    method: string;
+    note: string | null;
+    created_at: string;
+  }>;
+
   return (
     <SectionShell badge="Cartões · Editar" title="Cartão de frota" description="Edite, bloqueie ou acompanhe o uso e o histórico do cartão.">
       <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
@@ -51,6 +74,33 @@ export default async function CartaoEditPage({ params }: { params: Promise<{ id:
         </FormShell>
 
         <div className="space-y-4">
+          <RechargeForm cardId={id} initialBalance={Number(data.balance_brl ?? 0)} />
+
+          {recargas.length > 0 ? (
+            <Card className="overflow-hidden">
+              <div className="border-b border-[color:var(--color-border)] px-5 py-3">
+                <h3 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Recargas recentes</h3>
+              </div>
+              <div className="divide-y divide-[color:var(--color-border)]">
+                {recargas.map((r) => (
+                  <div key={r.id} className="flex items-center justify-between px-5 py-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Plus className="h-4 w-4 text-[color:var(--color-brand)]" />
+                      <div>
+                        <div className="font-mono text-[color:var(--color-brand)]">+ {formatBRL(r.amount_brl)}</div>
+                        <div className="text-[11px] text-[color:var(--color-muted)]">
+                          {METHOD_LABEL[r.method] ?? r.method}
+                          {r.note ? ` · ${r.note}` : ""}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[11px] text-[color:var(--color-muted)]">{timeAgo(r.created_at)}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          ) : null}
+
           <Card className="p-5">
             <h3 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Cota do mês</h3>
             <div className="mt-3 flex items-end justify-between">
