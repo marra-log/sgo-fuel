@@ -60,7 +60,10 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
   const [holder, setHolder] = useState(initial?.holder_name ?? "");
   const [status, setStatus] = useState(initial?.status ?? "ACTIVE");
   const [limit, setLimit] = useState<string>(initial?.monthly_limit_l != null ? String(initial.monthly_limit_l) : "1000");
-  const [pin, setPin] = useState(initial?.pin ?? "");
+  // PIN: não exibe hash bcrypt ($2...) salvo; mostra texto legado se houver.
+  const pinIsHashed = (initial?.pin ?? "").startsWith("$2");
+  const hasPin = Boolean(initial?.pin);
+  const [pin, setPin] = useState(pinIsHashed ? "" : (initial?.pin ?? ""));
   const [driverId, setDriverId] = useState(initial?.driver_id ?? "");
   const [vehicleId, setVehicleId] = useState(initial?.vehicle_id ?? "");
 
@@ -146,7 +149,7 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
         }
       }
 
-      const payload = {
+      const payload: Record<string, unknown> = {
         card_number: cardNumber.replace(/\s/g, ""),
         nfc_uid: nfc ? normalizeUid(nfc) : null,
         holder_name: holder || null,
@@ -161,6 +164,11 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
         allowed_hour_start: hourStart !== "" ? Number(hourStart) : null,
         allowed_hour_end: hourEnd !== "" ? Number(hourEnd) : null,
       };
+
+      // Editando e deixou o PIN em branco: mantém o atual (não sobrescreve/apaga).
+      if (editing && pin === "" && hasPin) {
+        delete payload.pin;
+      }
 
       if (editing && initial?.id) {
         const { error } = await supabase.from("fleet_cards").update(payload).eq("id", initial.id);
@@ -241,8 +249,8 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
         <FormField label="Cota mensal (L)" required>
           <Input type="number" min={0} value={limit} onChange={(e) => setLimit(e.target.value)} required />
         </FormField>
-        <FormField label="PIN (4 dígitos)" hint="Opcional.">
-          <Input value={pin} onChange={(e) => setPin(e.target.value)} maxLength={4} className="font-mono" placeholder="••••" />
+        <FormField label="PIN (4 dígitos)" hint={editing && hasPin ? "Em branco mantém o atual." : "Opcional."}>
+          <Input value={pin} onChange={(e) => setPin(e.target.value)} maxLength={4} className="font-mono" placeholder={editing && hasPin ? "•••• (mantém)" : "••••"} />
         </FormField>
         <FormField label="Status">
           <Select value={status} onChange={(e) => setStatus(e.target.value)}>
