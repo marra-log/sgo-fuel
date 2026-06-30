@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { CheckCircle2, Plus, XCircle } from "lucide-react";
+import { ArrowDownRight, CheckCircle2, Plus, XCircle } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
 import { FormShell } from "@/components/cadastros/crud-shell";
 import { Card } from "@/components/ui/card";
@@ -14,6 +14,7 @@ const METHOD_LABEL: Record<string, string> = {
   PIX: "PIX",
   BOLETO: "Boleto",
   TED: "TED",
+  ESTORNO: "Estorno/ajuste",
 };
 
 export const dynamic = "force-dynamic";
@@ -82,21 +83,30 @@ export default async function CartaoEditPage({ params }: { params: Promise<{ id:
                 <h3 className="text-sm font-semibold text-[color:var(--color-text-strong)]">Recargas recentes</h3>
               </div>
               <div className="divide-y divide-[color:var(--color-border)]">
-                {recargas.map((r) => (
-                  <div key={r.id} className="flex items-center justify-between px-5 py-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Plus className="h-4 w-4 text-[color:var(--color-brand)]" />
-                      <div>
-                        <div className="font-mono text-[color:var(--color-brand)]">+ {formatBRL(r.amount_brl)}</div>
-                        <div className="text-[11px] text-[color:var(--color-muted)]">
-                          {METHOD_LABEL[r.method] ?? r.method}
-                          {r.note ? ` · ${r.note}` : ""}
+                {recargas.map((r) => {
+                  const neg = Number(r.amount_brl) < 0;
+                  return (
+                    <div key={r.id} className="flex items-center justify-between px-5 py-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        {neg ? (
+                          <ArrowDownRight className="h-4 w-4 text-[color:var(--color-danger)]" />
+                        ) : (
+                          <Plus className="h-4 w-4 text-[color:var(--color-brand)]" />
+                        )}
+                        <div>
+                          <div className={"font-mono " + (neg ? "text-[color:var(--color-danger)]" : "text-[color:var(--color-brand)]")}>
+                            {neg ? "− " : "+ "}{formatBRL(Math.abs(Number(r.amount_brl)))}
+                          </div>
+                          <div className="text-[11px] text-[color:var(--color-muted)]">
+                            {METHOD_LABEL[r.method] ?? r.method}
+                            {r.note ? ` · ${r.note}` : ""}
+                          </div>
                         </div>
                       </div>
+                      <span className="text-[11px] text-[color:var(--color-muted)]">{timeAgo(r.created_at)}</span>
                     </div>
-                    <span className="text-[11px] text-[color:var(--color-muted)]">{timeAgo(r.created_at)}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
           ) : null}

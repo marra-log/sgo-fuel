@@ -5,12 +5,14 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   Cpu,
+  CreditCard,
   Fuel,
   PiggyBank,
   ShieldCheck,
   Truck,
   Trophy,
   Video,
+  Wallet,
   Zap,
 } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
@@ -224,6 +226,29 @@ function demoDashboard() {
   };
 }
 
+// Carteira pré-paga da frota (best-effort: só aparece se wallet.sql foi aplicado)
+async function loadWallet(): Promise<{ saldo: number; recargasMes: number; debitadoMes: number; cartoesAtivos: number } | null> {
+  const supabase = await createSupabaseServerClient();
+  const { data: bal, error } = await supabase.from("fleet_cards").select("balance_brl, status");
+  if (error || !bal) return null;
+
+  const saldo = (bal as Array<{ balance_brl: number | null; status: string }>).reduce((a, c) => a + Number(c.balance_brl ?? 0), 0);
+  const cartoesAtivos = (bal as Array<{ status: string }>).filter((c) => c.status === "ACTIVE").length;
+
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+
+  const [{ data: rec }, { data: tx }] = await Promise.all([
+    supabase.from("card_recharges").select("amount_brl").gte("created_at", monthStart.toISOString()),
+    supabase.from("card_transactions").select("amount_brl").eq("status", "APPROVED").gte("created_at", monthStart.toISOString()),
+  ]);
+  const recargasMes = (rec ?? []).reduce((a, c) => a + Number((c as { amount_brl: number }).amount_brl ?? 0), 0);
+  const debitadoMes = (tx ?? []).reduce((a, c) => a + Number((c as { amount_brl: number }).amount_brl ?? 0), 0);
+
+  return { saldo, recargasMes, debitadoMes, cartoesAtivos };
+}
+
 const ANOMALY_LABEL: Record<string, string> = {
   CONTAINER_PATTERN: "Recipiente fora do padrão",
   PLATE_MISMATCH: "Placa divergente",
@@ -237,6 +262,7 @@ export default async function DashboardPage() {
   const { events: recentEvents, ranking, litrosMes, bloqueiosMes, pumpsOnline, latestAnomaly } =
     await loadDashboardData();
   const analytics = await loadAnalytics(14);
+  const wallet = await loadWallet();
   const economiaEstimada = Math.round(bloqueiosMes * 230 * 100) / 100; // ~R$230 por bloqueio prevenido (estimativa)
 
   return (
@@ -283,6 +309,32 @@ export default async function DashboardPage() {
           sublabel="status reportado pelas bombas"
         />
       </div>
+
+      {/* Carteira da frota (cartão pré-pago) */}
+      {wallet ? (
+        <div className="mt-6">
+          <Card>
+            <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
+              <div>
+                <h2 className="flex items-center gap-2 text-base font-semibold text-[color:var(--color-text-strong)]">
+                  <Wallet className="h-4 w-4 text-[color:var(--color-brand)]" /> Carteira da frota
+                </h2>
+                <p className="text-xs text-[color:var(--color-muted)]">Saldo pré-pago dos cartões e movimento do mês.</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Link href="/cartoes/recarga" className="text-xs font-medium text-[color:var(--color-brand)] hover:underline">Recarregar →</Link>
+                <Link href="/transacoes" className="text-xs font-medium text-[color:var(--color-brand)] hover:underline">Transações →</Link>
+              </div>
+            </div>
+            <div className="grid gap-px bg-[color:var(--color-border)] sm:grid-cols-2 lg:grid-cols-4">
+              <WalletStat title="Saldo em cartões" value={formatBRL(wallet.saldo)} icon={<Wallet className="h-3.5 w-3.5" />} brand />
+              <WalletStat title="Recargas · mês" value={formatBRL(wallet.recargasMes)} icon={<ArrowUpRight className="h-3.5 w-3.5" />} />
+              <WalletStat title="Debitado · mês" value={formatBRL(wallet.debitadoMes)} icon={<ArrowDownRight className="h-3.5 w-3.5" />} />
+              <WalletStat title="Cartões ativos" value={String(wallet.cartoesAtivos)} icon={<CreditCard className="h-3.5 w-3.5" />} />
+            </div>
+          </Card>
+        </div>
+      ) : null}
 
       {/* Gráficos */}
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -618,6 +670,19 @@ function Kpi({
         <span className="text-[color:var(--color-muted)]">{sublabel}</span>
       </div>
     </Card>
+  );
+}
+
+function WalletStat({ title, value, icon, brand }: { title: string; value: string; icon: React.ReactNode; brand?: boolean }) {
+  return (
+    <div className="bg-[color:var(--color-surface)] px-5 py-4">
+      <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-[color:var(--color-muted)]">
+        {icon} {title}
+      </div>
+      <div className={"mt-1.5 text-xl font-semibold " + (brand ? "text-[color:var(--color-brand)]" : "text-[color:var(--color-text-strong)]")}>
+        {value}
+      </div>
+    </div>
   );
 }
 

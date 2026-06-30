@@ -20,6 +20,12 @@ export function RechargeForm({ cardId, initialBalance }: { cardId: string; initi
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
+  // Estorno / ajuste
+  const [showEstorno, setShowEstorno] = useState(false);
+  const [estornoVal, setEstornoVal] = useState("");
+  const [estornoReason, setEstornoReason] = useState("");
+  const [estornoBusy, setEstornoBusy] = useState(false);
+
   // Gera o QR PIX e registra a cobrança PENDENTE (o webhook credita ao confirmar)
   async function gerarPix() {
     const value = Number(amount);
@@ -36,6 +42,47 @@ export function RechargeForm({ cardId, initialBalance }: { cardId: string; initi
       await supabase.rpc("fn_create_pix_charge", { p_card_id: cardId, p_amount: value, p_txid: txid, p_provider: "manual" });
     } catch {
       /* estrutura PIX automática ainda não habilitada — ok */
+    }
+  }
+
+  // Estorna (subtrai) saldo com motivo — nunca deixa negativo (validado no servidor)
+  async function estornar() {
+    setMsg(null);
+    const value = Number(estornoVal);
+    if (!value || value <= 0) {
+      setMsg({ kind: "err", text: "Informe o valor a estornar." });
+      return;
+    }
+    if (value > balance) {
+      setMsg({ kind: "err", text: `Não dá para estornar mais que o saldo (${formatBRL(balance)}).` });
+      return;
+    }
+    setEstornoBusy(true);
+    const supabase = createSupabaseBrowserClient();
+    try {
+      const { data, error } = await supabase.rpc("fn_adjust_card", {
+        p_card_id: cardId,
+        p_amount: -value,
+        p_reason: estornoReason || "Estorno manual",
+      });
+      if (error) {
+        const hint = /does not exist|schema cache|function/i.test(error.message)
+          ? "Rode supabase/rules.sql no Supabase para habilitar estorno."
+          : error.message;
+        setMsg({ kind: "err", text: hint });
+        return;
+      }
+      const novo = Number(data);
+      setBalance(novo);
+      setEstornoVal("");
+      setEstornoReason("");
+      setShowEstorno(false);
+      setMsg({ kind: "ok", text: `Estorno feito. Novo saldo: ${formatBRL(novo)}.` });
+      router.refresh();
+    } catch (e) {
+      setMsg({ kind: "err", text: "Erro inesperado: " + (e instanceof Error ? e.message : String(e)) });
+    } finally {
+      setEstornoBusy(false);
     }
   }
 
@@ -180,6 +227,56 @@ export function RechargeForm({ cardId, initialBalance }: { cardId: string; initi
             {msg.text}
           </p>
         ) : null}
+
+        {/* Estorno / ajuste */}
+        <div className="mt-3 border-t border-[color:var(--color-border)] pt-3">
+          {!showEstorno ? (
+            <button
+              type="button"
+              onClick={() => setShowEstorno(true)}
+              className="text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-danger)]"
+            >
+              Estornar / ajustar saldo
+            </button>
+          ) : (
+            <div>
+              <span className="mb-1 block text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">Estornar saldo (R$)</span>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <input
+                  value={estornoVal}
+                  onChange={(e) => setEstornoVal(e.target.value)}
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  placeholder="Valor a estornar"
+                  className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2 font-mono text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-danger)]"
+                />
+                <input
+                  value={estornoReason}
+                  onChange={(e) => setEstornoReason(e.target.value)}
+                  placeholder="Motivo (ex.: lançamento errado)"
+                  className="w-full rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-danger)] placeholder:text-[color:var(--color-muted)]"
+                />
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <button
+                  onClick={estornar}
+                  disabled={estornoBusy}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[color:var(--color-danger)]/50 bg-[color:var(--color-danger)]/10 px-3 py-2 text-xs font-semibold text-[color:var(--color-danger)] disabled:opacity-50"
+                >
+                  {estornoBusy ? "Estornando…" : "Confirmar estorno"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setShowEstorno(false); setEstornoVal(""); setEstornoReason(""); }}
+                  className="text-xs text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

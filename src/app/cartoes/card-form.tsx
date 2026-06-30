@@ -21,7 +21,22 @@ export type CardFormData = {
   pin?: string | null;
   driver_id?: string | null;
   vehicle_id?: string | null;
+  max_liters_per_tx?: number | null;
+  daily_limit_brl?: number | null;
+  allowed_weekdays?: number[] | null;
+  allowed_hour_start?: number | null;
+  allowed_hour_end?: number | null;
 };
+
+const WEEKDAYS = [
+  { n: 1, l: "Seg" },
+  { n: 2, l: "Ter" },
+  { n: 3, l: "Qua" },
+  { n: 4, l: "Qui" },
+  { n: 5, l: "Sex" },
+  { n: 6, l: "Sáb" },
+  { n: 0, l: "Dom" },
+];
 
 // Gera número fictício no padrão private label (BIN 7000 + 12 dígitos)
 function genCardNumber() {
@@ -48,6 +63,13 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
   const [pin, setPin] = useState(initial?.pin ?? "");
   const [driverId, setDriverId] = useState(initial?.driver_id ?? "");
   const [vehicleId, setVehicleId] = useState(initial?.vehicle_id ?? "");
+
+  // Regras de uso (opcionais)
+  const [maxLitersTx, setMaxLitersTx] = useState(initial?.max_liters_per_tx != null ? String(initial.max_liters_per_tx) : "");
+  const [dailyLimit, setDailyLimit] = useState(initial?.daily_limit_brl != null ? String(initial.daily_limit_brl) : "");
+  const [weekdays, setWeekdays] = useState<number[]>(initial?.allowed_weekdays ?? []);
+  const [hourStart, setHourStart] = useState(initial?.allowed_hour_start != null ? String(initial.allowed_hour_start) : "");
+  const [hourEnd, setHourEnd] = useState(initial?.allowed_hour_end != null ? String(initial.allowed_hour_end) : "");
 
   const [drivers, setDrivers] = useState<Array<{ id: string; name: string }>>([]);
   const [vehicles, setVehicles] = useState<Array<{ id: string; plate: string }>>([]);
@@ -133,6 +155,11 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
         pin: pin || null,
         driver_id: driverId || null,
         vehicle_id: vehicleId || null,
+        max_liters_per_tx: maxLitersTx ? Number(maxLitersTx) : null,
+        daily_limit_brl: dailyLimit ? Number(dailyLimit) : null,
+        allowed_weekdays: weekdays.length > 0 ? weekdays : null,
+        allowed_hour_start: hourStart !== "" ? Number(hourStart) : null,
+        allowed_hour_end: hourEnd !== "" ? Number(hourEnd) : null,
       };
 
       if (editing && initial?.id) {
@@ -159,6 +186,10 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
     setDriverId(id);
     const d = drivers.find((x) => x.id === id);
     if (d && !holder.trim()) setHolder(d.name.toUpperCase());
+  }
+
+  function toggleWeekday(n: number) {
+    setWeekdays((w) => (w.includes(n) ? w.filter((x) => x !== n) : [...w, n]));
   }
 
   return (
@@ -239,6 +270,55 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
             ))}
           </Select>
         </FormField>
+      </div>
+
+      {/* Regras de uso (opcional) */}
+      <div className="rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-4">
+        <div className="text-sm font-medium text-[color:var(--color-text-strong)]">Regras de uso</div>
+        <p className="text-xs text-[color:var(--color-muted)]">Limites e janelas aplicados na hora de autorizar. Em branco = sem restrição.</p>
+
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+          <FormField label="Limite por abastecimento (L)" hint="Recusa acima disso.">
+            <Input type="number" min={0} value={maxLitersTx} onChange={(e) => setMaxLitersTx(e.target.value)} placeholder="ex.: 200" />
+          </FormField>
+          <FormField label="Limite diário (R$)" hint="Soma do dia.">
+            <Input type="number" min={0} step="0.01" value={dailyLimit} onChange={(e) => setDailyLimit(e.target.value)} placeholder="ex.: 800" />
+          </FormField>
+        </div>
+
+        <div className="mt-3">
+          <span className="mb-1.5 block text-xs font-medium text-[color:var(--color-text)]">Dias permitidos</span>
+          <div className="flex flex-wrap gap-1.5">
+            {WEEKDAYS.map((d) => {
+              const on = weekdays.includes(d.n);
+              return (
+                <button
+                  key={d.n}
+                  type="button"
+                  onClick={() => toggleWeekday(d.n)}
+                  className={
+                    "rounded-md border px-2.5 py-1.5 text-xs transition-colors " +
+                    (on
+                      ? "border-[color:var(--color-brand)] bg-[color:var(--color-brand-soft)] text-[color:var(--color-brand)]"
+                      : "border-[color:var(--color-border)] bg-[color:var(--color-surface)] text-[color:var(--color-muted)] hover:text-[color:var(--color-text-strong)]")
+                  }
+                >
+                  {d.l}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-1 text-[11px] text-[color:var(--color-muted)]">Nenhum selecionado = todos os dias.</p>
+        </div>
+
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+          <FormField label="Hora início" hint="0–23. Vazio = sem janela.">
+            <Input type="number" min={0} max={23} value={hourStart} onChange={(e) => setHourStart(e.target.value)} placeholder="ex.: 6" />
+          </FormField>
+          <FormField label="Hora fim" hint="1–24, exclusivo.">
+            <Input type="number" min={1} max={24} value={hourEnd} onChange={(e) => setHourEnd(e.target.value)} placeholder="ex.: 20" />
+          </FormField>
+        </div>
       </div>
 
       {loadHint ? (
