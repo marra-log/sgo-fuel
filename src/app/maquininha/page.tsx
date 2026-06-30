@@ -2,6 +2,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { MaquininhaClient } from "./maquininha-client";
 
 export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "SGO-Fuel POS · Terminal",
+  manifest: "/pos.webmanifest",
+};
 
 export default async function MaquininhaPage() {
   const supabase = await createSupabaseServerClient();

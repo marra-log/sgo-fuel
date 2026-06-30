@@ -4,17 +4,29 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
+  CreditCard,
   Fuel,
   Gauge,
   LogOut,
   MapPin,
   Navigation,
+  Nfc,
   Truck,
   User as UserIcon,
+  Wallet,
 } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { traduzSupabaseError } from "@/lib/supabase/errors";
-import { formatNumber, timeAgo } from "@/lib/utils";
+import { NfcReaderButton } from "@/components/nfc-reader-button";
+import { normalizeUid } from "@/lib/web-nfc";
+import { formatBRL, formatNumber, timeAgo } from "@/lib/utils";
+
+type LinkedCard = {
+  card_number: string;
+  nfc_uid: string | null;
+  status: string;
+  balance_brl: number | null;
+};
 
 type Driver = { id: string; name: string; score: number };
 type Vehicle = {
@@ -67,6 +79,73 @@ export function MotoristaApp({
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
+  // Carteira pré-paga do cartão vinculado (fluxo "celular via NFC")
+  const [card, setCard] = useState<LinkedCard | null>(null);
+  const [litersDebit, setLitersDebit] = useState("100");
+  const [priceDebit, setPriceDebit] = useState("6.12");
+  const [pinDebit, setPinDebit] = useState("");
+  const [nfcOk, setNfcOk] = useState<string | null>(null);
+  const [debitBusy, setDebitBusy] = useState(false);
+  const [debitMsg, setDebitMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  async function loadCard(did: string) {
+    const supabase = createSupabaseBrowserClient();
+    const { data } = await supabase
+      .from("fleet_cards")
+      .select("card_number, nfc_uid, status, balance_brl")
+      .eq("driver_id", did)
+      .maybeSingle();
+    setCard((data ?? null) as LinkedCard | null);
+  }
+
+  // Confirma o cartão pela tag NFC do próprio celular
+  function onConfirmNfc(uid: string) {
+    if (card?.nfc_uid && normalizeUid(uid) === normalizeUid(card.nfc_uid)) {
+      setNfcOk("Cartão confirmado pela tag NFC ✓");
+    } else {
+      setNfcOk(`Tag lida (UID ${uid}) não corresponde ao seu cartão.`);
+    }
+  }
+
+  async function abastecerComSaldo() {
+    setDebitMsg(null);
+    if (!card) {
+      setDebitMsg({ kind: "err", text: "Você não tem cartão vinculado. Peça ao gestor." });
+      return;
+    }
+    setDebitBusy(true);
+    const supabase = createSupabaseBrowserClient();
+    try {
+      const { data, error } = await supabase.rpc("fn_authorize_card", {
+        p_card_number: card.card_number,
+        p_pin: pinDebit || null,
+        p_liters: Number(litersDebit || 0),
+        p_price: Number(priceDebit || 0),
+        p_pump_id: pumpId || null,
+      });
+      if (error) {
+        const hint = /does not exist|schema cache|function/i.test(error.message)
+          ? "Carteira não habilitada — rode supabase/wallet.sql no Supabase."
+          : error.message;
+        setDebitMsg({ kind: "err", text: hint });
+        return;
+      }
+      const r = data as { ok: boolean; reason?: string; amount?: number; balance_after?: number | null };
+      if (r.ok) {
+        setCard((c) => (c ? { ...c, balance_brl: r.balance_after ?? c.balance_brl } : c));
+        setDebitMsg({ kind: "ok", text: `Abastecimento liberado! Debitado ${formatBRL(r.amount ?? 0)}. Saldo: ${formatBRL(r.balance_after ?? 0)}.` });
+        setNfcOk(null);
+        if (driver) loadHistory(driver.id);
+      } else {
+        setDebitMsg({ kind: "err", text: r.reason ?? "Não autorizado." });
+      }
+    } catch (e) {
+      setDebitMsg({ kind: "err", text: "Erro: " + (e instanceof Error ? e.message : String(e)) });
+    } finally {
+      setDebitBusy(false);
+    }
+  }
+
   // Restaura motorista escolhido
   useEffect(() => {
     const saved = typeof window !== "undefined" ? localStorage.getItem(DRIVER_KEY) : null;
@@ -102,6 +181,7 @@ export function MotoristaApp({
     if (driverId) {
       localStorage.setItem(DRIVER_KEY, driverId);
       loadHistory(driverId);
+      loadCard(driverId);
     }
   }, [driverId]);
 
@@ -300,6 +380,83 @@ export function MotoristaApp({
             {msg.text}
           </div>
         ) : null}
+      </div>
+
+      {/* Carteira do cartão — abastecer com saldo (celular via NFC) */}
+      <div className="mt-4 rounded-xl border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
+            <CreditCard className="h-3 w-3" /> Cartão private label
+          </div>
+          {card ? (
+            <span className="font-mono text-[11px] text-[color:var(--color-muted)]">•••• {card.card_number.slice(-4)}</span>
+          ) : null}
+        </div>
+
+        {!card ? (
+          <div className="mt-2 text-sm text-[color:var(--color-warning)]">
+            Nenhum cartão vinculado a você. Peça ao gestor para emitir e vincular em /cartoes.
+          </div>
+        ) : (
+          <>
+            <div className="mt-2 flex items-end justify-between">
+              <div>
+                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
+                  <Wallet className="h-3 w-3" /> Saldo disponível
+                </div>
+                <div className="text-2xl font-semibold text-[color:var(--color-brand)]">{formatBRL(Number(card.balance_brl ?? 0))}</div>
+              </div>
+              <NfcReaderButton onRead={onConfirmNfc} label="Aproximar cartão (NFC)" />
+            </div>
+            {nfcOk ? <div className="mt-1 text-[11px] text-[color:var(--color-brand)]">{nfcOk}</div> : null}
+
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <label className="block">
+                <span className="mb-1 block text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">Litros</span>
+                <input value={litersDebit} onChange={(e) => setLitersDebit(e.target.value)} type="number" min={0}
+                  className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-2 font-mono text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">R$/L</span>
+                <input value={priceDebit} onChange={(e) => setPriceDebit(e.target.value)} type="number" min={0} step="0.01"
+                  className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-2 font-mono text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">PIN</span>
+                <input value={pinDebit} onChange={(e) => setPinDebit(e.target.value)} maxLength={4} inputMode="numeric"
+                  className="w-full rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] px-2 py-2 font-mono text-sm text-[color:var(--color-text-strong)] outline-none focus:border-[color:var(--color-brand)]" placeholder="••••" />
+              </label>
+            </div>
+
+            <div className="mt-3 flex items-center justify-between rounded-lg bg-[color:var(--color-surface-2)] px-3 py-2">
+              <span className="text-xs text-[color:var(--color-muted)]">Total a debitar</span>
+              <span className="font-mono text-base font-semibold text-[color:var(--color-text-strong)]">
+                {formatBRL((Number(litersDebit) || 0) * (Number(priceDebit) || 0))}
+              </span>
+            </div>
+
+            <button
+              onClick={abastecerComSaldo}
+              disabled={debitBusy}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[color:var(--color-brand)] py-3 text-sm font-semibold text-black disabled:opacity-60"
+            >
+              <Nfc className="h-4 w-4" />
+              {debitBusy ? "Debitando…" : "Abastecer com saldo"}
+            </button>
+
+            {debitMsg ? (
+              <div
+                className={
+                  debitMsg.kind === "ok"
+                    ? "mt-3 rounded-md border border-[color:var(--color-brand)]/40 bg-[color:var(--color-brand-soft)] px-3 py-2 text-xs text-[color:var(--color-brand)]"
+                    : "mt-3 rounded-md border border-[color:var(--color-danger)]/40 bg-[color:var(--color-danger)]/10 px-3 py-2 text-xs text-[color:var(--color-danger)]"
+                }
+              >
+                {debitMsg.text}
+              </div>
+            ) : null}
+          </>
+        )}
       </div>
 
       {/* Histórico */}

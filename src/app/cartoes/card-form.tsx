@@ -182,7 +182,7 @@ export function CardForm({ initial }: { initial?: CardFormData }) {
       </div>
 
       <FormField label="Nome impresso (titular)">
-        <Input value={holder} onChange={(e) => setHolder(e.target.value)} placeholder="MARRALOG TRANSPORTES" />
+        <Input value={holder} onChange={(e) => setHolder(e.target.value)} placeholder="TRANSCARGO LOGÍSTICA" />
       </FormField>
 
       <div className="grid gap-4 sm:grid-cols-3">

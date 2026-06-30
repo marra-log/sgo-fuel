@@ -27,6 +27,7 @@ import {
   Trophy,
   Truck,
   Users,
+  Wallet,
   X,
   Zap,
   type LucideIcon,
@@ -60,6 +61,7 @@ const groups: { title: string; items: NavItem[] }[] = [
     title: "Financeiro",
     items: [
       { href: "/cartoes", label: "Gestão dos Cartões", icon: CreditCard, desc: "Emitir, bloquear e limites" },
+      { href: "/cartoes/recarga", label: "Recarregar saldo", icon: Wallet, desc: "Adicionar saldo por cartão/motorista" },
       { href: "/maquininha", label: "Maquininha", icon: Smartphone, desc: "Terminal de autorização" },
       { href: "/faturamento", label: "Faturamento", icon: Receipt, desc: "Fechamento e cobrança" },
       { href: "/conciliacao", label: "Conciliação SEFAZ", icon: FileText, desc: "Notas x abastecimentos" },

@@ -1,0 +1,15 @@
+{
+  "name": "SGO-Fuel Totem",
+  "short_name": "SGO Totem",
+  "description": "Totem IoT de autoatendimento — abastecimento por cartão/NFC com débito de saldo ou liberação por IA/placa.",
+  "start_url": "/totem",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08090b",
+  "theme_color": "#08090b",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CreditCard, Nfc } from "lucide-react";
+import { CreditCard, Nfc, Wallet } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
 import { Badge } from "@/components/ui/badge";
 import { ListShell, EmptyState } from "@/components/cadastros/crud-shell";
@@ -47,7 +47,11 @@ export default async function CartoesPage() {
       title="Cartão exclusivo da empresa"
       description="Cartões private label (fechados) identificados por número e NFC. Cada um tem saldo pré-pago (R$) — recarregue no cartão e o motorista debita na Smart POS. Bloqueio na hora."
     >
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <Link href="/cartoes/recarga" className="inline-flex items-center gap-1.5 rounded-md bg-[color:var(--color-brand)] px-3 py-2 text-xs font-semibold text-black hover:opacity-90">
+          <Wallet className="h-3.5 w-3.5" />
+          Recarregar saldo
+        </Link>
         <Link href="/maquininha" className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface)] px-3 py-2 text-xs text-[color:var(--color-text-strong)] hover:bg-[color:var(--color-surface-2)]">
           <CreditCard className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
           Abrir a Maquininha (terminal)
