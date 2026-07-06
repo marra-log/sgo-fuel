@@ -4,7 +4,8 @@
 -- Popula o banco com motoristas, veículos, pátios, tanques, bombas,
 -- cartões, abastecimentos e anomalias — vinculados à SUA empresa.
 --
--- Pré-requisito: já ter criado a empresa em /cadastros/empresa.
+-- Pré-requisitos: empresa criada em /cadastros/empresa E os SQLs
+--   wallet.sql + rules.sql + pin.sql já aplicados (o seed usa saldo/PIN/regras).
 -- Como aplicar: cole tudo no SQL Editor do Supabase e clique em Run.
 -- Idempotente: se já houver motoristas, o seed é ignorado.
 -- ============================================================
@@ -82,17 +83,28 @@ begin
     (v_tenant, 'RDH-8H08', 'VW Constellation 24.280',  'DIESEL_S10', 450, 2.66, 321400, v_drivers[8]);
   select array_agg(id order by plate) into v_vehicles from vehicles where tenant_id = v_tenant;
 
-  -- 7) Cartões de frota (8)
-  insert into fleet_cards (tenant_id, card_number, nfc_uid, holder_name, driver_id, vehicle_id, status, monthly_limit_l) values
-    (v_tenant, '7000000000000001', '04A1B2C301', 'João Pereira',    v_drivers[1], v_vehicles[1], 'ACTIVE', 1200),
-    (v_tenant, '7000000000000002', '04A1B2C302', 'Carlos Santos',   v_drivers[2], v_vehicles[2], 'ACTIVE', 1200),
-    (v_tenant, '7000000000000003', '04A1B2C303', 'Marcos Oliveira', v_drivers[3], v_vehicles[3], 'ACTIVE', 1000),
-    (v_tenant, '7000000000000004', '04A1B2C304', 'Paulo Ribeiro',   v_drivers[4], v_vehicles[4], 'ACTIVE', 1000),
-    (v_tenant, '7000000000000005', '04A1B2C305', 'Antônio Costa',   v_drivers[5], v_vehicles[5], 'BLOCKED', 800),
-    (v_tenant, '7000000000000006', '04A1B2C306', 'Rafael Lima',     v_drivers[6], v_vehicles[6], 'ACTIVE', 1000),
-    (v_tenant, '7000000000000007', '04A1B2C307', 'Bruno Alves',     v_drivers[7], v_vehicles[7], 'ACTIVE', 1500),
-    (v_tenant, '7000000000000008', '04A1B2C308', 'Felipe Souza',    v_drivers[8], v_vehicles[8], 'ACTIVE', 1000);
+  -- 7) Cartões de frota (8) — com SALDO pré-pago, PIN e regras (dados reais)
+  --    Requer wallet.sql + rules.sql + pin.sql aplicados antes.
+  insert into fleet_cards (tenant_id, card_number, nfc_uid, holder_name, driver_id, vehicle_id, status, monthly_limit_l, balance_brl, pin) values
+    (v_tenant, '7000000000000001', '04A1B2C301', 'João Pereira',    v_drivers[1], v_vehicles[1], 'ACTIVE',  1200, 2500.00, '1234'),
+    (v_tenant, '7000000000000002', '04A1B2C302', 'Carlos Santos',   v_drivers[2], v_vehicles[2], 'ACTIVE',  1200, 1800.00, null),
+    (v_tenant, '7000000000000003', '04A1B2C303', 'Marcos Oliveira', v_drivers[3], v_vehicles[3], 'ACTIVE',  1000, 1500.00, null),
+    (v_tenant, '7000000000000004', '04A1B2C304', 'Paulo Ribeiro',   v_drivers[4], v_vehicles[4], 'ACTIVE',  1000, 1500.00, null),
+    (v_tenant, '7000000000000005', '04A1B2C305', 'Antônio Costa',   v_drivers[5], v_vehicles[5], 'BLOCKED',  800,  800.00, null),
+    (v_tenant, '7000000000000006', '04A1B2C306', 'Rafael Lima',     v_drivers[6], v_vehicles[6], 'ACTIVE',  1000,   90.00, null),
+    (v_tenant, '7000000000000007', '04A1B2C307', 'Bruno Alves',     v_drivers[7], v_vehicles[7], 'ACTIVE',  1500, 4200.00, '9999'),
+    (v_tenant, '7000000000000008', '04A1B2C308', 'Felipe Souza',    v_drivers[8], v_vehicles[8], 'ACTIVE',  1000, 1200.00, null);
   select array_agg(id) into v_cards from fleet_cards where tenant_id = v_tenant;
+
+  -- 7b) Regras de uso de exemplo no cartão do Marcos (limite/dia/horário)
+  update fleet_cards
+    set max_liters_per_tx = 200, daily_limit_brl = 800, allowed_hour_start = 6, allowed_hour_end = 20
+    where tenant_id = v_tenant and card_number = '7000000000000003';
+
+  -- 7c) Histórico de recargas coerente com o saldo (carga inicial)
+  insert into card_recharges (tenant_id, card_id, amount_brl, method, note, balance_after)
+    select tenant_id, id, balance_brl, 'MANUAL', 'Carga inicial (demonstração)', balance_brl
+    from fleet_cards where tenant_id = v_tenant and balance_brl > 0;
 
   -- 8) Abastecimentos (30) — distribuídos nas últimas 30h, alguns bloqueados
   for i in 1..30 loop
