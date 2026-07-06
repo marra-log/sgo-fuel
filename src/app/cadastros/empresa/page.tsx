@@ -31,22 +31,26 @@ export default function EmpresaPage() {
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.replace("/login?redirect=/cadastros/empresa");
-        return;
+      try {
+        // A rota é protegida pelo middleware — se chegou aqui, está logado.
+        // Consultamos direto (a sessão via cookie autentica o RLS).
+        const { data, error } = await supabase
+          .from("tenants")
+          .select("*")
+          .limit(1)
+          .maybeSingle();
+        if (error) {
+          setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
+        } else if (data) {
+          setTenant(data);
+          setName(data.name);
+          setCnpj(data.cnpj ?? "");
+        }
+      } catch (e) {
+        setMsg({ kind: "err", text: "Falha ao carregar: " + (e instanceof Error ? e.message : String(e)) });
+      } finally {
+        setLoading(false);
       }
-      const { data } = await supabase
-        .from("tenants")
-        .select("*")
-        .limit(1)
-        .maybeSingle();
-      if (data) {
-        setTenant(data);
-        setName(data.name);
-        setCnpj(data.cnpj ?? "");
-      }
-      setLoading(false);
     })();
   }, [router]);
 
@@ -56,34 +60,38 @@ export default function EmpresaPage() {
     setMsg(null);
     const supabase = createSupabaseBrowserClient();
 
-    if (tenant) {
-      const { error } = await supabase
-        .from("tenants")
-        .update({ name, cnpj: cnpj || null })
-        .eq("id", tenant.id);
-      if (error) {
-        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
-        setSaving(false);
-        return;
+    try {
+      if (tenant) {
+        const { error } = await supabase
+          .from("tenants")
+          .update({ name, cnpj: cnpj || null })
+          .eq("id", tenant.id);
+        if (error) {
+          setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
+          return;
+        }
+        setMsg({ kind: "ok", text: "Empresa atualizada." });
+        setTenant({ ...tenant, name, cnpj: cnpj || null });
+      } else {
+        const { data, error } = await supabase
+          .from("tenants")
+          .insert({ name, cnpj: cnpj || null })
+          .select()
+          .single();
+        if (error) {
+          setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
+          return;
+        }
+        setTenant(data);
+        setMsg({ kind: "ok", text: "Empresa criada — você é o OWNER. Redirecionando…" });
+        router.refresh();
+        router.push("/dashboard");
       }
-      setMsg({ kind: "ok", text: "Empresa atualizada." });
-      setTenant({ ...tenant, name, cnpj: cnpj || null });
-    } else {
-      const { data, error } = await supabase
-        .from("tenants")
-        .insert({ name, cnpj: cnpj || null })
-        .select()
-        .single();
-      if (error) {
-        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
-        setSaving(false);
-        return;
-      }
-      setTenant(data);
-      setMsg({ kind: "ok", text: "Empresa criada — você é o OWNER." });
-      router.refresh();
+    } catch (e) {
+      setMsg({ kind: "err", text: "Erro inesperado: " + (e instanceof Error ? e.message : String(e)) });
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   }
 
   return (
