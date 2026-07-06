@@ -1,41 +1,36 @@
-// SGO-Fuel · Service Worker (Bloco A6)
-// Cache leve do shell da PWA do motorista. Estratégia: network-first com
-// fallback pro cache (offline básico). Dados sensíveis não são cacheados.
+// SGO-Fuel · Service Worker — KILL SWITCH
+// Substitui o SW antigo (que cacheava o shell). Este apenas se auto-remove,
+// limpa caches e recarrega as abas para garantir que ninguém fique preso em
+// código desatualizado. Sem cache de código durante o desenvolvimento.
 
-const CACHE = "sgo-fuel-v1";
-const SHELL = ["/app", "/icon.svg", "/manifest.webmanifest"];
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(SHELL).catch(() => {}))
-  );
+self.addEventListener("install", () => {
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  // Só GET e mesma origem; nunca cacheia chamadas ao Supabase.
-  if (req.method !== "GET") return;
-  const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;
-  if (url.pathname.startsWith("/_next/") || url.pathname.startsWith("/api/")) return;
-
-  event.respondWith(
-    fetch(req)
-      .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((cache) => cache.put(req, copy).catch(() => {}));
-        return res;
-      })
-      .catch(() => caches.match(req).then((cached) => cached || caches.match("/app")))
+    (async () => {
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      } catch (e) {
+        /* ignore */
+      }
+      try {
+        await self.registration.unregister();
+      } catch (e) {
+        /* ignore */
+      }
+      const clients = await self.clients.matchAll({ type: "window" });
+      clients.forEach((client) => {
+        try {
+          client.navigate(client.url);
+        } catch (e) {
+          /* ignore */
+        }
+      });
+    })()
   );
 });
+
+// Nunca intercepta requisições — tudo vai direto para a rede.

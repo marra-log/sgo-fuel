@@ -6,14 +6,16 @@ export function PwaRegister() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!("serviceWorker" in navigator)) return;
-    const onLoad = () => {
-      navigator.serviceWorker.register("/sw.js").catch(() => {
-        // Falha silenciosa — PWA funciona mesmo sem SW registrado.
-      });
-    };
-    if (document.readyState === "complete") onLoad();
-    else window.addEventListener("load", onLoad);
-    return () => window.removeEventListener("load", onLoad);
+    // Kill switch: remove qualquer service worker antigo (que poderia servir um
+    // bundle desatualizado) e limpa os caches dele. O "Adicionar à tela inicial"
+    // continua funcionando pelo manifest, sem depender do SW.
+    navigator.serviceWorker
+      .getRegistrations()
+      .then((regs) => Promise.all(regs.map((r) => r.unregister())))
+      .catch(() => {});
+    if (typeof caches !== "undefined") {
+      caches.keys().then((keys) => keys.forEach((k) => caches.delete(k))).catch(() => {});
+    }
   }, []);
 
   return null;
