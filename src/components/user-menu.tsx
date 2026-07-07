@@ -19,21 +19,27 @@ export function UserMenu() {
     let cancelled = false;
 
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        if (!cancelled) setSession(null);
-        return;
-      }
-      const { data: members } = await supabase
-        .from("tenant_members")
-        .select("tenants(name)")
-        .limit(1)
-        .maybeSingle();
-
-      if (!cancelled) {
-        const tenantName =
-          (members?.tenants as unknown as { name?: string } | null)?.name ?? null;
-        setSession({ email: user.email ?? "", tenantName });
+      try {
+        // getSession lê da storage local (rápido) — o menu/logout aparece na hora.
+        const { data: { session: s } } = await supabase.auth.getSession();
+        const user = s?.user;
+        if (!user) {
+          if (!cancelled) setSession(null);
+          return;
+        }
+        if (!cancelled) setSession({ email: user.email ?? "", tenantName: null });
+        // Enriquece o nome da empresa depois, sem travar o logout.
+        const { data: members } = await supabase
+          .from("tenant_members")
+          .select("tenants(name)")
+          .limit(1)
+          .maybeSingle();
+        if (!cancelled) {
+          const tenantName = (members?.tenants as unknown as { name?: string } | null)?.name ?? null;
+          setSession((prev) => (prev ? { ...prev, tenantName } : { email: user.email ?? "", tenantName }));
+        }
+      } catch {
+        /* não bloqueia o menu/logout se a consulta falhar */
       }
     }
     load();
