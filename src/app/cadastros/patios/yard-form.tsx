@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { traduzSupabaseError } from "@/lib/supabase/errors";
+import { resolveTenantId } from "@/lib/supabase/tenant-client";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
@@ -34,43 +35,38 @@ export function YardForm({ initial }: { initial?: YardFormData }) {
     setMsg(null);
     const supabase = createSupabaseBrowserClient();
 
-    const { data: member } = await supabase
-      .from("tenant_members")
-      .select("tenant_id")
-      .limit(1)
-      .maybeSingle();
-    const tenantId = member?.tenant_id;
-    if (!tenantId) {
-      setMsg({ kind: "err", text: "Sua conta ainda não tem empresa." });
+    try {
+      const payload = {
+        name,
+        address: address || null,
+        lat: lat ? Number(lat) : null,
+        lng: lng ? Number(lng) : null,
+      };
+
+      if (editing && initial?.id) {
+        const { error } = await supabase.from("yards").update(payload).eq("id", initial.id);
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        setMsg({ kind: "ok", text: "Pátio atualizado." });
+        router.refresh();
+      } else {
+        const { tenantId, error: terr } = await resolveTenantId(supabase);
+        if (!tenantId) { setMsg({ kind: "err", text: terr ?? "Empresa não encontrada." }); return; }
+        const { error } = await supabase.from("yards").insert({ ...payload, tenant_id: tenantId });
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        router.push("/cadastros/patios");
+        router.refresh();
+      }
+    } catch (err) {
+      setMsg({ kind: "err", text: "Erro inesperado: " + (err instanceof Error ? err.message : String(err)) });
+    } finally {
       setSaving(false);
-      return;
     }
-
-    const payload = {
-      name,
-      address: address || null,
-      lat: lat ? Number(lat) : null,
-      lng: lng ? Number(lng) : null,
-    };
-
-    if (editing && initial?.id) {
-      const { error } = await supabase.from("yards").update(payload).eq("id", initial.id);
-      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
-      setMsg({ kind: "ok", text: "Pátio atualizado." });
-      router.refresh();
-    } else {
-      const { error } = await supabase.from("yards").insert({ ...payload, tenant_id: tenantId });
-      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
-      router.push("/cadastros/patios");
-      router.refresh();
-    }
-    setSaving(false);
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <FormField label="Nome do pátio" required>
-        <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Pátio Marralog · BH" />
+        <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Pátio Central · BH" />
       </FormField>
       <FormField label="Endereço">
         <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Av. Industrial, 1500" />

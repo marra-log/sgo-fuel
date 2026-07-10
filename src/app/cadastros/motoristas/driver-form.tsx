@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { traduzSupabaseError } from "@/lib/supabase/errors";
+import { resolveTenantId } from "@/lib/supabase/tenant-client";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
@@ -38,48 +39,33 @@ export function DriverForm({ initial }: { initial?: DriverFormData }) {
     setMsg(null);
     const supabase = createSupabaseBrowserClient();
 
-    // Resolve tenant_id no client (precisa pra insert; updates herdam via RLS).
-    const { data: member } = await supabase
-      .from("tenant_members")
-      .select("tenant_id")
-      .limit(1)
-      .maybeSingle();
-    const tenantId = member?.tenant_id;
+    try {
+      const payload = {
+        name,
+        cpf: cpf || null,
+        cnh: cnh || null,
+        phone: phone || null,
+        active,
+      };
 
-    if (!tenantId) {
-      setMsg({ kind: "err", text: "Sua conta ainda não tem empresa. Crie em Cadastros → Empresa." });
+      if (editing && initial?.id) {
+        const { error } = await supabase.from("drivers").update(payload).eq("id", initial.id);
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        setMsg({ kind: "ok", text: "Motorista atualizado." });
+        router.refresh();
+      } else {
+        const { tenantId, error: terr } = await resolveTenantId(supabase);
+        if (!tenantId) { setMsg({ kind: "err", text: terr ?? "Empresa não encontrada." }); return; }
+        const { error } = await supabase.from("drivers").insert({ ...payload, tenant_id: tenantId });
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        router.push("/cadastros/motoristas");
+        router.refresh();
+      }
+    } catch (err) {
+      setMsg({ kind: "err", text: "Erro inesperado: " + (err instanceof Error ? err.message : String(err)) });
+    } finally {
       setSaving(false);
-      return;
     }
-
-    const payload = {
-      name,
-      cpf: cpf || null,
-      cnh: cnh || null,
-      phone: phone || null,
-      active,
-    };
-
-    if (editing && initial?.id) {
-      const { error } = await supabase.from("drivers").update(payload).eq("id", initial.id);
-      if (error) {
-        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
-        setSaving(false);
-        return;
-      }
-      setMsg({ kind: "ok", text: "Motorista atualizado." });
-      router.refresh();
-    } else {
-      const { error } = await supabase.from("drivers").insert({ ...payload, tenant_id: tenantId });
-      if (error) {
-        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
-        setSaving(false);
-        return;
-      }
-      router.push("/cadastros/motoristas");
-      router.refresh();
-    }
-    setSaving(false);
   }
 
   return (

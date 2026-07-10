@@ -79,7 +79,15 @@ export default function EmpresaPage() {
           .select()
           .single();
         if (error) {
-          setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
+          const isRls = /row-level security|violates row-level/i.test(error.message);
+          setMsg({
+            kind: "err",
+            text: isRls
+              ? "O banco está bloqueando a criação de empresas (falta a policy tenants_insert). " +
+                "Correção: abra o SQL Editor do Supabase (projeto jozeyczhxdcfvtvumiph) e rode o arquivo supabase/fix-rls.sql do repositório. " +
+                "Depois volte aqui e clique em Criar empresa de novo."
+              : traduzSupabaseError(error.message),
+          });
           return;
         }
         setTenant(data);
@@ -140,7 +148,7 @@ export default function EmpresaPage() {
               value={name}
               onChange={setName}
               required
-              placeholder="Marralog Transportes Ltda"
+              placeholder="TransCargo Logística Ltda"
             />
             <Field
               label="CNPJ"

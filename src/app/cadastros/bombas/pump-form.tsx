@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { traduzSupabaseError } from "@/lib/supabase/errors";
+import { resolveTenantId } from "@/lib/supabase/tenant-client";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input, Select } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
@@ -61,36 +62,35 @@ export function PumpForm({ initial }: { initial?: PumpFormData }) {
     setMsg(null);
     const supabase = createSupabaseBrowserClient();
 
-    const { data: member } = await supabase.from("tenant_members").select("tenant_id").limit(1).maybeSingle();
-    const tenantId = member?.tenant_id;
-    if (!tenantId) {
-      setMsg({ kind: "err", text: "Sua conta ainda não tem empresa." });
+    try {
+      const payload = {
+        serial_number: serial.trim().toUpperCase(),
+        iot_device_id: deviceId || null,
+        device_version: deviceVersion || null,
+        status,
+        yard_id: scope === "YARD" ? yardId || null : null,
+        tank_id: scope === "YARD" ? tankId || null : null,
+        partner_station: scope === "PARTNER" ? partner || null : null,
+      };
+
+      if (editing && initial?.id) {
+        const { error } = await supabase.from("pumps").update(payload).eq("id", initial.id);
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        setMsg({ kind: "ok", text: "Bomba atualizada." });
+        router.refresh();
+      } else {
+        const { tenantId, error: terr } = await resolveTenantId(supabase);
+        if (!tenantId) { setMsg({ kind: "err", text: terr ?? "Empresa não encontrada." }); return; }
+        const { error } = await supabase.from("pumps").insert({ ...payload, tenant_id: tenantId });
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        router.push("/cadastros/bombas");
+        router.refresh();
+      }
+    } catch (err) {
+      setMsg({ kind: "err", text: "Erro inesperado: " + (err instanceof Error ? err.message : String(err)) });
+    } finally {
       setSaving(false);
-      return;
     }
-
-    const payload = {
-      serial_number: serial.trim().toUpperCase(),
-      iot_device_id: deviceId || null,
-      device_version: deviceVersion || null,
-      status,
-      yard_id: scope === "YARD" ? yardId || null : null,
-      tank_id: scope === "YARD" ? tankId || null : null,
-      partner_station: scope === "PARTNER" ? partner || null : null,
-    };
-
-    if (editing && initial?.id) {
-      const { error } = await supabase.from("pumps").update(payload).eq("id", initial.id);
-      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
-      setMsg({ kind: "ok", text: "Bomba atualizada." });
-      router.refresh();
-    } else {
-      const { error } = await supabase.from("pumps").insert({ ...payload, tenant_id: tenantId });
-      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
-      router.push("/cadastros/bombas");
-      router.refresh();
-    }
-    setSaving(false);
   }
 
   return (

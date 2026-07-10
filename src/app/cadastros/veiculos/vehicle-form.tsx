@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { traduzSupabaseError } from "@/lib/supabase/errors";
+import { resolveTenantId } from "@/lib/supabase/tenant-client";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input, Select } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
@@ -61,48 +62,35 @@ export function VehicleForm({ initial }: { initial?: VehicleFormData }) {
     setMsg(null);
     const supabase = createSupabaseBrowserClient();
 
-    const { data: member } = await supabase
-      .from("tenant_members")
-      .select("tenant_id")
-      .limit(1)
-      .maybeSingle();
-    const tenantId = member?.tenant_id;
-    if (!tenantId) {
-      setMsg({ kind: "err", text: "Sua conta ainda não tem empresa." });
+    try {
+      const payload = {
+        plate: plate.trim().toUpperCase(),
+        model: model || null,
+        fuel_type: fuelType,
+        tank_capacity_l: capacity ? Number(capacity) : null,
+        avg_consumption: avg ? Number(avg) : null,
+        current_odometer: odom ? Number(odom) : 0,
+        current_driver_id: driverId || null,
+      };
+
+      if (editing && initial?.id) {
+        const { error } = await supabase.from("vehicles").update(payload).eq("id", initial.id);
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        setMsg({ kind: "ok", text: "Veículo atualizado." });
+        router.refresh();
+      } else {
+        const { tenantId, error: terr } = await resolveTenantId(supabase);
+        if (!tenantId) { setMsg({ kind: "err", text: terr ?? "Empresa não encontrada." }); return; }
+        const { error } = await supabase.from("vehicles").insert({ ...payload, tenant_id: tenantId });
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        router.push("/cadastros/veiculos");
+        router.refresh();
+      }
+    } catch (err) {
+      setMsg({ kind: "err", text: "Erro inesperado: " + (err instanceof Error ? err.message : String(err)) });
+    } finally {
       setSaving(false);
-      return;
     }
-
-    const payload = {
-      plate: plate.trim().toUpperCase(),
-      model: model || null,
-      fuel_type: fuelType,
-      tank_capacity_l: capacity ? Number(capacity) : null,
-      avg_consumption: avg ? Number(avg) : null,
-      current_odometer: odom ? Number(odom) : 0,
-      current_driver_id: driverId || null,
-    };
-
-    if (editing && initial?.id) {
-      const { error } = await supabase.from("vehicles").update(payload).eq("id", initial.id);
-      if (error) {
-        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
-        setSaving(false);
-        return;
-      }
-      setMsg({ kind: "ok", text: "Veículo atualizado." });
-      router.refresh();
-    } else {
-      const { error } = await supabase.from("vehicles").insert({ ...payload, tenant_id: tenantId });
-      if (error) {
-        setMsg({ kind: "err", text: traduzSupabaseError(error.message) });
-        setSaving(false);
-        return;
-      }
-      router.push("/cadastros/veiculos");
-      router.refresh();
-    }
-    setSaving(false);
   }
 
   return (

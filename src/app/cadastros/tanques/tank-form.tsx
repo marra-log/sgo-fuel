@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { traduzSupabaseError } from "@/lib/supabase/errors";
+import { resolveTenantId } from "@/lib/supabase/tenant-client";
 import { Button } from "@/components/ui/button";
 import { FormField, FormMessage, Input, Select } from "@/components/ui/input";
 import { DeleteButton } from "@/components/cadastros/delete-button";
@@ -43,38 +44,37 @@ export function TankForm({ initial }: { initial?: TankFormData }) {
     setMsg(null);
     const supabase = createSupabaseBrowserClient();
 
-    const { data: member } = await supabase.from("tenant_members").select("tenant_id").limit(1).maybeSingle();
-    const tenantId = member?.tenant_id;
-    if (!tenantId) {
-      setMsg({ kind: "err", text: "Sua conta ainda não tem empresa." });
-      setSaving(false);
-      return;
-    }
-    if (!yardId) {
-      setMsg({ kind: "err", text: "Selecione um pátio. Cadastre primeiro se não houver." });
-      setSaving(false);
-      return;
-    }
+    try {
+      if (!yardId) {
+        setMsg({ kind: "err", text: "Selecione um pátio. Cadastre primeiro se não houver." });
+        return;
+      }
 
-    const payload = {
-      name,
-      yard_id: yardId,
-      fuel_type: fuelType,
-      capacity_l: Number(capacity),
-    };
+      const payload = {
+        name,
+        yard_id: yardId,
+        fuel_type: fuelType,
+        capacity_l: Number(capacity),
+      };
 
-    if (editing && initial?.id) {
-      const { error } = await supabase.from("tanks").update(payload).eq("id", initial.id);
-      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
-      setMsg({ kind: "ok", text: "Tanque atualizado." });
-      router.refresh();
-    } else {
-      const { error } = await supabase.from("tanks").insert({ ...payload, tenant_id: tenantId });
-      if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); setSaving(false); return; }
-      router.push("/cadastros/tanques");
-      router.refresh();
+      if (editing && initial?.id) {
+        const { error } = await supabase.from("tanks").update(payload).eq("id", initial.id);
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        setMsg({ kind: "ok", text: "Tanque atualizado." });
+        router.refresh();
+      } else {
+        const { tenantId, error: terr } = await resolveTenantId(supabase);
+        if (!tenantId) { setMsg({ kind: "err", text: terr ?? "Empresa não encontrada." }); return; }
+        const { error } = await supabase.from("tanks").insert({ ...payload, tenant_id: tenantId });
+        if (error) { setMsg({ kind: "err", text: traduzSupabaseError(error.message) }); return; }
+        router.push("/cadastros/tanques");
+        router.refresh();
+      }
+    } catch (err) {
+      setMsg({ kind: "err", text: "Erro inesperado: " + (err instanceof Error ? err.message : String(err)) });
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   }
 
   return (
