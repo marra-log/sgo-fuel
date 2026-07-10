@@ -18,8 +18,6 @@ const PROTECTED_PREFIXES = [
   "/faturamento",
   "/transacoes",
   "/usuarios",
-  "/multas",
-  "/vistoria",
 ];
 
 const PUBLIC_AUTH_ROUTES = ["/login", "/cadastro"];

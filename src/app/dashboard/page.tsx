@@ -39,18 +39,25 @@ type EventRow = {
 
 type RankingRow = {
   nome: string;
-  kml: number;
-  viagens: number;
+  litros: number;
+  abastecimentos: number;
   anomalias: number;
 };
+
+type ConcilTank = { label: string; entrada: number; saida: number };
+
+type FleetVehicle = { placa: string; modelo: string | null; motorista: string | null };
 
 async function loadDashboardData(): Promise<{
   events: EventRow[];
   ranking: RankingRow[];
   litrosMes: number;
   bloqueiosMes: number;
+  custoCompraMes: number;
   pumpsOnline: { online: number; total: number };
   latestAnomaly: { id: string; type: string; description: string | null; local: string } | null;
+  concil: ConcilTank[];
+  frota: FleetVehicle[];
 }> {
   const supabase = await createSupabaseServerClient();
 
@@ -120,30 +127,25 @@ async function loadDashboardData(): Promise<{
     if (did) anomaliasMap.set(did, (anomaliasMap.get(did) ?? 0) + 1);
   }
 
-  // Ranking de motoristas
-  const driverMap = new Map<string, { nome: string; litros: number; viagens: number; anomalias: number }>();
+  // Ranking de motoristas — apenas dados medidos: litros, nº de abastecimentos e anomalias.
+  // km/L só entra quando houver odômetro real registrado no fechamento do abastecimento.
+  const driverMap = new Map<string, RankingRow>();
   for (const r of monthRows) {
     if (!r.driver_id) continue;
     const prev = driverMap.get(r.driver_id) ?? {
       nome: r.drivers?.name ?? "—",
       litros: 0,
-      viagens: 0,
+      abastecimentos: 0,
       anomalias: anomaliasMap.get(r.driver_id) ?? 0,
     };
     if (r.status !== "BLOCKED") {
       prev.litros += Number(r.delivered_l ?? 0);
-      prev.viagens += 1;
+      prev.abastecimentos += 1;
     }
     driverMap.set(r.driver_id, prev);
   }
   const ranking: RankingRow[] = Array.from(driverMap.values())
-    .map((d) => ({
-      nome: d.nome,
-      kml: d.litros > 0 ? Number((d.viagens * 100 / d.litros).toFixed(2)) : 0,
-      viagens: d.viagens,
-      anomalias: d.anomalias,
-    }))
-    .sort((a, b) => b.viagens - a.viagens)
+    .sort((a, b) => b.litros - a.litros)
     .slice(0, 5);
 
   // Bombas online
@@ -179,50 +181,66 @@ async function loadDashboardData(): Promise<{
       }
     : null;
 
-  // Fallback de DEMONSTRAÇÃO quando o tenant ainda não tem eventos
-  if (events.length === 0) {
-    return demoDashboard();
+  // Conciliação por tanque (mês corrente): entrada via NFe × saída via abastecimentos
+  const [{ data: tanks }, { data: invoices }, { data: pumpTanks }, { data: monthPumpFuelings }] = await Promise.all([
+    supabase.from("tanks").select("id, name, fuel_type"),
+    supabase.from("fiscal_invoices").select("tank_id, volume_l, value_brl, issued_at"),
+    supabase.from("pumps").select("id, tank_id"),
+    supabase
+      .from("fuelings")
+      .select("pump_id, delivered_l, status")
+      .gte("started_at", monthStart.toISOString()),
+  ]);
+
+  const custoCompraMes = ((invoices ?? []) as Array<{ value_brl: number | null; issued_at: string | null }>)
+    .filter((inv) => inv.issued_at && new Date(inv.issued_at) >= monthStart)
+    .reduce((a, inv) => a + Number(inv.value_brl ?? 0), 0);
+
+  const pumpToTank = new Map<string, string>();
+  for (const p of (pumpTanks ?? []) as Array<{ id: string; tank_id: string | null }>)
+    if (p.tank_id) pumpToTank.set(p.id, p.tank_id);
+
+  const saidaPorTanque = new Map<string, number>();
+  for (const f of (monthPumpFuelings ?? []) as Array<{ pump_id: string; delivered_l: number | null; status: string }>) {
+    if (f.status === "BLOCKED") continue;
+    const tid = pumpToTank.get(f.pump_id);
+    if (tid) saidaPorTanque.set(tid, (saidaPorTanque.get(tid) ?? 0) + Number(f.delivered_l ?? 0));
   }
+  const entradaPorTanque = new Map<string, number>();
+  for (const inv of (invoices ?? []) as Array<{ tank_id: string | null; volume_l: number | null }>) {
+    if (inv.tank_id) entradaPorTanque.set(inv.tank_id, (entradaPorTanque.get(inv.tank_id) ?? 0) + Number(inv.volume_l ?? 0));
+  }
+  const concil: ConcilTank[] = ((tanks ?? []) as Array<{ id: string; name: string; fuel_type: string }>)
+    .map((t) => ({
+      label: t.name,
+      entrada: Math.round(entradaPorTanque.get(t.id) ?? 0),
+      saida: Math.round(saidaPorTanque.get(t.id) ?? 0),
+    }))
+    .filter((t) => t.entrada > 0 || t.saida > 0)
+    .slice(0, 4);
+
+  // Frota real cadastrada
+  const { data: vehiclesData } = await supabase
+    .from("vehicles")
+    .select("plate, model, drivers:current_driver_id(name)")
+    .order("created_at", { ascending: false })
+    .limit(4);
+  const frota: FleetVehicle[] = ((vehiclesData ?? []) as unknown as Array<{
+    plate: string;
+    model: string | null;
+    drivers: { name: string } | null;
+  }>).map((v) => ({ placa: v.plate, modelo: v.model, motorista: v.drivers?.name ?? null }));
 
   return {
     events,
     ranking,
     litrosMes,
     bloqueiosMes,
+    custoCompraMes,
     pumpsOnline: { online: pumpsOnline ?? 0, total: pumpsTotal ?? 0 },
     latestAnomaly,
-  };
-}
-
-// Dados fictícios genéricos para a apresentação (tenant vazio).
-function demoDashboard() {
-  const events: EventRow[] = [
-    { when: "há 8 min", pump: "Pátio TransCargo · Bomba 02", placa: "RDA-1A01", motorista: "João Pereira", litros: 178.4, status: "Conforme", tone: "success" },
-    { when: "há 26 min", pump: "Posto Estrela · BR-381", placa: "RDB-2B02", motorista: "Carlos Santos", litros: 240.0, status: "Conforme", tone: "success" },
-    { when: "há 41 min", pump: "Pátio TransCargo · Bomba 01", placa: "RDC-3C03", motorista: "Marcos Oliveira", litros: 12.0, status: "Bloqueado", tone: "danger" },
-    { when: "há 1 h", pump: "Posto Horizonte", placa: "RDD-4D04", motorista: "Paulo Ribeiro", litros: 95.6, status: "Conforme", tone: "success" },
-    { when: "há 2 h", pump: "Pátio TransCargo · Bomba 03", placa: "RDE-5E05", motorista: "Antônio Costa", litros: 0.0, status: "Bloqueado", tone: "danger" },
-    { when: "há 3 h", pump: "Posto Boa Viagem", placa: "RDF-6F06", motorista: "Rafael Lima", litros: 160.0, status: "Conforme", tone: "success" },
-  ];
-  const ranking: RankingRow[] = [
-    { nome: "João Pereira", kml: 3.12, viagens: 24, anomalias: 0 },
-    { nome: "Carlos Santos", kml: 3.04, viagens: 27, anomalias: 0 },
-    { nome: "Marcos Oliveira", kml: 2.97, viagens: 19, anomalias: 0 },
-    { nome: "Paulo Ribeiro", kml: 2.42, viagens: 22, anomalias: 1 },
-    { nome: "Antônio Costa", kml: 2.11, viagens: 18, anomalias: 3 },
-  ];
-  return {
-    events,
-    ranking,
-    litrosMes: 48230,
-    bloqueiosMes: 14,
-    pumpsOnline: { online: 12, total: 14 },
-    latestAnomaly: {
-      id: "demo0001",
-      type: "CONTAINER_PATTERN",
-      description: "IA detectou recipiente fora do padrão (balde) no bico. Corte imediato.",
-      local: "Pátio TransCargo · Bomba 01",
-    },
+    concil,
+    frota,
   };
 }
 
@@ -259,11 +277,10 @@ const ANOMALY_LABEL: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const { events: recentEvents, ranking, litrosMes, bloqueiosMes, pumpsOnline, latestAnomaly } =
+  const { events: recentEvents, ranking, litrosMes, bloqueiosMes, custoCompraMes, pumpsOnline, latestAnomaly, concil, frota } =
     await loadDashboardData();
   const analytics = await loadAnalytics(14);
   const wallet = await loadWallet();
-  const economiaEstimada = Math.round(bloqueiosMes * 230 * 100) / 100; // ~R$230 por bloqueio prevenido (estimativa)
 
   return (
     <SectionShell
@@ -285,12 +302,12 @@ export default async function DashboardPage() {
           sublabel="soma de delivered_l no mês"
         />
         <Kpi
-          title="Economia estimada"
-          value={formatBRL(economiaEstimada)}
-          delta={`${bloqueiosMes} bloqueios`}
+          title="Combustível comprado · mês"
+          value={formatBRL(custoCompraMes)}
+          delta="NFes importadas"
           deltaUp
           icon={<PiggyBank className="h-4 w-4" />}
-          sublabel="cada bloqueio ≈ R$ 230 evitados"
+          sublabel="soma das notas fiscais do mês"
         />
         <Kpi
           title="Bloqueios da IA"
@@ -523,9 +540,15 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div className="px-5 py-4 space-y-4">
-            <ConcilRow label="Diesel S10 — Tanque 1" entrada={28000} saida={27640} />
-            <ConcilRow label="Diesel S500 — Tanque 2" entrada={15000} saida={14910} />
-            <ConcilRow label="Arla 32 — Tanque 3" entrada={4000} saida={3994} />
+            {concil.length === 0 ? (
+              <p className="py-6 text-center text-sm text-[color:var(--color-muted)]">
+                Sem movimento de tanque no mês. Importe o XML da NFe em{" "}
+                <Link href="/conciliacao" className="text-[color:var(--color-brand)] hover:underline">Conciliação</Link>{" "}
+                para cruzar entrada × saída.
+              </p>
+            ) : (
+              concil.map((t) => <ConcilRow key={t.label} label={t.label} entrada={t.entrada} saida={t.saida} />)
+            )}
             <div className="pt-2 text-right">
               <Link href="/conciliacao" className="text-xs font-medium text-[color:var(--color-brand)] hover:underline">
                 Ver conciliação completa →
@@ -538,7 +561,7 @@ export default async function DashboardPage() {
           <div className="border-b border-[color:var(--color-border)] px-5 py-4">
             <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Ranking de motoristas</h2>
             <p className="text-xs text-[color:var(--color-muted)]">
-              Eficiência (km/L) e anomalias detectadas pela IA.
+              Litros abastecidos e anomalias detectadas pela IA no mês.
             </p>
           </div>
           <div className="divide-y divide-[color:var(--color-border)]">
@@ -567,18 +590,18 @@ export default async function DashboardPage() {
                 <div className="min-w-0 flex-1">
                   <div className="truncate font-medium text-[color:var(--color-text-strong)]">{m.nome}</div>
                   <div className="text-xs text-[color:var(--color-muted)]">
-                    {m.viagens} viagens · {m.anomalias} anomalia{m.anomalias === 1 ? "" : "s"}
+                    {m.abastecimentos} abastecimento{m.abastecimentos === 1 ? "" : "s"} · {m.anomalias} anomalia{m.anomalias === 1 ? "" : "s"}
                   </div>
                 </div>
                 <div className="flex flex-none items-center gap-2 sm:gap-3">
                   <div className="hidden h-1.5 w-24 overflow-hidden rounded-full bg-[color:var(--color-surface-2)] sm:block sm:w-32">
                     <div
                       className="h-full bg-[color:var(--color-brand)]"
-                      style={{ width: `${(m.kml / 3.5) * 100}%` }}
+                      style={{ width: `${ranking[0]?.litros ? Math.min(100, (m.litros / ranking[0].litros) * 100) : 0}%` }}
                     />
                   </div>
                   <span className="whitespace-nowrap font-mono text-[color:var(--color-text-strong)]">
-                    {m.kml.toFixed(2)} km/L
+                    {formatNumber(Math.round(m.litros))} L
                   </span>
                 </div>
               </div>
@@ -596,32 +619,39 @@ export default async function DashboardPage() {
       {/* Frota */}
       <div className="mt-6">
         <Card>
-          <div className="border-b border-[color:var(--color-border)] px-5 py-4">
-            <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Frota monitorada</h2>
-            <p className="text-xs text-[color:var(--color-muted)]">
-              Veículos com placa cadastrada, cota e status atual.
-            </p>
+          <div className="flex items-center justify-between border-b border-[color:var(--color-border)] px-5 py-4">
+            <div>
+              <h2 className="text-base font-semibold text-[color:var(--color-text-strong)]">Frota monitorada</h2>
+              <p className="text-xs text-[color:var(--color-muted)]">
+                Últimos veículos cadastrados e motorista vinculado.
+              </p>
+            </div>
+            <Link href="/cadastros/veiculos" className="text-xs font-medium text-[color:var(--color-brand)] hover:underline">
+              Ver todos →
+            </Link>
           </div>
-          <div className="grid gap-3 px-5 py-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { placa: "BRA-2E19", modelo: "Scania R450", motorista: "Reinaldo S.", status: "Em rota" },
-              { placa: "BRA-7K22", modelo: "Volvo FH 540", motorista: "Antônio L.", status: "Em rota" },
-              { placa: "BRA-5C04", modelo: "Mercedes Actros", motorista: "Júlio A.", status: "Pátio" },
-              { placa: "RIO-1A88", modelo: "Iveco Stralis", motorista: "Edna P.", status: "Em manutenção" },
-            ].map((v, i) => (
-              <div key={i} className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-sm text-[color:var(--color-text-strong)]">{v.placa}</span>
-                  <Truck className="h-4 w-4 text-[color:var(--color-muted)]" />
+          {frota.length === 0 ? (
+            <div className="px-5 py-10 text-center">
+              <Truck className="mx-auto h-6 w-6 text-[color:var(--color-muted)]" />
+              <p className="mt-2 text-sm text-[color:var(--color-muted)]">Nenhum veículo cadastrado ainda.</p>
+              <Link href="/cadastros/veiculos/novo" className="mt-2 inline-block text-xs font-medium text-[color:var(--color-brand)] hover:underline">
+                Cadastrar veículo →
+              </Link>
+            </div>
+          ) : (
+            <div className="grid gap-3 px-5 py-4 sm:grid-cols-2 lg:grid-cols-4">
+              {frota.map((v, i) => (
+                <div key={i} className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-sm text-[color:var(--color-text-strong)]">{v.placa}</span>
+                    <Truck className="h-4 w-4 text-[color:var(--color-muted)]" />
+                  </div>
+                  <div className="mt-1 text-xs text-[color:var(--color-muted)]">{v.modelo ?? "—"}</div>
+                  <div className="mt-2 text-xs text-[color:var(--color-text-strong)]">{v.motorista ?? "Sem motorista vinculado"}</div>
                 </div>
-                <div className="mt-1 text-xs text-[color:var(--color-muted)]">{v.modelo}</div>
-                <div className="mt-2 text-xs text-[color:var(--color-text-strong)]">{v.motorista}</div>
-                <div className="mt-1 text-[10px] uppercase tracking-wider text-[color:var(--color-brand)]">
-                  {v.status}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </Card>
       </div>
     </SectionShell>
@@ -696,7 +726,7 @@ function ConcilRow({
   saida: number;
 }) {
   const diff = entrada - saida;
-  const pct = (diff / entrada) * 100;
+  const pct = entrada > 0 ? (diff / entrada) * 100 : 0;
   const tone = pct > 1.5 ? "danger" : pct > 0.8 ? "warning" : "success";
   return (
     <div>
@@ -716,7 +746,7 @@ function ConcilRow({
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[color:var(--color-surface-2)]">
         <div
           className="h-full bg-[color:var(--color-brand)]"
-          style={{ width: `${(saida / entrada) * 100}%` }}
+          style={{ width: `${entrada > 0 ? Math.min(100, (saida / entrada) * 100) : 0}%` }}
         />
       </div>
     </div>

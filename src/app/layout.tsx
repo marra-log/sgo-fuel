@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { UpdateWatchdog } from "@/components/update-watchdog";
 
 export const metadata: Metadata = {
   title: "SGO-Fuel — Gestão Inteligente de Abastecimento",
@@ -23,7 +24,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <UpdateWatchdog />
+      </body>
     </html>
   );
 }

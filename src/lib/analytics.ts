@@ -100,12 +100,6 @@ export async function loadAnalytics(days = 14): Promise<AnalyticsData> {
     .select("*", { count: "exact", head: true })
     .is("resolved_at", null);
 
-  // Se o tenant ainda não tem eventos, mostra dados de DEMONSTRAÇÃO (fictícios)
-  // para a apresentação não ficar com gráficos vazios.
-  if (totalEventos === 0) {
-    return demoAnalytics(days);
-  }
-
   return {
     daily,
     statusDist,
@@ -117,57 +111,3 @@ export async function loadAnalytics(days = 14): Promise<AnalyticsData> {
   };
 }
 
-function seeded(seed: number) {
-  return function () {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-// Dados FICTÍCIOS determinísticos — usados quando o tenant está vazio.
-export function demoAnalytics(days = 14): AnalyticsData {
-  const r = seeded(2026);
-  const today = new Date();
-  const daily: DailyPoint[] = [];
-  let totalLitros = 0;
-  let totalEventos = 0;
-  let totalBloqueios = 0;
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const eventos = 8 + Math.floor(r() * 14);
-    const bloqueios = Math.floor(r() * 3);
-    const litros = Math.round((eventos - bloqueios) * (140 + r() * 90));
-    daily.push({
-      dia: d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-      litros,
-      eventos,
-      bloqueios,
-    });
-    totalLitros += litros;
-    totalEventos += eventos;
-    totalBloqueios += bloqueios;
-  }
-  const statusDist: StatusSlice[] = [
-    { name: "Concluído", value: totalEventos - totalBloqueios - 6 },
-    { name: "Autorizado", value: 6 },
-    { name: "Bloqueado", value: totalBloqueios },
-  ];
-  const nomes = ["João Pereira", "Carlos Santos", "Marcos Oliveira", "Paulo Ribeiro", "Antônio Costa"];
-  const topDrivers: DriverBar[] = nomes.map((nome, i) => ({
-    nome: nome.split(" ")[0],
-    litros: Math.round((2200 - i * 280) + r() * 200),
-  }));
-  return {
-    daily,
-    statusDist,
-    topDrivers,
-    totalLitros,
-    totalEventos,
-    totalBloqueios,
-    anomaliasAbertas: totalBloqueios,
-  };
-}
