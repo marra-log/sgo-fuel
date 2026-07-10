@@ -13,7 +13,8 @@ const PROTECTED_PREFIXES = [
   "/auditoria",
   "/relatorios",
   "/cartoes",
-  "/maquininha",
+  // "/maquininha" fica público: o PWABuilder precisa analisar a página para
+  // gerar o APK; os dados continuam protegidos por RLS (sem login, nada aparece).
   "/faturamento",
   "/transacoes",
   "/usuarios",
