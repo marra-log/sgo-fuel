@@ -12,7 +12,7 @@ type DriverAgg = {
   id: string;
   nome: string;
   placa: string | null;
-  viagens: number;
+  abastecimentos: number;
   litros: number;
   anomalias: number;
 };
@@ -40,11 +40,11 @@ async function loadRanking(): Promise<DriverAgg[]> {
     .select("fueling_id, fuelings(driver_id)")
     .gte("detected_at", monthStart.toISOString());
 
-  const fuelMap = new Map<string, { viagens: number; litros: number }>();
+  const fuelMap = new Map<string, { abastecimentos: number; litros: number }>();
   for (const f of (fuelings ?? []) as Array<{ driver_id: string; status: string; delivered_l: number | null }>) {
     if (!f.driver_id || f.status === "BLOCKED") continue;
-    const prev = fuelMap.get(f.driver_id) ?? { viagens: 0, litros: 0 };
-    prev.viagens += 1;
+    const prev = fuelMap.get(f.driver_id) ?? { abastecimentos: 0, litros: 0 };
+    prev.abastecimentos += 1;
     prev.litros += Number(f.delivered_l ?? 0);
     fuelMap.set(f.driver_id, prev);
   }
@@ -57,36 +57,36 @@ async function loadRanking(): Promise<DriverAgg[]> {
 
   type DriverWithVehicle = { id: string; name: string; vehicles: Array<{ plate: string }> };
   const rows: DriverAgg[] = (drivers as unknown as DriverWithVehicle[]).map((d) => {
-    const fuel = fuelMap.get(d.id) ?? { viagens: 0, litros: 0 };
+    const fuel = fuelMap.get(d.id) ?? { abastecimentos: 0, litros: 0 };
     return {
       id: d.id,
       nome: d.name,
       placa: d.vehicles?.[0]?.plate ?? null,
-      viagens: fuel.viagens,
+      abastecimentos: fuel.abastecimentos,
       litros: fuel.litros,
       anomalias: anomMap.get(d.id) ?? 0,
     };
   });
 
-  return rows.sort((a, b) => b.viagens - a.viagens || b.litros - a.litros);
+  return rows.sort((a, b) => b.abastecimentos - a.abastecimentos || b.litros - a.litros);
 }
 
 function score(r: DriverAgg) {
-  // Score simples MVP: 100 - 10 por anomalia, +1 por viagem completa.
-  const s = 100 - r.anomalias * 10 + r.viagens;
+  // Score simples MVP: 100 - 10 por anomalia, +1 por abastecimento concluído.
+  const s = 100 - r.anomalias * 10 + r.abastecimentos;
   return Math.max(0, Math.min(100, s));
 }
 
 export default async function RankingPage() {
   const drivers = await loadRanking();
   const top = drivers[0];
-  const cleanCount = drivers.filter((d) => d.anomalias === 0 && d.viagens > 0).length;
+  const cleanCount = drivers.filter((d) => d.anomalias === 0 && d.abastecimentos > 0).length;
 
   return (
     <SectionShell
       badge="Ranking"
       title="Eficiência e conduta dos motoristas"
-      description="Score combina viagens completas, anomalias detectadas pela IA e respeito à cota. Calculado em cima dos dados reais do mês."
+      description="Score combina abastecimentos concluídos e anomalias detectadas pela IA. Calculado em cima dos dados reais do mês."
     >
       {drivers.length === 0 ? (
         <Card className="px-6 py-16 text-center">
@@ -118,7 +118,7 @@ export default async function RankingPage() {
               icon={<Trophy className="h-5 w-5" />}
               tone="warning"
               title={top?.nome ?? "—"}
-              subtitle={`Líder do mês · ${top?.viagens ?? 0} viagens`}
+              subtitle={`Líder do mês · ${top?.abastecimentos ?? 0} abastecimentos`}
             />
             <Highlight
               icon={<Medal className="h-5 w-5" />}
@@ -147,7 +147,7 @@ export default async function RankingPage() {
                     <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">#</th>
                     <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Motorista</th>
                     <th className="px-5 py-3 font-medium text-[color:var(--color-muted)]">Placa</th>
-                    <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Viagens</th>
+                    <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Abastecimentos</th>
                     <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Litros</th>
                     <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Anomalias</th>
                     <th className="px-5 py-3 text-right font-medium text-[color:var(--color-muted)]">Score</th>
@@ -159,7 +159,7 @@ export default async function RankingPage() {
                       <td className="px-5 py-3 text-[color:var(--color-muted)]">{i + 1}</td>
                       <td className="px-5 py-3 font-medium text-[color:var(--color-text-strong)]">{d.nome}</td>
                       <td className="px-5 py-3 font-mono text-[color:var(--color-muted)]">{d.placa ?? "—"}</td>
-                      <td className="px-5 py-3 text-right text-[color:var(--color-text-strong)]">{d.viagens}</td>
+                      <td className="px-5 py-3 text-right text-[color:var(--color-text-strong)]">{d.abastecimentos}</td>
                       <td className="px-5 py-3 text-right font-mono text-[color:var(--color-text-strong)]">{formatNumber(Math.round(d.litros))} L</td>
                       <td className="px-5 py-3 text-right">
                         {d.anomalias === 0 ? (

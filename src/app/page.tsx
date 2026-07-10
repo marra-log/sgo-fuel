@@ -58,9 +58,9 @@ export default function HomePage() {
                     <BarChart3 className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/postos">
+                <Link href="/maquininha">
                   <Button size="lg" variant="outline">
-                    Painel de Postos
+                    Maquininha POS
                     <BarChart3 className="h-4 w-4" />
                   </Button>
                 </Link>
@@ -305,7 +305,7 @@ export default function HomePage() {
             cta="Entrar"
           />
           <ProductCard
-            href="/motorista"
+            href="/app"
             icon={<Truck className="h-5 w-5" />}
             title="App do Motorista"
             desc="Rotas, saldos e check-in na bomba."
@@ -322,7 +322,7 @@ export default function HomePage() {
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm text-[color:var(--color-muted)]">
             Navegue pelas telas do gestor, anomalias, conciliação SEFAZ e ranking de motoristas —
-            todas funcionais como demonstração interativa.
+            todas calculadas em cima dos dados reais da sua operação.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/dashboard">
@@ -347,7 +347,7 @@ export default function HomePage() {
             <Fuel className="h-3.5 w-3.5 text-[color:var(--color-brand)]" />
             <span>SGO-Fuel · Powered by Aether IA</span>
           </div>
-          <span>Demonstração interativa — dados simulados</span>
+          <span>Gestão de abastecimento com dados reais da operação</span>
         </div>
       </footer>
     </div>

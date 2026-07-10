@@ -523,7 +523,7 @@ function Header() {
 function Footer() {
   return (
     <div className="mt-auto pt-8 text-center text-[10px] text-[color:var(--color-muted)]">
-      SGO-Fuel · demonstração — instale na tela inicial pelo menu do navegador
+      SGO-Fuel — instale na tela inicial pelo menu do navegador
     </div>
   );
 }

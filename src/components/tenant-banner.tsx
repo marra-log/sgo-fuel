@@ -79,8 +79,8 @@ export async function TenantBanner() {
           </div>
           <p className="mt-1 text-xs text-[color:var(--color-muted)]">
             {empty
-              ? "Sua empresa está pronta. Os números abaixo são exemplos de demonstração — cadastre frota para vê-los reais."
-              : "Os números do painel já refletem seus dados cadastrados."}
+              ? "Sua empresa está pronta. O painel começa zerado — cadastre motoristas, veículos e bombas para os números aparecerem."
+              : "Todos os números do painel são calculados dos seus dados reais."}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

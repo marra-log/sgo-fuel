@@ -97,7 +97,9 @@ export function SimuladorClient({
         status: isBlocked ? "BLOCKED" : "COMPLETED",
         alpr_plate: vehicle?.plate ?? null,
         alpr_confidence: 0.92,
-        cost_brl: deliveredL ? Math.round(deliveredL * 562) / 100 : 0,
+        // cost_brl fica nulo: custo real só entra via NFe (conciliação) ou transação de cartão,
+        // nunca com preço inventado.
+        cost_brl: null,
       })
       .select("id")
       .single();
