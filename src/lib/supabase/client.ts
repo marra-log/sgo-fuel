@@ -66,7 +66,7 @@ async function resilientFetch(input: RequestInfo | URL, init?: RequestInit): Pro
     const controller = new AbortController();
     const timer = setTimeout(
       () => controller.abort(new DOMException("fetch interceptado/lento", "TimeoutError")),
-      12000
+      6000
     );
     try {
       return await fetch(input, { ...init, signal: controller.signal });
