@@ -387,7 +387,7 @@ function KpiHero({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-3 sm:p-4">
       <div className="text-base font-semibold leading-tight text-[color:var(--color-text-strong)] sm:text-xl">{value}</div>
-      <div className="mt-1 text-[10px] uppercase tracking-wider text-[color:var(--color-muted)] sm:text-[11px]">
+      <div className="mt-1 text-[11px] uppercase tracking-wider text-[color:var(--color-muted)] sm:text-[11px]">
         {label}
       </div>
     </div>
@@ -545,7 +545,7 @@ function PumpVisual() {
 
           {/* Plate detection box */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-[color:var(--color-brand)] px-3 py-1.5">
-            <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-brand)]">
+            <div className="text-[11px] uppercase tracking-wider text-[color:var(--color-brand)]">
               Placa detectada
             </div>
             <div className="font-mono text-sm text-[color:var(--color-text-strong)]">BRA · 2E19</div>
@@ -554,7 +554,7 @@ function PumpVisual() {
           {/* Scanline */}
           <div className="absolute inset-x-0 h-12 scanline" />
 
-          <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[10px] text-[color:var(--color-text-strong)]">
+          <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-md bg-black/70 px-2 py-1 text-[11px] text-[color:var(--color-text-strong)]">
             <Camera className="h-3 w-3 text-[color:var(--color-brand)]" />
             ALPR · Edge
           </div>
@@ -563,7 +563,7 @@ function PumpVisual() {
         {/* Live readings */}
         <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
           <div className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-2">
-            <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
+            <div className="text-[11px] uppercase tracking-wider text-[color:var(--color-muted)]">
               Cota liberada
             </div>
             <div className="mt-0.5 font-mono text-sm text-[color:var(--color-brand)]">
@@ -571,13 +571,13 @@ function PumpVisual() {
             </div>
           </div>
           <div className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-2">
-            <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
+            <div className="text-[11px] uppercase tracking-wider text-[color:var(--color-muted)]">
               Bico
             </div>
             <div className="mt-0.5 font-mono text-sm text-[color:var(--color-text-strong)]">Conforme</div>
           </div>
           <div className="rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-surface-2)] p-2">
-            <div className="text-[10px] uppercase tracking-wider text-[color:var(--color-muted)]">
+            <div className="text-[11px] uppercase tracking-wider text-[color:var(--color-muted)]">
               Status SSR
             </div>
             <div className="mt-0.5 font-mono text-sm text-[color:var(--color-brand)]">

@@ -25,6 +25,7 @@ import { loadAnalytics } from "@/lib/analytics";
 import { LitrosArea, EventosBar, StatusPie, TopDriversBar, PieLegend } from "@/components/charts";
 import { formatBRL, formatNumber, timeAgo } from "@/lib/utils";
 import { Kpi, WalletStat, ConcilRow } from "@/components/dashboard/stats";
+import { OnboardingChecklist } from "@/components/dashboard/onboarding";
 
 export const dynamic = "force-dynamic";
 
@@ -291,6 +292,9 @@ export default async function DashboardPage() {
     >
       {/* Status da empresa + contadores reais do banco */}
       <TenantBanner />
+
+      {/* Primeiros passos — some quando a operação está configurada */}
+      <OnboardingChecklist />
 
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

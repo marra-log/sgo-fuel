@@ -28,6 +28,7 @@ declare module "lucide-react" {
   export const Camera: LucideIcon;
   export const Check: LucideIcon;
   export const CheckCircle2: LucideIcon;
+  export const Circle: LucideIcon;
   export const ClipboardCheck: LucideIcon;
   export const Copy: LucideIcon;
   export const Cpu: LucideIcon;
