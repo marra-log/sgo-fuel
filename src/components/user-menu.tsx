@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LogOut, User as UserIcon } from "lucide-react";
+import Link from "next/link";
+import { Activity, Download, Gauge, LogOut, User as UserIcon, Zap } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type SessionInfo = {
@@ -86,6 +87,27 @@ export function UserMenu() {
             <div className="mt-2 truncate text-xs text-[color:var(--color-muted)]">
               {session.email}
             </div>
+          </div>
+          <div className="border-b border-[color:var(--color-border)] py-1">
+            <div className="px-4 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-wider text-[color:var(--color-muted)]">
+              Ferramentas
+            </div>
+            {[
+              { href: "/diagnostico", label: "Diagnóstico do sistema", Icon: Activity },
+              { href: "/simular", label: "Simular abastecimento", Icon: Zap },
+              { href: "/instalar", label: "Instalar nas máquinas (APK)", Icon: Download },
+              { href: "/", label: "Página de apresentação", Icon: Gauge },
+            ].map(({ href, label, Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-[color:var(--color-text)] transition-colors hover:bg-[color:var(--color-surface-2)]"
+              >
+                <Icon className="h-3.5 w-3.5 text-[color:var(--color-muted)]" />
+                {label}
+              </Link>
+            ))}
           </div>
           <form action="/auth/logout" method="POST">
             <button

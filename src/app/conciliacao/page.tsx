@@ -1,5 +1,6 @@
 import { FileText, ShieldCheck, Upload } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
+import { SectionTabs, FINANCEIRO_TABS } from "@/components/section-tabs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -76,10 +77,11 @@ export default async function ConciliacaoPage() {
 
   return (
     <SectionShell
-      badge="Conciliação SEFAZ"
-      title="XML de compra × Saída efetiva"
+      badge="Financeiro & Fiscal"
+      title="Conciliação fiscal — XML de compra × saída efetiva"
       description="Importe a NFe do combustível: o sistema extrai chave, volume e valor e cruza com os litros liberados pelo IoT por tanque — sem sondas físicas."
     >
+      <SectionTabs tabs={FINANCEIRO_TABS} />
       {/* Upload */}
       <Card className="mb-6 p-5">
         <div className="flex items-center gap-2">

@@ -13,7 +13,7 @@ export default async function TanqueEditPage({ params }: { params: Promise<{ id:
   if (!data) notFound();
 
   return (
-    <SectionShell badge="Cadastros · Tanques" title="Editar tanque" description="Ajuste capacidade, combustível ou exclua.">
+    <SectionShell crumbs={[{ href: "/cadastros", label: "Cadastros" }, { href: "/cadastros/tanques", label: "Tanques" }]} width="form" badge="Cadastros · Tanques" title="Editar tanque" description="Ajuste capacidade, combustível ou exclua.">
       <FormShell backHref="/cadastros/tanques" title={data.name}>
         <TankForm initial={data} />
       </FormShell>

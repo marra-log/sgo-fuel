@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Ban, CheckCircle2, CreditCard, Droplet, FileText, Receipt } from "lucide-react";
 import { SectionShell } from "@/components/section-shell";
+import { SectionTabs, FINANCEIRO_TABS } from "@/components/section-tabs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PrintButton } from "@/components/print-button";
@@ -64,10 +65,11 @@ export default async function FaturamentoPage() {
 
   return (
     <SectionShell
-      badge="Faturamento · Cartões"
-      title="Fechamento do período"
+      badge="Financeiro & Fiscal"
+      title="Faturamento — fechamento do período"
       description="Consolidação das transações de cartão para cobrança. É assim que os valores são lançados: cada passada aprovada entra na fatura; as negadas mostram o desvio evitado."
     >
+      <SectionTabs tabs={FINANCEIRO_TABS} />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="text-sm text-[color:var(--color-muted)]">
           Período: <span className="text-[color:var(--color-text-strong)]">{periodoLabel}</span> · {tenant?.name ?? "Empresa"}

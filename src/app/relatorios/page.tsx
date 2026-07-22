@@ -5,6 +5,8 @@ import { loadAnalytics } from "@/lib/analytics";
 import { getCurrentTenant } from "@/lib/supabase/tenant";
 import { LitrosArea, EventosBar, StatusPie, TopDriversBar, PieLegend } from "@/components/charts";
 import { PrintButton } from "@/components/print-button";
+import { SiteHeader } from "@/components/site-header";
+import { SectionTabs, FINANCEIRO_TABS } from "@/components/section-tabs";
 import { formatBRL, formatNumber } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -58,6 +60,14 @@ export default async function RelatoriosPage() {
 
   return (
     <div className="min-h-screen bg-white text-black print:bg-white">
+      {/* Navegação do sistema — some na impressão */}
+      <div className="print:hidden">
+        <SiteHeader />
+        <div className="mx-auto max-w-4xl px-4 pt-5">
+          <SectionTabs tabs={FINANCEIRO_TABS} />
+        </div>
+      </div>
+
       {/* Barra de ação — some na impressão */}
       <div className="border-b border-gray-200 bg-[color:var(--color-background)] px-4 py-3 print:hidden">
         <div className="mx-auto flex max-w-4xl items-center justify-between">

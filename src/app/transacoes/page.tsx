@@ -1,4 +1,5 @@
 import { SectionShell } from "@/components/section-shell";
+import { SectionTabs, FINANCEIRO_TABS } from "@/components/section-tabs";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { TransacoesClient, type TxRow } from "./transacoes-client";
 
@@ -49,10 +50,11 @@ export default async function TransacoesPage() {
 
   return (
     <SectionShell
-      badge="Financeiro · Transações"
-      title="Movimento dos cartões"
+      badge="Financeiro & Fiscal"
+      title="Abastecimentos"
       description="Todo abastecimento autorizado ou negado nos terminais (Smart POS, Totem e celular). Filtre, audite e exporte."
     >
+      <SectionTabs tabs={FINANCEIRO_TABS} />
       <TransacoesClient rows={rows} saldoCartoes={saldoCartoes} />
     </SectionShell>
   );

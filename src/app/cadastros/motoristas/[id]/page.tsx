@@ -18,7 +18,7 @@ export default async function MotoristaEditPage({
   if (!data) notFound();
 
   return (
-    <SectionShell badge="Cadastros · Motoristas" title="Editar motorista" description="Atualize os dados ou desative o motorista.">
+    <SectionShell crumbs={[{ href: "/cadastros", label: "Cadastros" }, { href: "/cadastros/motoristas", label: "Motoristas" }]} width="form" badge="Cadastros · Motoristas" title="Editar motorista" description="Atualize os dados ou desative o motorista.">
       <FormShell
         backHref="/cadastros/motoristas"
         title={data.name}

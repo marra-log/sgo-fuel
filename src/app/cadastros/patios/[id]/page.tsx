@@ -13,7 +13,7 @@ export default async function PatioEditPage({ params }: { params: Promise<{ id: 
   if (!data) notFound();
 
   return (
-    <SectionShell badge="Cadastros · Pátios" title="Editar pátio" description="Ajuste o endereço, coordenadas ou exclua.">
+    <SectionShell crumbs={[{ href: "/cadastros", label: "Cadastros" }, { href: "/cadastros/patios", label: "Pátios" }]} width="form" badge="Cadastros · Pátios" title="Editar pátio" description="Ajuste o endereço, coordenadas ou exclua.">
       <FormShell backHref="/cadastros/patios" title={data.name} subtitle={data.address ?? ""}>
         <YardForm initial={data} />
       </FormShell>

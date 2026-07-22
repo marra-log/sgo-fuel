@@ -18,7 +18,7 @@ export default async function VeiculoEditPage({
   if (!data) notFound();
 
   return (
-    <SectionShell badge="Cadastros · Veículos" title="Editar veículo" description="Atualize dados, troque motorista, ou exclua.">
+    <SectionShell crumbs={[{ href: "/cadastros", label: "Cadastros" }, { href: "/cadastros/veiculos", label: "Veículos" }]} width="form" badge="Cadastros · Veículos" title="Editar veículo" description="Atualize dados, troque motorista, ou exclua.">
       <FormShell backHref="/cadastros/veiculos" title={data.plate} subtitle={data.model ?? ""}>
         <VehicleForm initial={data} />
       </FormShell>
