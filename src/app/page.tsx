@@ -20,13 +20,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SiteHeader } from "@/components/site-header";
+import { MarketingHeader } from "@/components/marketing-header";
 import { formatBRL } from "@/lib/utils";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen">
-      <SiteHeader />
+      <MarketingHeader />
 
       {/* HERO */}
       <section className="grid-backdrop relative overflow-hidden border-b border-[color:var(--color-border)]">
