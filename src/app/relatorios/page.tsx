@@ -138,6 +138,7 @@ export default async function RelatoriosPage() {
           {tanksRows.length === 0 ? (
             <p className="text-sm text-gray-500">Nenhum tanque cadastrado.</p>
           ) : (
+            <div className="overflow-x-auto print:overflow-visible">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr className="border-b border-gray-300 text-left text-gray-600">
@@ -162,6 +163,7 @@ export default async function RelatoriosPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
           <p className="mt-3 text-xs text-gray-500">
             Custo total de combustível comprado (NFes importadas): <strong>{formatBRL(custoTotal)}</strong>
