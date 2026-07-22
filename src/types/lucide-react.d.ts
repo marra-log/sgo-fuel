@@ -30,6 +30,7 @@ declare module "lucide-react" {
   export const CheckCircle2: LucideIcon;
   export const Circle: LucideIcon;
   export const ClipboardCheck: LucideIcon;
+  export const Compass: LucideIcon;
   export const Copy: LucideIcon;
   export const Cpu: LucideIcon;
   export const CreditCard: LucideIcon;
@@ -63,6 +64,7 @@ declare module "lucide-react" {
   export const QrCode: LucideIcon;
   export const Radar: LucideIcon;
   export const Receipt: LucideIcon;
+  export const RotateCcw: LucideIcon;
   export const Save: LucideIcon;
   export const Search: LucideIcon;
   export const Shuffle: LucideIcon;
